@@ -1,13 +1,7 @@
 import Image from "next/image";
 import { Fragment } from "react";
-import { SectionHeader } from "../SectionHeader";
-
-type Props = {};
-
-type packageProps = {
-    title: string;
-    description: string;
-};
+import { SectionHeader } from "@/components/LandingPage/SectionHeader";
+import { packageProps } from "@/components/LandingPage/props";
 
 const packages: packageProps[] = [
     {
@@ -27,7 +21,7 @@ const packages: packageProps[] = [
     },
 ];
 
-export function VehiclePackages({ }: Props) {
+function VehiclePackages() {
     return (
         <section className="py-[120px] lg:pt-24 3xl:pt-[107px] lg:pb-[150px] 3xl:pb-[200px] px-5">
             <div className="space-y-10 md:space-y-[100px] 3xl:space-y-[157px] max-w-[1100px] 3xl:max-w-[1510px] mx-auto">
@@ -65,3 +59,6 @@ export function VehiclePackages({ }: Props) {
         </section>
     );
 }
+
+
+export { VehiclePackages }

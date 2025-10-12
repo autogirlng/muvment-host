@@ -1,4 +1,4 @@
-import { TripSettings } from "./trip";
+import { TripSettings } from "@/types";
 
 export enum EarningPeriod {
   WEEK = "week",

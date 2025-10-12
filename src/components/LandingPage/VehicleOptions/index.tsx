@@ -1,16 +1,11 @@
-import Image, { StaticImageData } from "next/image";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { truck, bus, suv, sedan } from "@/ui/assets";
-import Button from "@/ui/button";
+import { Button } from "@/ui";
 import { SectionHeader } from "../SectionHeader";
+import { optionProps } from "@/components/LandingPage/props";
 
-type Props = {};
-
-type optionProps = {
-    type: string;
-    image: string;
-};
 
 const vehicles: optionProps[] = [
     {
@@ -31,7 +26,7 @@ const vehicles: optionProps[] = [
     },
 ];
 
-function VehicleOptions({ }: Props) {
+function VehicleOptions() {
     return (
         <section className="px-5 pb-5 sm:pb-10 3xl:pb-[53px]">
             <div className="pt-[97px] pb-[155px] md:bg-grey-75 rounded-[75px] md:rounded-[97px] px-5">
@@ -73,4 +68,4 @@ function VehicleOptions({ }: Props) {
     );
 }
 
-export default VehicleOptions;
+export { VehicleOptions };

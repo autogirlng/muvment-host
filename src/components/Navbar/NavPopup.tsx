@@ -2,15 +2,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { popupNavItems, popupNavItemsHome } from "@/utils/data";
 import { getInitialsFromName } from "@/utils/functions";
-import { useAppSelector } from "@/lib/hooks";
-
-import { User } from "@/utils/types";
 import { AvatarImage, HorizontalDivider } from "@/ui";
 import { MobileNavItem } from "@/components/Navbar";
+import { NavPopupProps } from "@/components/Navbar/props";
 
-type Props = { handleClick?: () => void; user: User | null };
 
-export function NavPopup({ handleClick, user }: Props) {
+
+export function NavPopup({ handleClick, user }: NavPopupProps) {
   const pathname = usePathname();
 
   return (

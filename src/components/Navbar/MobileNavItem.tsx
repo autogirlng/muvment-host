@@ -1,16 +1,8 @@
-import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import cn from "classnames";
 import useLogout from "@/hooks/useLogout";
-
-type Props = {
-  link?: string;
-  name: string;
-  icon: ReactNode;
-  handleClick?: () => void;
-  className?: string;
-};
+import { MobileNavItemProps } from "@/components/Navbar/props";
 
 export function MobileNavItem({
   link,
@@ -18,7 +10,7 @@ export function MobileNavItem({
   icon,
   handleClick,
   className,
-}: Props) {
+}: MobileNavItemProps) {
   const pathname = usePathname();
   const { logoutUser } = useLogout();
   return (
@@ -45,7 +37,7 @@ export function MobileNavItem({
   );
 }
 
-const NavItem = ({ link, name, icon }: Props) => {
+const NavItem = ({ link, name, icon }: MobileNavItemProps) => {
   const pathname = usePathname();
   return (
     <p

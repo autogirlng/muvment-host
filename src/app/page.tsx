@@ -2,19 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { User } from "@/utils/types";
+import { User } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
-import Hero from "@/components/LandingPage/Hero";
-import { Benefits } from "@/components/LandingPage";
-import JoinUs from "@/components/LandingPage/JoinUs";
-import Steps from "@/components/LandingPage/Steps";
-import VehicleOptions from "@/components/LandingPage/VehicleOptions";
-import Calculator from "@/components/LandingPage/Calculator";
-import { VehiclePackages } from "@/components/LandingPage/VehiclePackages";
-import Overview from "@/components/LandingPage/Overview";
-import GetStarted from "@/components/LandingPage/GetStarted";
-import Footer from "@/components/LandingPage/Footer";
+import {
+  Benefits,
+  VehiclePackages,
+  Hero,
+  JoinUs,
+  Steps,
+  VehicleOptions,
+  Calculator,
+  Overview,
+  GetStarted,
+  Footer
+} from "@/components/LandingPage";
+
+
 
 export default function HomePage() {
   const http = useHttp();

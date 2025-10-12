@@ -4,7 +4,6 @@ import {
   BasicVehicleInformationValues,
   ChangePasswordValues,
   LoginFormValues,
-  ProfileFormValues,
   ResetPasswordEmailValues,
   SetNewPasswordValues,
   SignupFormValues,
@@ -13,7 +12,7 @@ import {
   VerifyPhoneNumberValues,
   WithdrawalAccountValues,
   WithdrawalValues,
-} from "@/utils/types";
+} from "@/types";
 
 export const signUpFormInitialValues: SignupFormValues = {
   firstName: "",

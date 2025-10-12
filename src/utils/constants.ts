@@ -1,7 +1,6 @@
-import { SignupFormValues } from "@/utils/types";
+import { SignupFormValues } from "@/types";
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-console.log('DEBUG apiUrl:', apiUrl, 'process.env.NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL);
 
 export const fullNameRegEx = /^[A-Za-z'-]+\s[A-Za-z'-]+(?:\s[A-Za-z'-]+)*\s*$/;
 
@@ -30,8 +29,3 @@ export const passwordChecks: { label: string; check: PasswordCheckKey }[] = [
   { label: "One lowercase character", check: "lowercase_letters" },
   { label: "Must not include spaces", check: "no_space" },
 ];
-
-// export const countryMap: { [key: string]: string } = {
-//   NG: "NGN",
-//   GH: "GHS",
-// };

@@ -2,7 +2,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import Button from "@/ui/button";
+import { Button } from "@/ui";
 
 
 function Hero() {
@@ -54,4 +54,4 @@ function Hero() {
   );
 }
 
-export default Hero;
+export { Hero };

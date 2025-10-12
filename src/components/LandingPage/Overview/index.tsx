@@ -1,14 +1,8 @@
 import Image from "next/image";
 import React from "react";
 import cn from "classnames";
-import { SectionHeader } from "../SectionHeader";
-
-type Props = {};
-
-type featureProps = {
-    title: string;
-    description: string;
-};
+import { SectionHeader } from "@/components/LandingPage/SectionHeader";
+import { featureProps } from "@/components/LandingPage/props";
 
 const features: featureProps[] = [
     {
@@ -33,7 +27,7 @@ const features: featureProps[] = [
     },
 ];
 
-function Overview({ }: Props) {
+function Overview() {
     return (
         <section className="lg:pb-[200px] px-5 sm:px-0">
             <div className="flex flex-col justify-center items-center gap-[28px] lg:gap-[77px]">
@@ -86,4 +80,4 @@ function Overview({ }: Props) {
     );
 }
 
-export default Overview;
+export { Overview };

@@ -1,19 +1,18 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Formik, Form } from "formik";
 import InputField from "@/ui/inputField";
 import { customerAppUrl } from "@/utils/data";
-import { Formik, Form } from "formik";
+
 import { newLetterValidationSchema } from "@/utils/validationSchema";
 import useNewsletter from "@/hooks/useNewsletter";
-import Button from "@/ui/button";
 import { footer_logo } from "@/ui/assets";
-import { Icons } from "@/ui";
+import { Icons, Button } from "@/ui";
+import { FooterNavProps } from "@/components/LandingPage/props";
 
-type FooterNavProps = {
-    title: string;
-    links: { name: string; link?: string; badgeTitle?: string }[];
-};
+
+
 
 const footerNav: FooterNavProps[] = [
     {
@@ -54,9 +53,8 @@ const footerNav: FooterNavProps[] = [
     },
 ];
 
-type Props = {};
 
-function Footer({ }: Props) {
+function Footer() {
     const { addSubscriber } = useNewsletter();
 
     const currentYear = new Date().getFullYear();
@@ -118,21 +116,7 @@ function Footer({ }: Props) {
                                     </Form>
                                 )}
                             </Formik>
-                            {/* <div className="flex flex-col md:flex-row gap-[10px]">
-                <InputField
-                  name="email"
-                  id="email"
-                  placeholder="Email Address"
-                />
-                <Button
-                  color="primary"
-                  variant="filled"
-                  className="!rounded-[25.56px] !py-4 !px-[28px]"
-                  onClick={newsLetter}
-                >
-                  Subscribe
-                </Button>
-              </div> */}
+
                         </div>
                         {footerNav.map((nav) => (
                             <div
@@ -187,4 +171,4 @@ function Footer({ }: Props) {
     );
 }
 
-export default Footer;
+export { Footer };

@@ -1,11 +1,6 @@
-import { ReactNode } from "react";
 import { Icons, WhatWeOffer } from "@/ui";
+import { benefitProps } from "@/components/LandingPage/props";
 
-type benefitProps = {
-    title: string;
-    description: string;
-    icon: ReactNode;
-};
 
 const benefits: benefitProps[] = [
     {

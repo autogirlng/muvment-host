@@ -1,4 +1,3 @@
-// utils/formatters.ts
 
 export const formatNumberWithCommas = (value: string) => {
   const number = value.replace(/,/g, "");

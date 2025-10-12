@@ -1,4 +1,4 @@
-import { TopRatedVehicleType } from "./vehicle";
+import {  TopRatedVehicleType } from "@/types";
 
 type UserVerification = {
   id: string;

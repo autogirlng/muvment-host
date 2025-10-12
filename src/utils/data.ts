@@ -9,7 +9,7 @@ import {
   TransactionStatus,
   TransactionTableRow,
   TransactionType,
-} from "./types";
+} from "@/types";
 
 type OptionType = { option: string; value: string };
 
@@ -119,14 +119,6 @@ export const completeAccountSetupTasks: AccountSetupTask[] = [
     isCompleted: false,
     taskId: "phoneVerified",
   },
-  // {
-  //   icon: Icons.ic_lock,
-  //   title: "Verify your identity",
-  //   link: "/account-setup/verify-identity",
-  //   linkText: "Start Verification",
-  //   isCompleted: false,
-  //   taskId: "bvnVerified",
-  // },
   {
     icon: Icons.ic_lock,
     title: "Setup Withdrawal Account",

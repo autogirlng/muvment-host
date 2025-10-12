@@ -1,33 +1,8 @@
-import React, { LegacyRef, ReactNode } from "react";
-
+import React, { ReactNode } from "react";
 import * as Select from "@radix-ui/react-select";
-
 import cn from "classnames";
 import Tooltip from "./tooltip";
-
-type OptionProps = {
-    value: string;
-    option: string;
-    flag?: string | ReactNode;
-};
-
-type SelectInputProps = {
-    className?: string;
-    defaultValue?: string;
-    id: string;
-    label?: string;
-    placeholder?: string;
-    variant?: "outlined" | "filled";
-    options: OptionProps[];
-    onChange?: (value: string) => void;
-    value?: string;
-    error?: string;
-    info?: boolean;
-    tooltipTitle?: string;
-    tooltipDescription?: string;
-    disabled?: boolean;
-    width?: string;
-};
+import { SelectInputProps, OptionProps } from "./props";
 
 const SelectInput = ({
     className,

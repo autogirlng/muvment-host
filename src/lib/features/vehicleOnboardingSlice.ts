@@ -1,10 +1,7 @@
-import { VehicleInformation, VehiclePhotos } from "@/utils/types";
+import { VehicleInformation } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { VehicleState } from "./types";
 
-interface VehicleState {
-  vehicle: VehicleInformation | null;
-  currentStep: number;
-}
 
 const initialState: VehicleState = {
   vehicle: null,

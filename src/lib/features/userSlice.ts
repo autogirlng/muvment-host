@@ -1,14 +1,9 @@
-import { User } from "@/utils/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { UserSliceState } from "./types";
+import { User } from "@/types";
 
-interface UserState {
-  user: User | null;
-  userToken: string;
-  isAuthenticated: boolean;
-  isLoading: boolean;
-}
 
-const initialState: UserState = {
+const initialState: UserSliceState = {
   user: null,
   userToken: "",
   isAuthenticated: false,
@@ -27,7 +22,7 @@ const userSlice = createSlice({
       localStorage.setItem("user_token", action.payload);
       state.isAuthenticated = true;
     },
-    setUser: (state, action: PayloadAction<UserState>) => {
+    setUser: (state, action: PayloadAction< UserSliceState>) => {
       state.user = action.payload.user;
       state.isLoading = action.payload.isLoading;
       state.userToken = action.payload.userToken;

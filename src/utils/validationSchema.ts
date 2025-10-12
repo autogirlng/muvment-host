@@ -7,7 +7,6 @@ import {
   specialCharRegex,
   uppercaseRegex,
 } from "@/utils/constants";
-import { isValidPhoneNumber } from "react-phone-number-input";
 import { validatePhoneNumber } from "./functions";
 
 export const newLetterValidationSchema = object().shape({

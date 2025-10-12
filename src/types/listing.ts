@@ -1,9 +1,12 @@
-import { VehicleStatus, VehiclePhotos } from "./vehicle";
-import { User } from "./user";
-import { BookingInformation } from "./booking";
-import { Pricing } from "./transactions_payment_finance";
-import { TripSettings } from "./trip";
-import { AssignedDriver } from "./driver";
+import { User,
+    VehicleStatus,
+    VehiclePhotos,
+    BookingInformation, 
+    Pricing, 
+    TripSettings, 
+    AssignedDriver
+} from "@/types";
+
 
 export enum ListingStatus {
   REVIEW = "review",

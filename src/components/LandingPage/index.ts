@@ -1,1 +1,11 @@
 export * from "./Benefits/index"
+export * from "./Calculator/index"
+export * from "./Footer/index"
+export * from "./GetStarted/index"
+export * from "./Hero/index"
+export * from "./JoinUs/index"
+export * from "./Overview/index"
+export * from "./Steps/index"
+export * from "./VehicleOptions/index"
+export * from "./VehiclePackages/index"
+

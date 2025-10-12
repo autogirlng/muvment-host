@@ -1,9 +1,8 @@
 import React from "react";
 import Link from "next/link";
-import Button from "@/ui/button";
-type Props = {};
+import { Button } from "@/ui";
 
-function GetStarted({ }: Props) {
+function GetStarted() {
     return (
         <section className="px-2 md:px-8 py-[120px] md:py-[200px]">
             <div className="bg-footer-overlay bg-no-repeat bg-cover bg-primary-500 h-[460px] md:h-[800px] 3xl:h-[965px] rounded-[63px] md:rounded-[177px] px-8">
@@ -27,4 +26,4 @@ function GetStarted({ }: Props) {
     );
 }
 
-export default GetStarted;
+export { GetStarted };

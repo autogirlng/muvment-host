@@ -1,10 +1,7 @@
 import { HowItWorks } from "@/ui/howItWorks";
+import { stepProps } from "../props";
 
 
-type stepProps = {
-  title: string;
-  description: string;
-};
 
 const steps: stepProps[] = [
   {
@@ -37,4 +34,4 @@ function Steps() {
   );
 }
 
-export default Steps;
+export { Steps };

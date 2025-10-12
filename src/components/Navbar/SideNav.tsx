@@ -3,10 +3,7 @@ import { dashboardNavItems } from "@/utils/data";
 import { logo } from "@/ui/assets";
 import { SideNavItem } from "@/components/Navbar";
 
-
-type Props = {};
-
-export function SideNav({ }: Props) {
+export function SideNav() {
     return (
         <div className="bg-white pt-8 pb-6 hidden md:block fixed left-0 top-0 md:w-[252px] 2xl:w-[272px] h-screen border-r border-grey-300 shadow-[12px_4px_100px_0_#00000012]">
             <div className="space-y-3 px-2 w-full">

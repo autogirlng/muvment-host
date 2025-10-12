@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { ErrorResponse, NotificationType } from "@/utils/types";
+import { ErrorResponse, NotificationType } from "@/types";
 
 import {
   lowercaseRegex,

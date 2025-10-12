@@ -1,5 +1,5 @@
 export * from "./Icons";
-export * from "./Avatar";
+export * from "./avatar";
 export * from "./divider"
 export * from "./popUp"
 export * from "./button"

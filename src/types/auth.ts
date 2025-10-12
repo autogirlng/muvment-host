@@ -1,6 +1,6 @@
 import { JSX } from "react";
-import { User } from "./user";
-import { BankProp } from "./transactions_payment_finance";
+import { User, BankProp } from "@/types";
+
 
 
 export interface AccountSetupTask {
@@ -62,16 +62,6 @@ export interface VerifyOtpValues {
   token: string;
 }
 
-export interface OtpStateForgotPassword {
-  forgotPasswordOtp: string;
-}
-
-export interface OtpStateAccountSetup {
-  phoneNumberToVerify: string;
-  accountDetails: WithdrawalAccountValues;
-  withdrawalAccountSetupOtp: string;
-}
-
 export interface SetNewPasswordValues {
   email: string;
   token: string;
@@ -112,11 +102,9 @@ export interface ProfileFormValues {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  // email: string;
   country: string;
   countryCode: string;
   bio: string;
-
   profileImage?: string;
   city: string;
   isBusiness: boolean;

@@ -1,15 +1,11 @@
 import cn from "classnames";
-import Button from "./button";
+import { Button } from "@/ui";
+import { HowItWorksProps } from "./props";
 
-type Props = { title: string; className?: string; steps: HowItWorksProps[] };
 
-type HowItWorksProps = {
-    title: string;
-    description: string;
-    button?: string;
-};
 
-function HowItWorks({ title, steps, className }: Props) {
+
+function HowItWorks({ title, steps, className }: HowItWorksProps) {
     return (
         <section
             id="how-it-works"

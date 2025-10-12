@@ -2,21 +2,14 @@ import cn from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import { useAppSelector } from "@/lib/hooks";
 import { getInitialsFromName } from "@/utils/functions";
 import { AvatarInitials, AvatarImage, HorizontalDivider, Icons } from "@/ui";
 import { mobile_nav_logo } from "@/ui/assets";
 import { MobileNavItem } from "@/components/Navbar";
-import {
-  dashboardNavItems,
-  popupNavItems,
-  popupNavItemsforNoUser,
-} from "@/utils/data";
-import { User } from "@/utils/types";
+import { dashboardNavItems, popupNavItems, popupNavItemsforNoUser } from "@/utils/data";
+import { MobileNavProps } from "@/components/Navbar/props";
 
-type Props = { userToken?: string; user: User | null };
-
-export function MobileNav({ userToken, user }: Props) {
+export function MobileNav({ userToken, user }: MobileNavProps) {
   const [openNav, setOpenNav] = useState<boolean>(false);
 
   return (

@@ -1,11 +1,10 @@
-import { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import cn from "classnames";
+import { SideNavItemProps } from "@/components/Navbar/props";
 
-type Props = { link: string; name: string; icon: ReactNode };
 
-export function SideNavItem({ link, name, icon }: Props) {
+export function SideNavItem({ link, name, icon }: SideNavItemProps) {
     const pathname = usePathname();
     return (
         <li>

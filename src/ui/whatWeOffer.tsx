@@ -1,19 +1,10 @@
 import cn from "classnames";
-import { ReactNode } from "react";
+import { WhatWeOfferProps } from "./props";
 
-type Props = {
-    title: string;
-    list: WhatWeOfferProps[];
-    className?: string;
-};
 
-type WhatWeOfferProps = {
-    title: string;
-    description: string;
-    icon: ReactNode;
-};
 
-function WhatWeOffer({ title, list, className }: Props) {
+
+function WhatWeOffer({ title, list, className }: WhatWeOfferProps) {
     return (
         <section
             className={cn(

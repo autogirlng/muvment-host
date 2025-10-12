@@ -7,7 +7,7 @@ import { getInitialsFromName } from "@/utils/functions";
 import { nav_logo } from "@/ui/assets";
 import { AvatarInitials, Popup, Icons } from "@/ui";
 import { NavPopup, MobileNavItem } from "@/components/Navbar";
-import { DesktopNavProps } from "./types";
+import { DesktopNavProps } from "@/components/Navbar/props";
 
 
 export function DesktopNav({ user, userToken }: DesktopNavProps) {

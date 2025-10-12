@@ -1,12 +1,7 @@
 import React, { useState } from "react";
-import {
-    citiesOptions,
-    vehicleAvailabilityOptions,
-    vehicleTypesOptions,
-} from "@/utils/data";
+import { citiesOptions, vehicleAvailabilityOptions, vehicleTypesOptions } from "@/utils/data";
 import Image from "next/image";
-import Button from "@/ui/button";
-import { SelectInput } from "@/ui";
+import { SelectInput, Button } from "@/ui";
 
 
 
@@ -165,4 +160,4 @@ function Calculator() {
     );
 }
 
-export default Calculator;
+export { Calculator };

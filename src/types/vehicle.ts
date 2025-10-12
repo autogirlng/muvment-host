@@ -1,6 +1,4 @@
-import { ListingStatus } from "./listing";
-import { TripSettings } from "./trip";
-import { Pricing } from "./transactions_payment_finance";
+import { Pricing, TripSettings, ListingStatus } from "@/types";
 
 
 export interface BasicVehicleInformationValues {

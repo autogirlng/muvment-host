@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
-import Button from "@/ui/button";
-import { SectionHeader } from "../SectionHeader";
+import { SectionHeader } from "@/components/LandingPage/SectionHeader";
+import { Button } from "@/ui";
+
 
 
 function JoinUs() {
@@ -38,4 +39,4 @@ function JoinUs() {
     );
 }
 
-export default JoinUs;
+export { JoinUs };

@@ -1,6 +1,4 @@
-import { User } from "./user";
-import { ListingInformation } from "./listing";
-import { PaymentBadgeStatus } from "./transactions_payment_finance";
+import { User, ListingInformation, PaymentBadgeStatus  } from "@/types";
 
 
 export const enum BookingType {
@@ -29,12 +27,7 @@ export interface BookingDetailsInformation {
   startDate: string;
   endDate: string;
   duration: number;
-  // bookingType: string;
   amount: number;
-  // paymentStatus: string;
-  // paymentMethod: string;
-  // rentalAgreement: string | null;
-  // bookingStatus: string;
   guestName: string;
   guestEmail: string;
   guestPhoneNumber: string;
@@ -45,8 +38,6 @@ export interface BookingDetailsInformation {
   userId: string;
   createdAt: string;
   updatedAt: string;
-  // vehicle: Vehicle;
-  // travelCompanions: TravelCompanion[];
 }
 
 export interface BookingInformation {
@@ -57,7 +48,7 @@ export interface BookingInformation {
   bookingType: BookingType;
   amount: number;
   paymentStatus: PaymentBadgeStatus;
-  paymentMethod: "BANK_TRANSFER" | "CARD_PAYMENT" | "CASH"; //check booking status
+  paymentMethod: "BANK_TRANSFER" | "CARD_PAYMENT" | "CASH";
   rentalAgreement: string | null;
   bookingStatus: BookingBadgeStatus;
   guestName: string;

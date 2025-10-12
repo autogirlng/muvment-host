@@ -1,28 +1,7 @@
 import { ReactNode } from "react";
 import cn from "classnames";
 import Tooltip from "./tooltip";
-
-type InputFieldProps = {
-    name: string;
-    id: string;
-    type?: string;
-    label?: string;
-    placeholder: string;
-    variant?: "outlined" | "filled";
-    icon?: ReactNode;
-    value?: string | any;
-    required?: boolean;
-    disabled?: boolean;
-    error?: string;
-    info?: boolean;
-    tooltipTitle?: string;
-    tooltipDescription?: string;
-    inputClass?: string;
-    className?: string;
-
-    toggleShowPassword?: () => void;
-    [key: string]: any;
-};
+import { InputFieldProps } from "./props";
 
 const InputField = ({
     id,

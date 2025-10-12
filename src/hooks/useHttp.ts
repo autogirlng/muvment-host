@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { apiUrl } from "@/utils/constants";
 import { handleErrors } from "@/utils/functions";
-import { ErrorResponse } from "@/utils/types";
+import { ErrorResponse } from "@/types";
 import { clearUser } from "@/lib/features/userSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
