@@ -1,6 +1,5 @@
 export * from "./Benefits/index"
 export * from "./Calculator/index"
-export * from "./Footer/index"
 export * from "./GetStarted/index"
 export * from "./Hero/index"
 export * from "./JoinUs/index"

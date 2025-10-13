@@ -735,11 +735,6 @@ export const photoUploadTips = [
     description:
       "Got a great sound system or custom rims? Make sure to capture these unique features in your photos. They can make your car more appealing to potential renters.View detailed guidelines.",
   },
-  // {
-  //   title: "Highlight Unique Features",
-  //   description:
-  //     "Got a great sound system or custom rims? Make sure to capture these unique features in your photos. They can make your car more appealing to potential renters.View detailed guidelines.",
-  // },
 ];
 
 export const bookingOverviewTableHeadItems: string[] = [
@@ -806,16 +801,6 @@ export const bookingOverviewFilters: {
   title: string;
   options: OptionType[];
 }[] = [
-  // {
-  //   title: "bookingType",
-  //   options: [
-  //     { option: "Daily rides", value: "daily" },
-  //     { option: "Interstate rides", value: "interstate" },
-  //     { option: "Weekly rides", value: "weekly" },
-  //     { option: "Monthly rides", value: "monthly" },
-  //     { option: "Airport pickups", value: "airport" },
-  //   ],
-  // },
   {
     title: "bookingType",
     options: [

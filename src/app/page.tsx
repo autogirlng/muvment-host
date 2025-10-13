@@ -1,10 +1,10 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { User } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import {
   Benefits,
   VehiclePackages,
@@ -14,10 +14,8 @@ import {
   VehicleOptions,
   Calculator,
   Overview,
-  GetStarted,
-  Footer
+  GetStarted
 } from "@/components/LandingPage";
-
 
 
 export default function HomePage() {

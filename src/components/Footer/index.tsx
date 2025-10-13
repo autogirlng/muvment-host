@@ -4,15 +4,11 @@ import Image from "next/image";
 import { Formik, Form } from "formik";
 import InputField from "@/ui/inputField";
 import { customerAppUrl } from "@/utils/data";
-
 import { newLetterValidationSchema } from "@/utils/validationSchema";
 import useNewsletter from "@/hooks/useNewsletter";
 import { footer_logo } from "@/ui/assets";
 import { Icons, Button } from "@/ui";
 import { FooterNavProps } from "@/components/LandingPage/props";
-
-
-
 
 const footerNav: FooterNavProps[] = [
     {
@@ -20,8 +16,6 @@ const footerNav: FooterNavProps[] = [
         links: [
             { name: "About us", link: "/" },
             { name: "Contact us", link: "/" },
-            // { name: "Careers", link: "", badgeTitle: "We're hiring!" },
-            // { name: "Events", link: "" },
             { name: "FAQs", link: "/" },
         ],
     },
@@ -48,7 +42,6 @@ const footerNav: FooterNavProps[] = [
                 link: customerAppUrl,
             },
             { name: "Vehicle types", link: `${customerAppUrl}/explore/categories?type=truck` },
-            // { name: "Find your location", link: "/" },
         ],
     },
 ];
