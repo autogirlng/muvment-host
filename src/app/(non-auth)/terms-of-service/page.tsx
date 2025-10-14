@@ -2,14 +2,7 @@
 
 import { Footer } from "@/components/Footer";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
-import {
-    TermsContentContainer,
-    NumberedList,
-    TermsSection,
-    SectionNav,
-    PolicyHeader,
-    ParagraphText
-} from "@/components/TermsOfService";
+import { TermsContentContainer, NumberedList, TermsSection, SectionNav, PolicyHeader, ParagraphText } from "@/components/TermsOfService";
 import {
     sections,
     generalTerms,

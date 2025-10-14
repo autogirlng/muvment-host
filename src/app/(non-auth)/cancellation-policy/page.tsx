@@ -2,21 +2,8 @@
 import { TermsContentContainer } from "@/components/TermsOfService/TermsContainer";
 import { Footer } from "@/components/Footer";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
-import {
-    NumberedList,
-    TermsSection,
-    SectionNav,
-    PolicyHeader,
-    ParagraphText
-} from "@/components/TermsOfService";
-
-import {
-    sections,
-    generalTerms,
-    generalRentalItems,
-    cancellationNoticeItems
-} from "@/utils/data/nonAuth";
-
+import { NumberedList, TermsSection, SectionNav, PolicyHeader, ParagraphText } from "@/components/TermsOfService";
+import { sections, generalTerms, generalRentalItems, cancellationNoticeItems } from "@/utils/data/nonAuth";
 
 function CancellationPolicy() {
     const currentDate = new Date().toLocaleDateString("en-US", {

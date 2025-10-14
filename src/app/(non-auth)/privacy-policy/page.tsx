@@ -1,22 +1,8 @@
 "use client";
 import { Footer } from "@/components/Footer";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
-import {
-    TermsContentContainer,
-    NumberedList,
-    TermsSection,
-    SectionNav,
-    PolicyHeader,
-    ParagraphText
-} from "@/components/TermsOfService";
-import {
-    sections,
-    generalTerms,
-    generalRentalItems,
-    cancellationNoticeItems
-} from "@/utils/data/nonAuth";
-
-
+import { TermsContentContainer, NumberedList, TermsSection, SectionNav, PolicyHeader, ParagraphText } from "@/components/TermsOfService";
+import { sections, generalTerms, generalRentalItems, cancellationNoticeItems } from "@/utils/data/nonAuth";
 
 function PrivacyPolicy() {
     const currentDate = new Date().toLocaleDateString("en-US", {

@@ -27,6 +27,7 @@
     "react-phone-number-input": "^3.4.5",
     "react-redux": "^9.2.0",
     "react-toastify": "^11.0.5",
+    "reactjs-otp-input": "^2.0.10",
     "tailwind-scrollbar-hide": "^4.0.0",
     "yup": "^1.4.0"
   },

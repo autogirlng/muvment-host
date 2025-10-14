@@ -2,12 +2,11 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Formik, Form } from "formik";
-import InputField from "@/ui/inputField";
 import { customerAppUrl } from "@/utils/data";
 import { newLetterValidationSchema } from "@/utils/validationSchema";
 import useNewsletter from "@/hooks/useNewsletter";
 import { footer_logo } from "@/ui/assets";
-import { Icons, Button } from "@/ui";
+import { Icons, Button, InputField } from "@/ui";
 import { FooterNavProps } from "@/components/LandingPage/props";
 
 const footerNav: FooterNavProps[] = [

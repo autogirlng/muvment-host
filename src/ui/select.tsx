@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 import * as Select from "@radix-ui/react-select";
 import cn from "classnames";
-import Tooltip from "./tooltip";
+import { Tooltip } from "./tooltip";
 import { SelectInputProps, OptionProps } from "./props";
 
 const SelectInput = ({

@@ -1,6 +1,5 @@
-import { ReactNode } from "react";
 import cn from "classnames";
-import Tooltip from "./tooltip";
+import { Tooltip } from "@/ui";
 import { InputFieldProps } from "./props";
 
 const InputField = ({
@@ -73,4 +72,4 @@ const InputField = ({
     </div>
 );
 
-export default InputField;
+export { InputField };

@@ -55,4 +55,4 @@ const Tooltip = ({
     </Popover.Root>
 );
 
-export default Tooltip;
+export { Tooltip };

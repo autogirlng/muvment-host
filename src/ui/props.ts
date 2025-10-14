@@ -102,5 +102,77 @@ export interface WhatWeOfferProps {
     className?: string;
 };
 
+export interface SpinnerProps  { 
+    className?: string 
+};
+
+
+export interface SelectCountryProps {
+    name: string;
+    id: string;
+    label?: string;
+    placeholder: string;
+    variant?: "outlined" | "filled";
+    value?: string | any;
+    required?: boolean;
+    disabled?: boolean;
+    error?: string;
+    onChange: (value: string) => void;
+    [key: string]: any;
+};
+
+export interface PhoneNumberAndCountryFieldProps  {
+    inputName: string;
+    selectName: string;
+
+    inputId: string;
+    selectId: string;
+
+    label?: string;
+
+    inputPlaceholder: string;
+    selectPlaceholder: string;
+
+    inputValue: string | any;
+    selectValue: string | any;
+
+    inputOnChange: (value: any) => void;
+    selectOnChange: (value: any) => void;
+
+    inputOnBlur: (value: any) => void;
+    selectOnBlur: (value: any) => void;
+
+    inputClassname?: string;
+    selectClassname?: string;
+
+    inputError?: string;
+    selectError?: string;
+
+    inputDisabled?: boolean;
+    selectDisabled?: boolean;
+
+    variant?: "outlined" | "filled";
+    info?: boolean;
+    tooltipTitle?: string;
+    tooltipDescription?: string;
+};
+
+
+export interface OtpFieldProps {
+  name: string;
+  id: string;
+  label?: string;
+  placeholder: string;
+  variant?: "outlined" | "filled";
+  value: string | any;
+  required?: boolean;
+  disabled?: boolean;
+  error?: string;
+  onChange: (otp: string) => void;
+  numInputs: number;
+  [key: string]: any;
+};
+
+
 
 
