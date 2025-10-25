@@ -23,7 +23,6 @@ export default function ForgotPasswordPage() {
             <Formik
                 initialValues={resetPasswordEmailInitialValues}
                 onSubmit={async (values, { setSubmitting }) => {
-                    console.log(values);
 
                     forgotPassword.mutate(values);
                     setSubmitting(false);

@@ -30,6 +30,7 @@ export const signUpFormInitialValues: SignupFormValues = {
     special_character: false,
     no_space: false,
   },
+  userType:"HOST"
 };
 
 export const loginFormInitialValues: LoginFormValues = {
@@ -89,27 +90,22 @@ export const withdrawalAccountValues: WithdrawalAccountValues = {
   accountNumber: "",
 };
 
-export const basicVehicleInformationValues: BasicVehicleInformationValues = {
-  listingName: "",
-  location: "",
-  address: "",
-  vehicleType: "",
-  make: "",
-  model: "",
-  yearOfRelease: "",
-  hasTracker: "no",
-  hasInsurance: "no",
-};
+// export const basicVehicleInformationValues: BasicVehicleInformationValues = {
+//   address: "",
+//   yearOfRelease: 200,
+//   hasTracker: "no",
+//   hasInsurance: "no",
+// };
 
-export const additionalVehicleInformationValues: AdditionalVehicleInformationValues =
-  {
-    licensePlateNumber: "",
-    stateOfRegistration: "",
-    vehicleDescription: "",
-    features: [],
-    vehicleColor: "",
-    numberOfSeats: "",
-  };
+// export const additionalVehicleInformationValues: AdditionalVehicleInformationValues =
+//   {
+//     licensePlateNumber: "",
+//     stateOfRegistration: "",
+//     vehicleDescription: "",
+//     features: [],
+//     vehicleColor: "",
+//     numberOfSeats: "",
+//   };
 
 export const vehiclePhotosValues: VehiclePhotos = {
   frontView: "",
@@ -120,22 +116,22 @@ export const vehiclePhotosValues: VehiclePhotos = {
   other: "",
 };
 
-export const availabilityAndPricingValues: AvailabilityAndPricingValues = {
-  advanceNoticeInDays: "",
-  minTripDurationInDays: "",
-  maxTripDurationInDays: "",
-  // selfDrive: "",
-  driverProvided: "",
-  fuelProvided: "",
-  dailyRate: "",
-  extraHourRate: "",
-  airportPickup: "",
-  threeDaysDiscount: "",
-  sevenDaysDiscount: "",
-  thirtyDaysDiscount: "",
-  outskirtsLocation: [],
-  outskirtsPrice: "",
-};
+// export const availabilityAndPricingValues: AvailabilityAndPricingValues = {
+//   advanceNoticeInDays: "",
+//   minTripDurationInDays: "",
+//   maxTripDurationInDays: "",
+//   // selfDrive: "",
+//   driverProvided: "",
+//   fuelProvided: "",
+//   dailyRate: "",
+//   extraHourRate: "",
+//   airportPickup: "",
+//   threeDaysDiscount: "",
+//   sevenDaysDiscount: "",
+//   thirtyDaysDiscount: "",
+//   outskirtsLocation: [],
+//   outskirtsPrice: "",
+// };
 
 
 

@@ -47,7 +47,7 @@ export function DesktopNav({ user, userToken }: DesktopNavProps) {
               <AvatarInitials
                 initials={
                   user
-                    ? getInitialsFromName(user?.firstName, user?.lastName)
+                    ? getInitialsFromName(user?.data.firstName, user?.data.lastName)
                     : Icons.ic_user
                 }
                 size="!w-8 !h-8"

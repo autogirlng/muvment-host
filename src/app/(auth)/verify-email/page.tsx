@@ -23,7 +23,7 @@ export default function VerifyEmailPage() {
     return (
         <OtpVerification
             verifyOtp={() => {
-                verifyEmailOnSignup.mutate({ email: email as string, token: otp });
+                verifyEmailOnSignup.mutate({ email: email as string, otp });
             }}
             isVerifyOtpLoading={verifyEmailOnSignup.isPending}
             isResendOtpLoading={resendVerifyEmailToken.isPending}

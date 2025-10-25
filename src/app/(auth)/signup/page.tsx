@@ -24,7 +24,6 @@ export default function SignupPage() {
             <Formik
                 initialValues={signUpFormInitialValues}
                 onSubmit={async (values, { setSubmitting }) => {
-                    console.log(values);
 
                     const { password_checks, ...submissionValues } = values;
                     signupMutation.mutate(submissionValues);

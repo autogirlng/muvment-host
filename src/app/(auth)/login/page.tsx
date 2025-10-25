@@ -12,7 +12,6 @@ import { loginFormInitialValues } from "@/utils/initialValues";
 
 export default function LoginPage() {
     const { isPasswordHidden, toggleHiddenPassword } = usePasswordValidation();
-
     const { loginMutation } = useAuth();
 
     return (
@@ -25,7 +24,6 @@ export default function LoginPage() {
             <Formik
                 initialValues={loginFormInitialValues}
                 onSubmit={(values, { setSubmitting }) => {
-                    console.log(values);
                     loginMutation.mutate(values);
                     setSubmitting(false);
                 }}

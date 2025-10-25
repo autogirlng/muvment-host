@@ -17,18 +17,14 @@ export function NavPopup({ handleClick, user }: NavPopupProps) {
         <>
           <AvatarImage
             image={
-              user?.isBusiness && user?.businessLogo
-                ? user?.businessLogo
-                : user?.profileImage
-                  ? user?.profileImage
-                  : ""
+              user.data.profilePictureUrl
             }
-            initials={getInitialsFromName(user.firstName, user.lastName)}
+            initials={getInitialsFromName(user.data.firstName, user.data.lastName)}
             size="!w-11 !h-11"
           />
           <div className="space-y-1">
             <p className="text-sm">
-              {user.businessName ?? `${user.firstName} ${user.lastName}`}
+              {`${user.data.firstName} ${user.data.lastName}`}
             </p>
             <Link href="/profile" className="text-xs text-primary-500">
               View profile

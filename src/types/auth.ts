@@ -9,7 +9,7 @@ export interface AccountSetupTask {
   link: string;
   linkText: string;
   isCompleted: boolean;
-  taskId: keyof User;
+  taskId: keyof User["data"];
 }
 
 interface PasswordChecks {
@@ -22,13 +22,15 @@ interface PasswordChecks {
 }
 
 export interface SignupFormValues {
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  email: string;
+  firstName: string,
+  lastName: string,
+  email: string,
+  password: string,
+  phoneNumber: string,
+  userType: "HOST",
+  referralCode?: string,
   country: string;
   countryCode: string;
-  password: string;
   password_checks?: PasswordChecks;
 }
 
@@ -37,9 +39,32 @@ export interface LoginFormValues {
   password: string;
 }
 
+export interface loginResponse {
+  status: string;
+  message: string;
+  errorCode: string;
+  data: {
+    accessToken: string;
+    refreshToken: string;
+    userId: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    profilePictureUrl: string;
+    emailVerified: boolean;
+    phoneVerified: boolean;
+  },
+  timestamp: string;
+}
+
 export interface verifyEmailValues {
   email: string;
   token: string;
+}
+
+export interface verifyEmail {
+  email:string;
+  otp:string;
 }
 
 export interface ResendVerifyEmailTokenValues {
@@ -50,12 +75,14 @@ export interface ResetPasswordEmailValues {
 }
 
 export interface VerifyPhoneNumberTokenValues {
-  phoneNumber: string;
-  token: string;
+  phoneNumber?: string;
+  email?:string;
+  otp: string;
 }
 
 export interface SendPhoneNumberTokenValues {
   phoneNumber: string;
+  email:string;
 }
 
 export interface VerifyOtpValues {
@@ -107,14 +134,14 @@ export interface ProfileFormValues {
   bio: string;
   profileImage?: string;
   city: string;
-  isBusiness: boolean;
-  businessAddress: string;
-  businessEmail: string;
-  businessLogo?: string;
-  businessName: string;
-  businessPhoneNumber: string;
-  businessCountry?: string;
-  businessCountryCode?: string;
+  // isBusiness: boolean;
+  // businessAddress: string;
+  // businessEmail: string;
+  // businessLogo?: string;
+  // businessName: string;
+  // businessPhoneNumber: string;
+  // businessCountry?: string;
+  // businessCountryCode?: string;
 }
 
 export interface WithdrawalValues {

@@ -13,6 +13,12 @@ export enum BookingBadgeStatus {
   COMPLTETED = "COMPLETED",
 }
 
+
+export type BookingsDataType = {
+  data: BookingInformation[];
+  totalCount: number;
+};
+
 export interface BookingStatistics {
   totalBookings: number;
   pendingApprovals: number;
@@ -20,6 +26,11 @@ export interface BookingStatistics {
   approvedRequests: number;
 }
 
+
+export interface VehicleUpcomingBookingType  {
+  data: BookingInformation[];
+  totalCount: number;
+};
 
 
 export interface BookingDetailsInformation {
@@ -64,4 +75,15 @@ export interface BookingInformation {
   createdAt: string;
   updatedAt: string;
   currencyCode: string;
+}
+
+export interface BookingTypeData {
+      id: string,
+      name: string,
+      durationInMinutes: number,
+      description: string,
+      defaultActive: boolean
+}
+export interface BookingTypeResponse {
+  data:  BookingTypeData[]
 }

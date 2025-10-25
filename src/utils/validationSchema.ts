@@ -1,4 +1,4 @@
-import { array, object, ref, string, mixed } from "yup";
+import { array, object, ref, string, mixed, number, boolean } from "yup";
 import {
   emailRegEx,
   lowercaseRegex,
@@ -124,12 +124,13 @@ export const withdrawalAccountSchema = object().shape({
 });
 
 export const basicVehicleInformationSchema = object().shape({
-  listingName: string().required("Vehicle name is required"),
-  location: string().required("City is required"),
+
+  name: string().required("Vehicle name is required"),
+  city: string().required("City is required"),
   address: string().required("Address is required"),
-  vehicleType: string().required("Please select vehicle type"),
-  make: string().required("Please selecm"),
-  model: string().required("Please select vehicle model"),
+  vehicleTypeId: string().required("Please select vehicle type"),
+  vehicleMakeId: string().required("Please select vehicle make"),
+  vehicleModelId: string().required("Please select vehicle model"),
   yearOfRelease: string().required("Please select year of release"),
   hasInsurance: string().required("Please select insurance status"),
   hasTracker: string().required("Please select tracker status"),
@@ -138,13 +139,13 @@ export const basicVehicleInformationSchema = object().shape({
 export const addtionalVehicleInformationSchema = object().shape({
   licensePlateNumber: string().required("License plate number is required"),
   stateOfRegistration: string().required("State of registration is required"),
-  vehicleDescription: string()
+  description: string()
     .required("Vehicle description is required")
     .min(30, "30 characters minimum"),
-  vehicleColor: string().required("Vehicle color is required"),
+  vehicleColorId: string().required("Vehicle color is required"),
   numberOfSeats: string().required("Number of seats is required"),
-  features: array().min(1, "Please select at least one feature"),
-  // vehicleOwner: string().required("This is required"),
+  featureIds: array().min(1, "Please select at least one feature"),
+
 });
 
 export const documentVehicleInformationSchema = object().shape({
@@ -153,7 +154,7 @@ export const documentVehicleInformationSchema = object().shape({
     "Vehicle registration document is required."
   ),
   insuranceCertificate: mixed().required("Insurance certificate is required."),
-  vehicleInspectionReport: mixed().required(
+  inspectionReport: mixed().required(
     "Vehicle inspection report is required."
   ),
   maintenanceHistory: mixed().nullable(),
@@ -169,18 +170,15 @@ export const vehiclePhotosSchema = object().shape({
 });
 
 export const availabilityAndPricingSchema = object().shape({
-  advanceNoticeInDays: string().required("Advance notice is required"),
-  maxTripDurationInDays: string().required("Maximum duration is required"),
-  driverProvided: string().required("Please select an option"),
-  fuelProvided: string().required("Please select an option"),
-  dailyRate: string().required("Please enter the amount"),
-  extraHourRate: string().required("Please enter the amount"),
-  // airportPickup: string().required("Please enter the amount"),
-
-  // // these should be activated if discount is on
-  // threeDaysDiscount: string().required("Please enter the amount"),
-  // sevenDaysDiscount: string().required("Please enter the amount"),
-  // thirtyDaysDiscount: string().required("Please enter the amount"),
+ 
+  maxTripDurationValue: string().required("Maximum duration is required"),
+  advanceNoticeValue: string().required("Advance notice is required"),
+  willProvideDriver: string().required("Please select an option"),
+  willProvideFuel: string().required("Please select an option"),
+  supportedBookingTypeIds: array().min(1, "Please select at least one booking type"),
+  outOfBoundsAreaIds: array().min(0),
+  outskirtFee: number().optional().min(0, "Not valid"),
+  extremeFee: number().optional().min(0, "Not valid"),
 });
 
 export const assignNewDriverFormValidationSchema = object().shape({

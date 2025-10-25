@@ -119,14 +119,14 @@ export const completeAccountSetupTasks: AccountSetupTask[] = [
     isCompleted: false,
     taskId: "phoneVerified",
   },
-  {
-    icon: Icons.ic_lock,
-    title: "Setup Withdrawal Account",
-    link: "/account-setup/withdrawal-account",
-    linkText: "Get Started",
-    isCompleted: false,
-    taskId: "withdrawalAccountVerified",
-  },
+  // {
+  //   icon: Icons.ic_lock,
+  //   title: "Setup Withdrawal Account",
+  //   link: "/account-setup/withdrawal-account",
+  //   linkText: "Get Started",
+  //   isCompleted: false,
+  //   taskId: "withdrawalAccountVerified",
+  // },
 ];
 
 const currentYear = new Date().getFullYear();
@@ -601,17 +601,17 @@ export const yesOrNoOptions: OptionType[] = [
 ];
 
 export const vehicleAvailabilityOptions: OptionType[] = [
-  { value: "1 day", option: "1 day" },
-  { value: "2 days", option: "2 days" },
-  { value: "3 days", option: "3 days" },
-  { value: "4 days", option: "4 days" },
-  { value: "5 days", option: "5 days" },
-  { value: "6 days", option: "6 days" },
+  { value: "1", option: "1 day" },
+  { value: "2", option: "2 days" },
+  { value: "3", option: "3 days" },
+  { value: "4", option: "4 days" },
+  { value: "5", option: "5 days" },
+  { value: "6", option: "6 days" },
 
-  { value: "1 week", option: "1 week" },
-  { value: "2 weeks", option: "2 weeks" },
-  { value: "3 weeks", option: "3 weeks" },
-  { value: "4 weeks", option: "4 weeks" },
+  { value: "7", option: "1 week" },
+  { value: "14", option: "2 weeks" },
+  { value: "21", option: "3 weeks" },
+  { value: "28", option: "4 weeks" },
 ];
 
 // add type

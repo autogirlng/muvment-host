@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { apiUrl } from "@/utils/constants";
+import {  baseAPIURL} from "@/utils/constants";
 import { handleErrors } from "@/utils/functions";
 import { ErrorResponse } from "@/types";
 import { clearUser } from "@/lib/features/userSlice";
@@ -13,7 +13,7 @@ export const useHttp = () => {
 
   const http = useMemo(() => {
     return axios.create({
-      baseURL: apiUrl,
+      baseURL: baseAPIURL,
       timeout: 20000,
     });
   }, []);
@@ -27,7 +27,7 @@ export const useHttp = () => {
   });
 
   const handleAuthError = (error: AxiosError<ErrorResponse>) => {
-    if (error?.response?.data?.ERR_CODE === "NOT_PERMITTED_REAUTHENICATE") {
+    if (error?.response?.data?.data === "NOT_PERMITTED_REAUTHENICATE") {
       dispatch(clearUser());
       router.push("/login");
       return true;
@@ -71,6 +71,20 @@ export const useHttp = () => {
     put: async <T>(url: string, data?: any) => {
       try {
         const response = await http.put<T>(url, data);
+        return response.data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          if (handleAuthError(error)) return;
+          handleErrors(error);
+          throw new Error(error.response?.data.message);
+        }
+        throw error;
+      }
+    },
+
+      patch: async <T>(url: string, data?: any,  config?: AxiosRequestConfig<any>) => {
+      try {
+        const response = await http.patch<T>(url, data, config);
         return response.data;
       } catch (error) {
         if (error instanceof AxiosError) {

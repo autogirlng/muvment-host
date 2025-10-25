@@ -1,12 +1,5 @@
 import { TripSettings } from "@/types";
 
-export enum EarningPeriod {
-  WEEK = "week",
-  MONTH = "month",
-  QUARTER = "quarter",
-  ALL_TIME = "all_time",
-}
-
 export enum TransactionType {
   CREDIT = "CREDIT",
   DEBIT = "DEBIT",

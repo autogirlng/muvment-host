@@ -7,7 +7,7 @@ import { OtpVerificationProps } from "./props";
 
 
 const OtpVerification = ({
-    numInputs = 5,
+    numInputs = 6,
     verifyOtp,
     isVerifyOtpLoading,
     resendOtp,
@@ -55,8 +55,8 @@ const OtpVerification = ({
                 value={otp}
                 onChange={handleChange}
                 error={
-                    error?.response?.data?.ERR_CODE === "INCORRECT_OTP" ||
-                        error?.response?.data?.ERR_CODE === "OTP_NOT_FOUND"
+                    error?.response?.data?.data === "INCORRECT_OTP" ||
+                        error?.response?.data?.data === "OTP_NOT_FOUND"
                         ? "Incorrect pin, please check and try again"
                         : ""
                 }

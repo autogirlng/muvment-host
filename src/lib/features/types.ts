@@ -19,6 +19,10 @@ export interface UserSliceState {
   isLoading: boolean;
 }
 
+
+
+
+
 export interface VehicleState {
   vehicle: VehicleInformation | null;
   currentStep: number;

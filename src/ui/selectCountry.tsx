@@ -4,7 +4,7 @@ import { SelectCountryProps } from "./props";
 
 const allowedCountries = [
     { flag: Icons.ic_country_nigeria, option: "+234", value: "NG" },
-    { flag: Icons.ic_country_ghana, option: "+233", value: "GH" },
+    // { flag: Icons.ic_country_ghana, option: "+233", value: "GH" },
 ];
 
 const SelectCountry = ({

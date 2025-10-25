@@ -29,8 +29,9 @@ export function MobileNav({ userToken, user }: MobileNavProps) {
           <AvatarInitials
             initials={
               user
-                ? getInitialsFromName(user.firstName, user.lastName)
+                ? getInitialsFromName(user.data.firstName, user.data.lastName)
                 : Icons.ic_user
+
             }
             size="!w-8 !h-8"
             color="!bg-primary-100 !text-primary-800 !text-[10px] !font-bold *:!w-5 *!h-5"
@@ -49,16 +50,12 @@ export function MobileNav({ userToken, user }: MobileNavProps) {
         {userToken || user ? (
           <div className="space-y-6 pb-8">
             <AvatarImage
-              image={
-                user?.isBusiness && user?.businessLogo
-                  ? user?.businessLogo
-                  : user?.profileImage
-                    ? user?.profileImage
-                    : ""
+              image={user?.data.profilePictureUrl
+
               }
               initials={
                 user
-                  ? getInitialsFromName(user.firstName, user.lastName)
+                  ? getInitialsFromName(user.data.firstName, user.data.lastName)
                   : Icons.ic_user
               }
               size="!w-20 !h-20"
@@ -66,7 +63,7 @@ export function MobileNav({ userToken, user }: MobileNavProps) {
             <div className="space-y-1">
               {user && (
                 <p className="text-sm">
-                  {user.firstName} {user.lastName}
+                  {user.data.firstName} {user.data.lastName}
                 </p>
               )}
               <Link href="/profile" className="text-xs text-primary-500">

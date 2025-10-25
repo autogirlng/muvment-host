@@ -23,6 +23,6 @@
 
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/ui/src/avatar.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/ui/src/avatar.tsx", "src/components/VehicleOnboarding/AdditionalInformation"],
   "exclude": ["node_modules"]
 }

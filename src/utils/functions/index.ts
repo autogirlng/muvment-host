@@ -9,8 +9,15 @@ import {
   specialCharRegex,
   uppercaseRegex,
 } from "@/utils/constants";
-import { daysOfTheWeek } from "./data";
+import { daysOfTheWeek } from "../data";
 import { Icons } from "@/ui";
+
+
+export const toScreamingSnakeCase = (str:string) => {
+  return str
+    .replace(/([a-z])([A-Z])/g, '$1_$2') // insert underscore before capital letters
+    .toUpperCase(); // convert everything to uppercase
+}
 
 export const isLengthValid = (password: string): boolean => {
   const isLengthValid = password.length >= 8;
@@ -72,10 +79,13 @@ export const getInitialsFromName = (
   firstName: string,
   lastName: string
 ): string => {
-  const firstInitial = firstName.charAt(0).toUpperCase();
+  if(firstName && lastName){
+const firstInitial = firstName.charAt(0).toUpperCase();
   const lastInitial = lastName.charAt(0).toUpperCase();
 
   return `${firstInitial}${lastInitial}`;
+  }
+  return ""
 };
 
 export const mapRentalAvailabilityToArray = (days: {
@@ -115,19 +125,19 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return `${firstPart}${middlePart}${lastPart}`;
 };
 
-export const calculateServiceFee = (
-  price: number,
-  standardFee: number
-): number => {
-  return price * standardFee;
-};
+// export const calculateServiceFee = (
+//   price: number,
+//   standardFee: number
+// ): number => {
+//   return price * standardFee;
+// };
 
-export const calculateRateGuestsWillSee = (
-  price: number,
-  serviceFee: number
-): number => {
-  return price + serviceFee;
-};
+// export const calculateRateGuestsWillSee = (
+//   price: number,
+//   serviceFee: number
+// ): number => {
+//   return price + serviceFee;
+// };
 
 // ============================= Notification Icons, Color and Bg Color starts ============================= //
 export const getNotificationIcon = (type: string) => {
@@ -276,73 +286,73 @@ export const handleErrors = (
     error.response?.data
   );
 
-  const ERR_CODE = error.response?.data?.ERR_CODE;
+  // const ERR_CODE = error.response?.data?.ERR_CODE;
 
   if (error?.message === "Network Error") {
     console.log(error);
     return toast.error("Network Error");
   }
 
-  if (error.response?.status === 500) {
-    return toast.error(error.response?.data?.message);
+  // else if (error.response?.status === 500) {
+  //   return toast.error(error.response?.data?.message);
+  // }
+
+  // else if (ERR_CODE === "USER_ALREADY_EXIST") {
+  //   return toast.error("Email already registered");
+  // }
+
+  //   else if (ERR_CODE === "PHONE_ALREADY_USED") {
+  //   return toast.error("Phone number already registered");
+  // }
+
+  //   else if (ERR_CODE === "INVALID_CREDENTIALS") {
+  //   return toast.error("Invalid login credentials");
+  // }
+
+  //  else if(ERR_CODE === "USER_NOT_FOUND") {
+  //   return toast.error("User not found");
+  // }
+
+  //  else if(ERR_CODE === "EMAIL_NOT_CONFIRMED") {
+  //   toast.error("Email not verified");
+  //   const parsedData = JSON.parse(error.config?.data);
+  //   console.log(parsedData);
+
+  //   window.location.href = `/verify-email?email=${encodeURIComponent(parsedData?.email ?? "")}`;
+  //   return;
+  // }
+
+  //   else if (ERR_CODE === "EMAIL_ALREADY_CONFIRMED") {
+  //   return toast.error("Email already confirmed");
+  // }
+
+  //   else if(ERR_CODE === "PHONE_NUMBER_NOT_FOUND") {
+  //   return toast.error("Phone Number not found");
+  // }
+
+  //  else if (ERR_CODE === "HOST_NOT_OWNER_OF_VEHICLE") {
+  //   return toast.error("Host not owner of vehicle");
+  // }
+
+  //   else if (ERR_CODE === "INCORRECT_OTP") {
+  //   return toast.error("Incorrect OTP");
+  // }
+
+  //   else if (
+  //   ERR_CODE === "NO_WITHDRAWAL_ACCOUNT_FOUND" ||
+  //   ERR_CODE === "RENTAL_AVALIABLITY_NOT_FOUND" ||
+  //   ERR_CODE === "WALLET_NOT_FOUND "
+  // ) {
+  //   return;
+  // }
+
+  //   else if (ERR_CODE) {
+  //   return toast.error(ERR_CODE);
+  // }
+
+  else {
+    return toast.error(error.response?.data.data)
+    // return toast.error(error.response?.data.message);
   }
 
-  if (ERR_CODE === "USER_ALREADY_EXIST") {
-    return toast.error("Email already registered");
-  }
-
-  if (ERR_CODE === "PHONE_ALREADY_USED") {
-    return toast.error("Phone number already registered");
-  }
-
-  if (ERR_CODE === "INVALID_CREDENTIALS") {
-    return toast.error("Invalid login credentials");
-  }
-
-  if (ERR_CODE === "USER_NOT_FOUND") {
-    return toast.error("User not found");
-  }
-
-  if (ERR_CODE === "EMAIL_NOT_CONFIRMED") {
-    toast.error("Email not verified");
-    const parsedData = JSON.parse(error.config?.data);
-    console.log(parsedData);
-
-    window.location.href = `/verify-email?email=${encodeURIComponent(parsedData?.email ?? "")}`;
-    return;
-  }
-
-  if (ERR_CODE === "EMAIL_ALREADY_CONFIRMED") {
-    return toast.error("Email already confirmed");
-  }
-
-  if (ERR_CODE === "PHONE_NUMBER_NOT_FOUND") {
-    return toast.error("Phone Number not found");
-  }
-
-  if (ERR_CODE === "HOST_NOT_OWNER_OF_VEHICLE") {
-    return toast.error("Host not owner of vehicle");
-  }
-
-  if (ERR_CODE === "INCORRECT_OTP") {
-    return toast.error("Incorrect OTP");
-  }
-
-  if (
-    ERR_CODE === "NO_WITHDRAWAL_ACCOUNT_FOUND" ||
-    ERR_CODE === "RENTAL_AVALIABLITY_NOT_FOUND" ||
-    ERR_CODE === "WALLET_NOT_FOUND "
-  ) {
-    return;
-  }
-
-  if (ERR_CODE) {
-    return toast.error(ERR_CODE);
-  }
-
-  if (error.response?.data?.message) {
-    return toast.error(error.response.data.message);
-  }
-
-  return {};
 };
