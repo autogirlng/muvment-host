@@ -16,11 +16,11 @@ export default function BookingsPage() {
   return (
     <main className="py-8 2xl:py-11">
       <div className="space-y-10">
-        <SectionTitle
+        {/* <SectionTitle
           title="Booking Analytics"
           icon={Icons.ic_activity}
-        />
-        <BookingsStats />
+        /> */}
+        {/* <BookingsStats /> */}
       </div>
       <Bookings />
     </main>

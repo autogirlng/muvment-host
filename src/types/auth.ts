@@ -89,6 +89,14 @@ export interface VerifyOtpValues {
   token: string;
 }
 
+export interface AccountVerificationValues {
+  accountNumber: string,
+  bankCode: string,
+  bankName: string,
+  accountName: string,
+  otp: string
+}
+
 export interface SetNewPasswordValues {
   email: string;
   token: string;
@@ -117,12 +125,7 @@ export interface VerifyIdentityValues {
   bvn: string;
 }
 
-export interface WithdrawalAccountValues {
-  bank?: BankProp | null;
-  bankCode: string;
-  accountNumber: string;
-  accountName?: string;
-}
+
 
 
 export interface ProfileFormValues {

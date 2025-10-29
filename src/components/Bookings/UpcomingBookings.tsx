@@ -21,11 +21,12 @@ export default function UpcomingBookings() {
       ) : isError ? (
         <p>something went wrong</p>
       ) : (
-        <BookingAnalyticsTable
-          items={upcomingBookings || []}
-          emptyStateTitle="No Upcoming Bookings"
-          emptyStateMessage="Your Upcoming Bookings Will Appear Here"
-        />
+        // <BookingAnalyticsTable
+        //   items={upcomingBookings || []}
+        //   emptyStateTitle="No Upcoming Bookings"
+        //   emptyStateMessage="Your Upcoming Bookings Will Appear Here"
+        // />
+        <></>
       )}
 
       <Pagination

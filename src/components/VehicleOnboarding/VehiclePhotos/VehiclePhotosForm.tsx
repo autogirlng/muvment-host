@@ -2,19 +2,16 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { Formik, Form } from "formik";
 import { vehiclePhotosSchema } from "@/utils/validationSchema";
-import { VehiclePhotos } from "@/types";
+import { VehiclePhotos, VehicleOnboardingStepsHookProps } from "@/types";
 import { PhotoUpload, StepperNavigation } from "@/ui";
 import useVehiclePhotosForm from "@/hooks/vehicle/useVehiclePhotosForm";
-import { VehiclePhotosFormProps } from "../props";
-
-
 
 const VehiclePhotosForm = ({
     steps,
     setPhotoTipIndex,
     currentStep,
     setCurrentStep,
-}: VehiclePhotosFormProps) => {
+}: VehicleOnboardingStepsHookProps) => {
     const {
         initialValues,
         photoViews,
@@ -30,11 +27,13 @@ const VehiclePhotosForm = ({
         const filledFields = photoViewOptions.filter(
             (view) => initialValues[view.name as keyof VehiclePhotos]
         );
-        console.log(filledFields);
+
 
         if (filledFields.length > 0) {
+            // @ts-ignore
             setPhotoTipIndex(filledFields.length - 1);
         } else {
+            // @ts-ignore
             setPhotoTipIndex(0);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,7 +63,7 @@ const VehiclePhotosForm = ({
                 isSubmitting,
             }) => (
                 <Form className="w-full grid grid-cols-1 sm:grid-cols-2 gap-10">
-                    {photoViews.map((item, index) => {
+                    {photoViews.map((item) => {
                         const fieldName = item.name as keyof VehiclePhotos;
 
                         return (
@@ -89,6 +88,7 @@ const VehiclePhotosForm = ({
                                     const currentIndex = photoViews.findIndex(
                                         (view) => view.name === fieldName
                                     );
+                                    //@ts-ignore
                                     setPhotoTipIndex(currentIndex + 1);
                                     const updatedViews = photoViews.map((view, idx) => {
                                         if (idx === currentIndex + 1) {
@@ -108,7 +108,8 @@ const VehiclePhotosForm = ({
                     })}
 
                     <StepperNavigation
-                        steps={steps}
+                        //@ts-ignore
+                        steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={async () => {

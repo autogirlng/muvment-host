@@ -1,4 +1,4 @@
-import { TripSettings } from "@/types";
+import { TripSettings, BaseResponse } from "@/types";
 
 export enum TransactionType {
   CREDIT = "CREDIT",
@@ -15,6 +15,16 @@ export enum TransactionOrigin {
   WITHDRAWAL = "WITHDRAWAL",
   BOOKING = "BOOKING",
 }
+
+export interface BankDetails extends BaseResponse {
+   data: {
+    bankName: string,
+    bankCode: string,
+    accountName: string,
+    accountNumber: string
+  } | string,
+}
+
 
 export type WalletBalance = {
   id: string;
@@ -54,6 +64,29 @@ export type BankCodes = {
   ussdTemplate: string;
 };
 
+export interface Banks {
+  
+      name: string,
+      code: string
+    
+}
+
+export interface BankList extends BaseResponse {
+      
+    data: Banks[]
+    
+}
+export interface WithdrawalAccountValues {
+  bankName: string;
+  bankCode: string;
+  accountNumber: string;
+  accountName?: string;
+
+}
+
+export interface WithdrawalAccountValuesResponse extends BaseResponse {
+  data:WithdrawalAccountValues;
+}
 export interface Rate {
   value: number;
   unit: string;

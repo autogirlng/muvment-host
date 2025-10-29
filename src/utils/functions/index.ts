@@ -279,12 +279,12 @@ export const handleErrors = (
   error: AxiosError<ErrorResponse>,
   page?: string
 ) => {
-  console.log(
-    `${page} error`,
-    error,
-    error.response?.status,
-    error.response?.data
-  );
+  // console.log(
+  //   `${page} error`,
+  //   error,
+  //   error.response?.status,
+  //   error.response?.data
+  // );
 
   // const ERR_CODE = error.response?.data?.ERR_CODE;
 
@@ -292,6 +292,8 @@ export const handleErrors = (
     console.log(error);
     return toast.error("Network Error");
   }
+
+  
 
   // else if (error.response?.status === 500) {
   //   return toast.error(error.response?.data?.message);

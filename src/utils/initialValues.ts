@@ -85,7 +85,7 @@ export const verifyIdentityValues: VerifyIdentityValues = {
 };
 
 export const withdrawalAccountValues: WithdrawalAccountValues = {
-  bank: null,
+  bankName: "",
   bankCode: "",
   accountNumber: "",
 };

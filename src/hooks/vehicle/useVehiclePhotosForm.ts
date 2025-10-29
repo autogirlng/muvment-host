@@ -1,12 +1,12 @@
 "use client";
 
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { handleErrors } from "@/utils/functions";
 import { photoViewOptions } from "@/utils/data";
-import { ErrorResponse, VehiclePhotos } from "@/types";
+import { ErrorResponse, VehiclePhotos, VehicleOnboardingStepsHookProps } from "@/types";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useHttp } from "@/hooks/useHttp";
@@ -14,14 +14,9 @@ import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 
 
 export default function useVehiclePhotosForm({
-  setPhotoTipIndex,
   currentStep,
   setCurrentStep,
-}: {
-  setPhotoTipIndex: Dispatch<SetStateAction<number>>;
-  currentStep: number;
-  setCurrentStep: (step: number) => void;
-}) {
+}: VehicleOnboardingStepsHookProps) {
   const http = useHttp();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -41,12 +36,12 @@ const [vehicleId, setVehicleId] = useState<string>("")
   };
 
   const initialValues: VehiclePhotos = {
-    frontView: vehicle?.VehicleImage?.frontView || "",
-    backView: vehicle?.VehicleImage?.backView || "",
-    sideView1: vehicle?.VehicleImage?.sideView1 || "",
-    sideView2: vehicle?.VehicleImage?.sideView2 || "",
-    interior: vehicle?.VehicleImage?.interior || "",
-    other: vehicle?.VehicleImage?.other || "",
+    frontView: "",
+    backView:  "",
+    sideView1:  "",
+    sideView2:  "",
+    interior:  "",
+    other:  "",
   };
 
   const [photoViews, setPhotoViews] = useState(

@@ -5,51 +5,18 @@ import { FullPageSpinner, StepperNavigation, InputField, SelectInput } from "@/u
 import FormRow from "@/components/VehicleOnboarding/FormRow";
 import useBasicInformationForm from "@/hooks/vehicle/useBasicInformationForm";
 import { basicVehicleInformationSchema } from "@/utils/validationSchema";
-import { BasicVehicleInformationFormProps } from "../props";
+import { VehicleOnboardingStepsHookProps } from "@/types";
 import {
     citiesOptions,
     yearOfReleaseOptions,
     yesOrNoOptions,
 } from "@/utils/data";
-import { useHttp } from "@/hooks/useHttp";
 
-interface VehicleFetchResponse {
-    status: string,
-    message: string,
-    errorCode?: string,
-    data: {
-        id: string,
-        name: string,
-        description: string
-    }[],
-    timestamp: string
-}
-
-interface VehicleModelResponse {
-    status: string,
-    message: string,
-    errorCode: string,
-    data:
-    {
-        id: string,
-        name: string,
-        code: string,
-        makeName: string,
-        makeId: string
-    }[],
-    timestamp: string
-}
-interface Option { option: string, value: string }
-interface VehicleInfoState {
-    vehicleTypes: Option[],
-    vehicleMakes: Option[],
-    vehicleModels: Option[]
-}
 const BasicVehicleInformationForm = ({
     steps,
     currentStep,
     setCurrentStep,
-}: BasicVehicleInformationFormProps) => {
+}: VehicleOnboardingStepsHookProps) => {
     const {
         submitStep1,
         saveStep1,
@@ -60,48 +27,10 @@ const BasicVehicleInformationForm = ({
         setSearchAddressQuery,
         setShowAddressList,
         showAddressList,
-    } = useBasicInformationForm({
-        currentStep,
-        setCurrentStep,
-    });
-    const http = useHttp();
+        vehicleOptions
+    } = useBasicInformationForm({ currentStep, setCurrentStep });
 
-    const [vehicleOptions, setVehicleOptions] = useState<VehicleInfoState>({ vehicleTypes: [], vehicleMakes: [], vehicleModels: [] })
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number }>()
-
-    const fetchVehicleOptions = async () => {
-
-        const [vehicleTypesRes, vehicleMakesRes, vehicleModelRes] = await Promise.all([
-            http.get<VehicleFetchResponse>("/v1/public/vehicle-types"),
-            http.get<VehicleFetchResponse>("/v1/public/vehicle-makes"),
-            http.get<VehicleModelResponse>("/v1/public/vehicle-models")
-        ]);
-
-        const vehicleTypes = vehicleTypesRes?.data.map((type) => ({
-            option: type.name,
-            value: type.id
-        })) ?? []
-
-        const vehicleMakes = vehicleMakesRes?.data.map((make) => ({
-            option: make.name,
-            value: make.id
-        })) ?? []
-
-        const vehicleModels = vehicleModelRes?.data.map((model) => ({
-            option: model.name,
-            value: model.id
-        })) ?? []
-        setVehicleOptions({
-            vehicleTypes,
-            vehicleMakes,
-            vehicleModels
-        })
-
-
-    }
-    useEffect(() => {
-        fetchVehicleOptions()
-    }, [])
 
     return (
         <Formik
@@ -305,48 +234,7 @@ const BasicVehicleInformationForm = ({
                         />
                     </FormRow>
 
-                    {/* <FormRow>
-                        <SelectInput
-                            id="hasInsurance"
-                            label="Does your vehicle have insurance?"
-                            placeholder="Select an option"
-                            variant="outlined"
-                            options={yesOrNoOptions}
-                            value={values.hasInsurance ? "Yes" : "No"}
-                            onChange={(value: string) => {
-                                setFieldTouched("hasInsurance", true);
-                                setFieldValue("hasInsurance", value);
-                            }}
-                            error={
-                                errors.hasInsurance && touched.hasInsurance
-                                    ? errors.hasInsurance
-                                    : ""
-                            }
-                            info
-                            tooltipTitle="Does your vehicle have insurance?"
-                            tooltipDescription="Let us know if your vehicle is currently insured. Providing insurance information increases the trust and security of potential bookings"
-                        />
 
-
-                        <SelectInput
-                            id="hasTracker"
-                            label="Does your vehicle have a tracker?"
-                            placeholder="Select an option"
-                            variant="outlined"
-                            options={yesOrNoOptions}
-                            value={values.hasTracker ? "Yes" : "No"}
-                            onChange={(value: string) => {
-                                setFieldTouched("hasTracker", true);
-                                setFieldValue("hasTracker", value);
-                            }}
-                            error={
-                                errors.hasTracker && touched.hasTracker ? errors.hasTracker : ""
-                            }
-                            info
-                            tooltipTitle="Does your vehicle have a tracker?"
-                            tooltipDescription="Specify whether your vehicle is equipped with a GPS tracker. This feature is useful for safety, to track the vehicle's location when rented."
-                        />
-                    </FormRow> */}
 
                     <FormRow>
                         <SelectInput
@@ -390,7 +278,7 @@ const BasicVehicleInformationForm = ({
                         />
                     </FormRow>
                     <StepperNavigation
-                        steps={steps}
+                        steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={() => {

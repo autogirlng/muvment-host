@@ -1,5 +1,5 @@
 import { bookingAnalyticsTableHeadItems } from "@/utils/data";
-import { BookingInformation } from "@/types";
+import { BookingInformation, BookingSegmentContent } from "@/types";
 import TableHead from "@/components/Table/TableHead";
 import EmptyState from "@/components/EmptyState";
 import BookingDesktopRow from "@/components/Bookings/BookingDesktopRow";
@@ -10,7 +10,7 @@ export default function BookingAnalyticsTable({
     emptyStateMessage,
     emptyStateTitle,
 }: {
-    items: BookingInformation[];
+    items: BookingSegmentContent[];
     emptyStateMessage: string;
     emptyStateTitle?: string;
 }) {

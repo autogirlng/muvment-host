@@ -1,48 +1,16 @@
 import { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
-import { addSpaceBeforeUppercase } from "@/utils/functions";
 import { addtionalVehicleInformationSchema } from "@/utils/validationSchema";
-import { vehicleColorsOptions, vehicleFeaturesOptions } from "@/utils/data";
 import { useHttp } from "@/hooks/useHttp";
-
 import { SelectInput, TextArea, InputField, StepperNavigation, GroupCheckBox } from "@/ui";
 import FormRow from "../FormRow";
 import useAdditionalInformationForm from "@/hooks/vehicle/useAdditionalInformationForm";
+import { VehicleFeaturesResponse, VehicleColorResponse, VehicleOnboardingStepsHookProps } from "@/types";
 
-
-interface VehicleFeaturesResponse {
-    status: string,
-    message: string,
-    errorCode: string,
-    data: {
-        id: string,
-        name: string,
-        description: string
-    }[],
-    timestamp: string
-}
-
-interface VehicleColorResponse {
-    status: string,
-    message: string,
-    errorCode: string,
-    data: {
-        id: string,
-        name: string,
-        hexCode: string
-    }[]
-    ,
-    timestamp: string
-
-}
 
 const AdditionalInformationForm = ({
     steps, currentStep, setCurrentStep
-}: {
-    steps: string[];
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-}) => {
+}: VehicleOnboardingStepsHookProps) => {
     const { submitStep2, saveStep2, initialValues } = useAdditionalInformationForm({ currentStep, setCurrentStep });
 
     const http = useHttp();
@@ -253,7 +221,7 @@ Bluetooth connectivity, and a sunroof.`}
 
 
                     <StepperNavigation
-                        steps={steps}
+                        steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={() => {

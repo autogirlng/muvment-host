@@ -7,6 +7,7 @@ import {
     addSpaceBeforeUppercase,
     formatNumberWithCommas,
 } from "@/utils/functions";
+import { VehicleFeatures } from "@/types"
 
 
 export default function VehicleInformation({ listingDetails }: VehicleInformationProps) {
@@ -32,15 +33,15 @@ export default function VehicleInformation({ listingDetails }: VehicleInformatio
             />
             <VehicleDetailsSection
                 title="Description"
-                text={listingDetails?.vehicleDescription}
+                text={listingDetails?.description}
             />
             <VehicleDetailsSection title="Vehicle Features">
                 <div className="flex flex-wrap gap-3">
-                    {listingDetails?.features?.map((feature: any, index: number) => {
+                    {listingDetails?.features?.map((feature: VehicleFeatures, index: number) => {
                         return (
                             <Chip
                                 key={index}
-                                text={addSpaceBeforeUppercase(feature)}
+                                text={addSpaceBeforeUppercase(feature.name)}
                                 variant="filled"
                                 radius="sm"
                                 color="light"
@@ -58,30 +59,30 @@ export default function VehicleInformation({ listingDetails }: VehicleInformatio
 
             <VehicleDetailsSection title="Pricing">
                 <div className="space-y-2 md:space-y-5">
-                    <PricingSection
+                    {/* <PricingSection
                         text="Daily"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.pricing?.dailyRate?.value || "-")}`}
-                    />
+                        value={`NGN ${formatNumberWithCommas(listingDetails?.pricing?. || "-")}`}
+                    /> */}
                     <PricingSection
                         text="Extra Hours"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.pricing?.extraHoursFee || "-")}`}
+                        value={`NGN ${formatNumberWithCommas(listingDetails?.extraHourlyRate || "-")}`}
                     />
-                    <PricingSection
+                    {/* <PricingSection
                         text="Airport pickup and dropoffs"
                         value={`NGN ${formatNumberWithCommas(listingDetails?.pricing?.airportPickupFee || "-")}`}
-                    />
+                    /> */}
                     <PricingSection
                         text="Outskirts"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.outskirtsPrice || "-")}`}
+                        value={`NGN ${formatNumberWithCommas(listingDetails?.outskirtFee || "-")}`}
                     />
                 </div>
             </VehicleDetailsSection>
             <VehicleDetailsSection title="Discounts">
                 <div className="space-y-2 md:space-y-5">
-                    {listingDetails?.pricing?.discounts?.map((item, index) => (
+                    {listingDetails?.discounts?.map((item, index) => (
                         <PricingSection
                             key={index}
-                            text={`${item?.durationInDays}+ days`}
+                            text={`_ Booking Type`}
                             value={`${item?.percentage || "-"}% off`}
                         />
                     ))}

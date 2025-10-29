@@ -9,6 +9,10 @@ export interface BaseResponse {
   timestamp: string
 }
 
+export interface Option { 
+  option: string, value: string 
+}
+
 
 export interface ErrorResponse {
     status: string,

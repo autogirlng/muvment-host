@@ -15,8 +15,8 @@ import { FullPageSpinner, Stepper } from "@/ui";
 const steps = [
   "Basic Details",
   "Additional Details",
-  "Documents",
   "Photos",
+  "Documents",
   "Availability and Pricing",
 ];
 

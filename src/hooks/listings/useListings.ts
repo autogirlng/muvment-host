@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useHttp } from "@/hooks//useHttp";
 import { useAppSelector } from "@/lib/hooks";
-import {  ListingDataType } from "@/types";
+import {  ListingDataType, HostVehicleListings } from "@/types";
 import { handleFilterQuery } from "@/utils/functions";
 
 export default function useListings({
@@ -19,21 +19,22 @@ export default function useListings({
 }) {
   const http = useHttp();
   const { user } = useAppSelector((state) => state.user);
-
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["getListings", user?.data.userId , currentPage, filters, search],
+    queryKey: ["getListings", user?.data.userId , currentPage-1, JSON.stringify(filters), search],
+
 
     queryFn: () =>
-      http.get<ListingDataType>(
-        `/api/listings/host/${user?.data.userId}?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({ filters, search })}`
+      http.get<HostVehicleListings>(
+        // `/v1/hosts/my-vehicles/${handleFilterQuery({ filters, search })}?id=${user?.data.userId}&page=${currentPage}&size=${pageLimit}&${handleFilterQuery({ filters, search })}`
+        `/v1/hosts/my-vehicles?searchTerm=${search}`
+      
       ),
     enabled: !!user?.data.userId,
     retry: false,
   });
-
   return {
-    listings: data?.data || [],
-    totalCount: data?.totalCount || 0,
+    listings: data?.data.content || [],
+    totalCount: data?.data.totalItems || 0,
     isError,
     isLoading,
   };

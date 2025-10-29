@@ -28,13 +28,11 @@ export default function useAvailabilityAndPricingForm({
 
   const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
   const [showOuskirts, setShowOuskirts] = useState<boolean>(
-    Array.isArray(vehicle?.outskirtsLocation) &&
-      vehicle.outskirtsLocation.length > 0
+  false
   );
 
   const [showDiscounts, setShowDiscounts] = useState<boolean>(
-    Array.isArray(vehicle?.outskirtsLocation) &&
-      vehicle.outskirtsLocation.length > 0
+  false
   );
 
   const initialValues: AvailabilityAndPricingValues = {

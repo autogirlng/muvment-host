@@ -6,7 +6,7 @@ import { AccountSetupSliceOtpState  } from "./types";
 const initialState: AccountSetupSliceOtpState  = {
   phoneNumberToVerify: "",
   withdrawalAccountSetupOtp: "",
-  accountDetails: { accountNumber: "", bankCode: "", accountName: "" },
+  accountDetails: { accountNumber: "", bankCode: "", accountName: "", bankName:"" },
 };
 
 const accountSetupSlice = createSlice({

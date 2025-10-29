@@ -10,6 +10,7 @@ export default function ViewListing({ id }: ViewListingProps) {
     ) : isError ? (
         <p>Something went wrong</p>
     ) : (
-        <ViewAsCustomer vehicle={vehicle ?? null} />
+        // <ViewAsCustomer vehicle={vehicle ?? null} />
+        <></>
     );
 }

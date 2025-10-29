@@ -3,12 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatNumberWithCommas, keyAndValueInAChip } from "@/utils/functions";
-import { MappedInformation, VehicleInformation } from "@/types";
+import { MappedInformation, VehicleInformation, HostVehicleListingContent, VehicleStatus } from "@/types";
 import { VehicleListingBadge, Popup, VerticalDivider, Chip, Icons, BlurredDialog } from "@/ui";
 import DeleteListing from "@/components/Listings/modals/DeleteListing";
 import { sedan } from "@/ui/assets";
 
-type Props = { listing: VehicleInformation };
+type ListingCardProps = { content: HostVehicleListingContent };
 
 const initialExtras = [
     { name: "Fuel Included", icon: Icons.ic_fuel_station, id: "fuelProvided" },
@@ -19,7 +19,7 @@ const initialExtras = [
     },
 ];
 
-export default function ListingCard({ listing }: Props) {
+export default function ListingCard(listing: ListingCardProps) {
     const [vehicleDetails, setVehicleDetails] = useState<MappedInformation[]>([]);
     const [extras, setExtras] = useState(initialExtras);
     const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
@@ -31,11 +31,8 @@ export default function ListingCard({ listing }: Props) {
     useEffect(() => {
         if (listing) {
             const mappedVehicleDetails: MappedInformation[] = [
-                { make: listing?.make || "N/A" },
-                { colour: listing?.vehicleColor || "N/A" },
-                { seatingCapacity: listing?.numberOfSeats || "N/A" },
-                { location: listing?.location || "N/A" },
-                { vehicleType: listing?.vehicleType || "N/A" },
+                { LicensePlateNumber: listing?.content.licensePlateNumber || "N/A" },
+
             ];
 
             setVehicleDetails(mappedVehicleDetails);
@@ -44,12 +41,12 @@ export default function ListingCard({ listing }: Props) {
                 if (extra.id === "fuelProvided") {
                     return {
                         ...extra,
-                        status: listing?.tripSettings?.fuelProvided || false,
+                        // status: listing?.tripSettings?.fuelProvided || false,
                     };
                 } else if (extra.id === "provideDriver") {
                     return {
                         ...extra,
-                        status: listing?.tripSettings?.provideDriver || false,
+                        // status: listing?.tripSettings?.provideDriver || false,
                     };
                 }
                 return extra;
@@ -61,15 +58,19 @@ export default function ListingCard({ listing }: Props) {
     }, [listing]);
     return (
         <div className="flex flex-col md:flex-row items-center gap-5 px-3 md:px-0 py-5 rounded-3xl bg-grey-75 md:bg-transparent md:border-b md:border-grey-200 last:border-none relative">
+
+
             <div className="h-[200px] w-full md:w-[200px]">
                 <Image
-                    src={listing?.VehicleImage?.frontView || sedan}
+                    src={sedan}
                     alt=""
                     width={200}
                     height={200}
                     className={cn(
                         "h-full w-full rounded-2xl",
-                        listing?.VehicleImage?.frontView ? "object-cover" : "object-contain"
+
+                        // listing?.VehicleImage?.frontView ? "object-cover" : "object-contain"
+                        "object-contain"
                     )}
                 />
             </div>
@@ -77,24 +78,27 @@ export default function ListingCard({ listing }: Props) {
                 <div className="space-y-[14px] md:max-w-[400px] 3xl:max-w-[450px]">
                     <div className="flex flex-col md:flex-row items-start md:items-center gap-3 md:gap-6">
                         <h5 className="text-h6 3xl:text-h5 !font-medium">
-                            {listing?.vehicleStatus === "draft"
-                                ? "Unfinished Listing"
-                                : listing?.listingName}
+
+                            {
+                                listing?.content.status === VehicleStatus.DRAFT
+                                    ? "Unfinished Listing"
+                                    : listing?.content.name}
                         </h5>
-                        <VehicleListingBadge status={listing?.vehicleStatus} />
+                        <VehicleListingBadge status={
+                            listing?.content.status} />
                     </div>
-                    {listing?.vehicleStatus !== "draft" && (
+                    {/* {listing?.content.status !== VehicleReviewStatus.DRAFT && (
                         <p className="text-base 3xl:text-xl !font-medium text-grey-700 md:text-primary-500">
                             NGN {formatNumberWithCommas(listing?.pricing?.dailyRate?.value)}
                             /day
                         </p>
-                    )}
+                    )} */}
                     <p className="uppercase text-xs !font-semibold hidden md:block">
                         Vehicle details
                     </p>
-                    {listing?.vehicleStatus === "draft" ? (
+                    {listing?.content.status === VehicleStatus.DRAFT ? (
                         <Link
-                            href={`/vehicle-onboarding?id=${listing?.id}`}
+                            href={`/vehicle-onboarding`}
                             className="text-sm 3xl:text-base text-primary-500 block"
                         >
                             Complete Vehicle Listing
@@ -117,31 +121,33 @@ export default function ListingCard({ listing }: Props) {
                     )}
                 </div>
 
-                {listing?.vehicleStatus !== "draft" && (
-                    <>
-                        <VerticalDivider className="hidden md:block" />
+                {
+                    // listing?.vehicleStatus !== "draft" && (
+                    //     <>
+                    //         <VerticalDivider className="hidden md:block" />
 
-                        <div className="space-y-[14px] md:max-w-[400px] 3xl:max-w-[450px]">
-                            <p className="uppercase text-xs !font-semibold hidden md:block">
-                                Extras
-                            </p>
-                            <div className="flex flex-wrap gap-3">
-                                {extras.map((detail: any, index: number) => {
-                                    return (
-                                        detail.status && <Chip
-                                            key={index}
-                                            icon={detail.icon}
-                                            text={detail.name}
-                                            variant="filled"
-                                            radius="sm"
-                                            color={"primary"}
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div>
-                    </>
-                )}
+                    //         <div className="space-y-[14px] md:max-w-[400px] 3xl:max-w-[450px]">
+                    //             <p className="uppercase text-xs !font-semibold hidden md:block">
+                    //                 Extras
+                    //             </p>
+                    //             <div className="flex flex-wrap gap-3">
+                    //                 {extras.map((detail: any, index: number) => {
+                    //                     return (
+                    //                         detail.status && <Chip
+                    //                             key={index}
+                    //                             icon={detail.icon}
+                    //                             text={detail.name}
+                    //                             variant="filled"
+                    //                             radius="sm"
+                    //                             color={"primary"}
+                    //                         />
+                    //                     );
+                    //                 })}
+                    //             </div>
+                    //         </div>
+                    //     </>
+                    // )
+                }
 
                 <VerticalDivider className="hidden md:block" />
                 <Popup
@@ -161,28 +167,30 @@ export default function ListingCard({ listing }: Props) {
                             </p>
                             <ul className="space-y-2 *:py-2">
                                 <li className="!text-xs 3xl:!text-base">
-                                    {listing?.vehicleStatus === "draft" ? (
-                                        <BlurredDialog
-                                            open={openDeleteModal}
-                                            onOpenChange={handleDeleteModal}
-                                            trigger={
-                                                <button className="!text-xs 3xl:!text-base hover:text-error-500">
-                                                    Delete listing
-                                                </button>
-                                            }
-                                            content={
-                                                <DeleteListing
-                                                    handleModal={handleDeleteModal}
-                                                    id={listing?.id}
-                                                    isDraft
-                                                />
-                                            }
-                                        />
-                                    ) : (
-                                        <Link href={`/listings/${listing?.id}`}>
-                                            View Vehicle Details
-                                        </Link>
-                                    )}
+                                    {
+                                        listing?.content.status === VehicleStatus.DRAFT ? (
+                                            <BlurredDialog
+                                                open={openDeleteModal}
+                                                onOpenChange={handleDeleteModal}
+                                                trigger={
+                                                    <button className="!text-xs 3xl:!text-base hover:text-error-500">
+                                                        Delete listing
+                                                    </button>
+                                                }
+                                                content={
+                                                    <DeleteListing
+                                                        handleModal={handleDeleteModal}
+                                                        id={listing?.content.id}
+                                                        isDraft
+                                                    />
+                                                }
+                                            />
+                                        ) : (
+                                            <Link href={`/listings/${listing?.content.id}`}>
+                                                View Vehicle Details
+                                            </Link>
+                                        )
+                                    }
                                 </li>
                             </ul>
                         </>
@@ -190,5 +198,5 @@ export default function ListingCard({ listing }: Props) {
                 />
             </div>
         </div>
-    );
+    )
 }

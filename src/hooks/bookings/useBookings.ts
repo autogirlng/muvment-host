@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "@/lib/hooks";
 import { useHttp } from "@/hooks/useHttp";
 import { handleFilterQuery } from "@/utils/functions";
-import { BookingsDataType } from "@/types";
+import { BookingsDataType, BookingSegments} from "@/types";
 
 
 export default function useBookings({
@@ -25,8 +25,9 @@ export default function useBookings({
     queryKey: ["getBookings", user?.data.userId, currentPage, search, filters],
 
     queryFn: async () =>
-      http.get<BookingsDataType>(
-        `/api/bookings/host/${user?.data.userId}?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({ filters, search })}`
+      http.get<BookingSegments>(
+        // `/v1/bookings/my-vehicles/segments?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({ filters, search })}`
+        `/v1/bookings/my-vehicles/segments?${handleFilterQuery({ filters, search })}`
       ),
 
     enabled: !!user?.data.userId,
@@ -34,8 +35,8 @@ export default function useBookings({
   });
 
   return {
-    bookings: data?.data || [],
-    totalCount: data?.totalCount || 0,
+    bookings: data?.data.content || [],
+    totalCount: data?.data.totalItems || 0,
     isError,
     error,
     isLoading,

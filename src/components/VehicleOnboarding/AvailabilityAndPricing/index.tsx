@@ -2,14 +2,9 @@ import { TipsPopup } from "@/ui";
 import Tips from "@/components/VehicleOnboarding//Tips";
 import AvailabilityAndPricingForm from "./AvailabilityAndPricingForm";
 import AvailabilityAndPricingTips from "./AvailabilityAndPricingTips";
+import { VehicleOnboardingStepsHookProps } from "@/types"
 
-type Props = {
-    steps: string[];
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-};
-
-export default function AvailabilityAndPricing({ steps, setCurrentStep, currentStep }: Props) {
+export default function AvailabilityAndPricing({ steps, setCurrentStep, currentStep }: VehicleOnboardingStepsHookProps) {
     return (
         <div className="flex justify-between flex-col-reverse md:flex-row gap-8">
             <AvailabilityAndPricingForm steps={steps} currentStep={currentStep} setCurrentStep={setCurrentStep} />

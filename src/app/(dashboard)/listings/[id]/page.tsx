@@ -57,12 +57,12 @@ export default function ListingsPage({ params }: { params: { id: string } }) {
         if (extra.id === "fuelProvided") {
           return {
             ...extra,
-            status: listingDetail?.tripSettings?.fuelProvided || false,
+            status: listingDetail?.willProvideFuel || false,
           };
         } else if (extra.id === "provideDriver") {
           return {
             ...extra,
-            status: listingDetail?.tripSettings?.provideDriver || false,
+            status: listingDetail?.willProvideDriver || false,
           };
         }
         return extra;
@@ -102,9 +102,9 @@ export default function ListingsPage({ params }: { params: { id: string } }) {
         <div className="text-grey-800 space-y-[52px]">
           {/* name */}
           <ListingDetailsHeader
-            name={listingDetail?.listingName}
+            name={listingDetail?.name}
             id={listingDetail?.id}
-            status={listingDetail?.vehicleStatus}
+            status={listingDetail?.status}
           />
           <ListingDetailsVehicleImages
             vehicleImages={vehicleImages as string[]}

@@ -1,4 +1,4 @@
-import { VehicleStatus, MappedInformation, EarningsStatistics, ListingInformation, AssignNewDriver} from "@/types";
+import { VehicleStatus, MappedInformation, EarningsStatistics, ListingInformation, AssignNewDriver, VehicleInformationStepper} from "@/types";
 import { ReactNode } from "react";
 
 export interface DeleteListingProps  {
@@ -35,7 +35,7 @@ export interface ListingDetailsEarningsProps { statistics: EarningsStatistics | 
 
 
 export interface VehicleInformationProps  {
-    listingDetails: ListingInformation | null;
+    listingDetails: VehicleInformationStepper | null;
 };
 
 export interface VehicleReviewsProps { id: string };

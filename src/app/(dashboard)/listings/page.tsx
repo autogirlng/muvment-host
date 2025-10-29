@@ -1,5 +1,4 @@
 "use client";
-
 import Link from "next/link";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { listingFilters } from "@/utils/data";
@@ -13,7 +12,6 @@ import ListingCard from "@/components/Listings/ListingCard";
 export default function ListingsPage() {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
   const pageLimit = 10;
@@ -24,7 +22,6 @@ export default function ListingsPage() {
     filters,
     search: debouncedSearch,
   });
-
   const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
     setFilters(selectedFilters);
     setCurrentPage(1);
@@ -69,11 +66,11 @@ export default function ListingsPage() {
               <span className="hidden md:block">Add New Vehicle</span>
             </Button>
           </Link>
-          <FilterBy
+          {/* <FilterBy
             categories={listingFilters}
             onChange={handleFilterChange}
             hideOnMobile
-          />
+          /> */}
         </div>
       </div>
       {isLoading ? (
@@ -89,7 +86,7 @@ export default function ListingsPage() {
           )}
           {listings?.length > 0 ? (
             listings?.map((listing, index) => (
-              <ListingCard key={index} listing={listing} />
+              <ListingCard key={index} content={listing} />
             ))
           ) : (
             <EmptyState
@@ -112,13 +109,13 @@ export default function ListingsPage() {
           )}
         </>
       )}
-      <Pagination
+      {/* <Pagination
         className="pagination-bar"
         currentPage={currentPage}
         totalCount={totalCount}
         pageLimit={pageLimit}
         onPageChange={(page) => setCurrentPage(page)}
-      />
+      /> */}
     </main>
   );
 }

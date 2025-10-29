@@ -1,19 +1,16 @@
 import Link from "next/link";
 import { SingleCheckBox, StepperNavigation } from "@/ui";
-import { useAppSelector } from "@/lib/hooks";
 import useVehicleSummary from "@/hooks/vehicle/useVehicleSummary";
 import ViewAsCustomer from "@/components/VehicleOnboarding/VehicleSummary/ViewAsCustomer";
-import { VehicleSummaryProps } from "../props";
 import { useHttp } from "@/hooks/useHttp";
 import { useEffect, useState } from "react";
-import { VehicleInformationResponse, VehicleInformationStepper } from "@/types";
+import { VehicleInformationResponse, VehicleInformationStepper, VehicleOnboardingStepsHookProps } from "@/types";
 
 export default function VehicleSummary({
     steps,
     currentStep,
     setCurrentStep,
-}: VehicleSummaryProps) {
-    const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
+}: VehicleOnboardingStepsHookProps) {
     const vehicleId = sessionStorage.getItem("vehicleId")
     const [vehicleInfo, setVehicleInfo] = useState<VehicleInformationStepper>()
 
@@ -30,12 +27,11 @@ export default function VehicleSummary({
     }, [])
 
 
-    const { submitVehicleOnboarding, agreeToTerms, setAgreeToTerms } =
-        useVehicleSummary({ vehicle, currentStep, setCurrentStep });
+    const { submitVehicleOnboarding, agreeToTerms, setAgreeToTerms } = useVehicleSummary();
 
     return (
         <div className="space-y-11">
-            <ViewAsCustomer vehicle={vehicle} vehicleInfo={vehicleInfo} />
+            <ViewAsCustomer vehicleInfo={vehicleInfo} />
 
             <div>
                 {/* checkbox */}
@@ -56,6 +52,7 @@ export default function VehicleSummary({
 
             <StepperNavigation
                 submitText="Submit Vehicle"
+                //@ts-ignore
                 steps={steps}
                 currentStep={currentStep}
                 setCurrentStep={setCurrentStep}

@@ -101,7 +101,7 @@ export default function useListingsActions(
 
   const updateListingStatusToAvaliable = useMutation({
     mutationFn: () =>
-      http.put(`/api/listings/status/${id}`, { status: VehicleStatus.ACTIVE }),
+      http.put(`/api/listings/status/${id}`, { status: VehicleStatus.IN_TRIP }),
 
     onSuccess: (data) => {
       console.log("Update Listing status to available successful", data);
@@ -121,7 +121,7 @@ export default function useListingsActions(
   const updateListingStatusToMaintenance = useMutation({
     mutationFn: () =>
       http.put(`/api/listings/status/${id}`, {
-        status: VehicleStatus.MAINTENANCE,
+        status: VehicleStatus.IN_MAINTENANCE,
       }),
 
     onSuccess: (data) => {

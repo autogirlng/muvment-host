@@ -17,6 +17,9 @@ import {
   ErrorResponse,
   VerifyOtpValues,
   WithdrawalAccountValues,
+  BankList, 
+  WithdrawalAccountValuesResponse,
+  AccountVerificationValues
 } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 
@@ -37,24 +40,24 @@ export default function useSetupWithdrawalAccount() {
 
   const resetAccountDetails = () =>
     dispatch(
-      setAccountDetails({ accountNumber: "", bankCode: "", accountName: "" })
+      setAccountDetails({ accountNumber: "", bankCode: "", accountName: "", bankName:"" })
     );
 
   const { data, isLoading } = useQuery({
     queryKey: ["getAllBankCodes"],
-    queryFn: () => http.get<BankCodes[]>("/api/withdrawal-account/bankCodes"),
+    queryFn: () => http.get<BankList>("/v1/banks"),
     retry: 2,
   });
 
   const validateBankAccount = useMutation({
     mutationFn: (values: WithdrawalAccountValues) =>
-      http.get<WithdrawalAccountValues>(
-        `/api/withdrawal-account/validateBank?accountNumber=${values.accountNumber}&bankCode=${values.bankCode}`
+      http.get<WithdrawalAccountValuesResponse>(
+        `/v1/banks/resolve?accountNumber=${values.accountNumber}&bankCode=${values.bankCode}`
       ),
 
     onSuccess: (data) => {
       console.log("Bank Account Verified Successfully", data);
-      dispatch(setAccountDetails(data as WithdrawalAccountValues));
+      dispatch(setAccountDetails(data?.data as WithdrawalAccountValues));
       setLoading(false);
     },
 
@@ -66,8 +69,7 @@ export default function useSetupWithdrawalAccount() {
   });
 
   const sendBankAccountOtp = useMutation({
-    mutationFn: () => http.get("/api/withdrawal-account/send-otp"),
-
+    mutationFn: () => http.post("/v1/hosts/me/bank-details/request-otp", {channel:"EMAIL"}),
     onSuccess: (data) => {
       router.push(`/account-setup/withdrawal-account/otp`);
       setLoading(false);
@@ -81,16 +83,30 @@ export default function useSetupWithdrawalAccount() {
   });
 
   const verifyBankAccountOtp = useMutation({
-    mutationFn: (values: VerifyOtpValues) =>
-      http.post("/api/withdrawal-account/verify-otp", values),
+    mutationFn: (values: VerifyOtpValues) => {
+      return http.put<WithdrawalAccountValuesResponse>("/v1/hosts/me/bank-details", {otp:values.token, ...accountDetails})
+    },
 
     onMutate: (values) => {
-      return { token: values.token };
+      return { 
+        otp: values.token,   
+
+  };
     },
     onSuccess: (data, _values, context) => {
       console.log("Bank Account Otp Verified", data);
-      dispatch(setWithdrawalAccountSetupOtp(context.token));
-      addBankAccount.mutate(accountDetails);
+      // dispatch(setWithdrawalAccountSetupOtp(context.otp));
+      // addBankAccount.mutate(accountDetails);
+       setLoading(false);
+      setPushToDashboard(true);
+
+      dispatch(
+        setAccountDetails({
+          accountNumber: "",
+          bankCode: "",
+          accountName: "",
+          bankName:""
+        }))
     },
 
     onError: (error: AxiosError<ErrorResponse>) => {
@@ -121,6 +137,7 @@ export default function useSetupWithdrawalAccount() {
           accountNumber: "",
           bankCode: "",
           accountName: "",
+          bankName:""
         })
       );
     },
@@ -135,7 +152,7 @@ export default function useSetupWithdrawalAccount() {
 
   return {
     validateBankAccount,
-    bankCodes: data || [],
+    bankCodes: data?.data || [],
     isLoading,
     accountDetails,
     credentialsError,

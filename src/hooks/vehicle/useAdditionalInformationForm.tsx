@@ -8,7 +8,9 @@ import {
     AdditionalVehicleInformationValues,
     ErrorResponse,
     VehicleInformation,
-    VehicleInformationResponse
+    VehicleInformationResponse,
+    VehicleOnboardingStepsHookProps
+
 } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useRouter } from "next/navigation";
@@ -18,15 +20,13 @@ import { useState, useEffect } from "react";
 export default function useAdditionalInformationForm({
     currentStep,
     setCurrentStep,
-}: {
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-}) {
+}: VehicleOnboardingStepsHookProps) {
     const http = useHttp();
 
     const router = useRouter();
     const dispatch = useAppDispatch();
     const [vehicleId, setVehicleId] = useState<string>("")
+
     useEffect(() => {
         const id = sessionStorage.getItem("vehicleId") ?? ""
         setVehicleId(id)
@@ -35,13 +35,12 @@ export default function useAdditionalInformationForm({
     const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
 
     const initialValues: AdditionalVehicleInformationValues = {
-        licensePlateNumber: vehicle?.licensePlateNumber || "",
-        stateOfRegistration: vehicle?.stateOfRegistration || "",
-        description: vehicle?.vehicleDescription || "",
-        featureIds: vehicle?.features || [],
-        vehicleColorId: vehicle?.vehicleColor || "",
-        numberOfSeats: vehicle?.numberOfSeats || 0,
-        // vehicleOwner: vehicle?.vehicleOwner || "",
+        licensePlateNumber: "",
+        stateOfRegistration: "",
+        description: "",
+        featureIds: [],
+        vehicleColorId: "",
+        numberOfSeats: 0,
     };
 
 
@@ -75,10 +74,7 @@ export default function useAdditionalInformationForm({
             console.log(values)
             return http.patch<VehicleInformationResponse>(
                 `/v1/vehicles/details?id=${vehicleId}`,
-
                 values
-
-
             )
         },
 
