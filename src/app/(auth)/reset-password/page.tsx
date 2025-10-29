@@ -15,11 +15,12 @@ export default function ResetPasswordPage() {
     const { isPasswordHidden, toggleHiddenPassword } = usePasswordValidation();
 
     const router = useRouter();
-    const emailParams = useSearchParams();
-    const email = emailParams.get("email");
+    const params = useSearchParams();
+    const email = params.get("email") ?? "";
+    const otp = params.get("token") ?? ""
     const { resetPassword } = useAuth();
 
-    if (!email) {
+    if (!email || !otp) {
         router.push("/forgot-password");
     }
 
@@ -35,7 +36,7 @@ export default function ResetPasswordPage() {
                 onSubmit={async (values, { setSubmitting }) => {
                     console.log(values);
 
-                    resetPassword.mutate({ ...values, email: email as string });
+                    resetPassword.mutate({ ...values, email: email, otp });
                     setSubmitting(false);
                 }}
                 validationSchema={setNewPasswordValidationSchema}

@@ -13,13 +13,11 @@ import {
 } from "@/lib/features/accountSetupSlice";
 import { handleErrors } from "@/utils/functions";
 import {
-  BankCodes,
   ErrorResponse,
   VerifyOtpValues,
   WithdrawalAccountValues,
   BankList, 
   WithdrawalAccountValuesResponse,
-  AccountVerificationValues
 } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 

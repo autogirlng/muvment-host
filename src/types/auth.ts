@@ -72,6 +72,7 @@ export interface ResendVerifyEmailTokenValues {
 }
 export interface ResetPasswordEmailValues {
   email: string;
+  
 }
 
 export interface VerifyPhoneNumberTokenValues {
@@ -99,7 +100,7 @@ export interface AccountVerificationValues {
 
 export interface SetNewPasswordValues {
   email: string;
-  token: string;
+  otp: string;
   password?: string;
   confirmPassword: string;
   password_checks?: PasswordChecks;
@@ -110,6 +111,12 @@ export interface ChangePasswordValues {
   password: string;
   confirmPassword: string;
   password_checks?: PasswordChecks;
+}
+
+export interface ResetPassword {
+  email: string;
+  otp: string;
+  newPassword: string;
 }
 
 export interface VerifyPhoneNumberValues {

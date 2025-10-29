@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import { withdrawalAccountValues } from "@/utils/initialValues";
 import { withdrawalAccountSchema } from "@/utils/validationSchema";
-import { BankProp, Banks } from "@/types";
+import { Banks } from "@/types";
 import useSetupWithdrawalAccount from "@/hooks/useSetupWithdrawalAccount";
 import { Button, InputField, SelectSearchInput, Icons } from "@/ui";
 
