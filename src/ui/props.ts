@@ -325,6 +325,7 @@ export interface FilterByProps  {
   ) => void;
   hideOnMobile?: boolean;
   dateEnabled?: boolean;
+  singleSelect?:boolean;
 };
 
 export interface DateFilterProps  {

@@ -42,7 +42,7 @@ export default function ListingsPage({ params }: { params: { id: string } }) {
   } = useGetListingById({
     id: params.id,
   });
-
+  console.log(listingDetail)
   useEffect(() => {
     if (!params.id) {
       router.push("/listings");

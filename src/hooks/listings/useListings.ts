@@ -7,7 +7,7 @@ import {  ListingDataType, HostVehicleListings } from "@/types";
 import { handleFilterQuery } from "@/utils/functions";
 
 export default function useListings({
-  currentPage = 1,
+  currentPage,
   pageLimit = 10,
   filters = {},
   search = "",
@@ -20,15 +20,12 @@ export default function useListings({
   const http = useHttp();
   const { user } = useAppSelector((state) => state.user);
   const { data, isError, isLoading } = useQuery({
-    queryKey: ["getListings", user?.data.userId , currentPage-1, JSON.stringify(filters), search],
-
-
+    queryKey: ["getListings", user?.data.userId, currentPage, JSON.stringify(filters), search],
     queryFn: () =>
       http.get<HostVehicleListings>(
-        // `/v1/hosts/my-vehicles/${handleFilterQuery({ filters, search })}?id=${user?.data.userId}&page=${currentPage}&size=${pageLimit}&${handleFilterQuery({ filters, search })}`
-        `/v1/hosts/my-vehicles?searchTerm=${search}`
+        `/v1/hosts/my-vehicles?size=${pageLimit}&page=${currentPage}&${handleFilterQuery({filters, search})}`
       
-      ),
+      ), 
     enabled: !!user?.data.userId,
     retry: false,
   });

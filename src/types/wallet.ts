@@ -105,6 +105,13 @@ export interface Pricing {
   discounts: Discount[];
 }
 
+export interface PricingOptions {
+     bookingTypeId: string;
+    bookingTypeName: string;
+    price: number;
+    platformFeeType: string
+}
+
 export interface AvailabilityAndPricing {
   tripSettings: TripSettings;
   pricing: Pricing;

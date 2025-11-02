@@ -708,22 +708,20 @@ export const listingFilters = [
   {
     title: "status",
     options: [
-      { option: "Review", value: ListingStatus.REVIEW },
-      { option: "Feedback", value: ListingStatus.FEEDBACK },
-      { option: "Accepted", value: ListingStatus.ACCEPTED },
+      { option: "Draft", value: ListingStatus.DRAFT },
+      { option: "In review", value: ListingStatus.IN_REVIEW },
+      { option: "Approved", value: ListingStatus.APPROVED },
       { option: "Rejected", value: ListingStatus.REJECTED },
-      { option: "Suspended", value: ListingStatus.SUSPENDED },
+      { option: "In maintenance", value: ListingStatus.IN_MAINTENANCE },
+      { option: "Unavailable", value: ListingStatus.UNAVAILABLE },
+      { option: "Company use", value: ListingStatus.COMPANY_USE },
+      { option: "Booked", value: ListingStatus.BOOKED },
+      { option: "In trip", value: ListingStatus.IN_TRIP },
+
     ],
   },
-  {
-    title: "type",
-    options: vehicleTypesOptions,
-  },
-  {
-    title: "location",
-    options: citiesOptions,
-  },
 ];
+
 
 export const bookingOverviewFilters: {
   title: string;

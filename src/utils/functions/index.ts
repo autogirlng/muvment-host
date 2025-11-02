@@ -269,7 +269,7 @@ export const handleFilterQuery = ({
 
   if (month) filterQuery.append("month", month.toString());
   if (year) filterQuery.append("year", year.toString());
-  if (search) filterQuery.append("search", search.toString());
+  if (search) filterQuery.append("searchTerm", search.toString());
   if (startDate) filterQuery.append("startDate", startDate.toString());
   if (endDate) filterQuery.append("endDate", endDate.toString());
   return filterQuery.toString();

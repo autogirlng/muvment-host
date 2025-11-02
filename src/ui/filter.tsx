@@ -12,6 +12,7 @@ const FilterBy: React.FC<FilterByProps> = ({
     onChange,
     hideOnMobile,
     dateEnabled = false,
+    singleSelect = false
 }) => {
     const contentRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -47,20 +48,35 @@ const FilterBy: React.FC<FilterByProps> = ({
     };
 
     const handleCheckboxChange = (categoryTitle: string, optionValue: string) => {
-        setSelectedFilters((prevFilters) => {
-            const filters = { ...prevFilters };
-            if (filters[categoryTitle]?.includes(optionValue)) {
-                filters[categoryTitle] = filters[categoryTitle].filter(
-                    (item) => item !== optionValue
-                );
-            } else {
-                filters[categoryTitle] = [
-                    ...(filters[categoryTitle] || []),
-                    optionValue,
-                ];
-            }
-            return filters;
-        });
+        if (!singleSelect) {
+            setSelectedFilters((prevFilters) => {
+                const filters = { ...prevFilters };
+                if (filters[categoryTitle]?.includes(optionValue)) {
+                    filters[categoryTitle] = filters[categoryTitle].filter(
+                        (item) => item !== optionValue
+                    );
+                } else {
+                    filters[categoryTitle] = [
+                        ...(filters[categoryTitle] || []),
+                        optionValue,
+                    ];
+                }
+                return filters;
+            });
+        }
+        // For single checkbox selection
+        else {
+            setSelectedFilters((prevFilters) => {
+                const filters = { ...prevFilters };
+                if (filters[categoryTitle]?.[0] === optionValue) {
+                    filters[categoryTitle] = [];
+                } else {
+                    filters[categoryTitle] = [optionValue];
+                }
+                return filters;
+            });
+        }
+
     };
 
     useEffect(() => {

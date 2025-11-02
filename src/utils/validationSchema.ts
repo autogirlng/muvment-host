@@ -55,21 +55,6 @@ export const loginFormValidationSchema = object().shape({
     .required("Please enter your email"),
   password: string()
     .required("Please enter your password")
-    .matches(
-      uppercaseRegex,
-      "Password must contain at least one uppercase letter"
-    )
-    .matches(
-      lowercaseRegex,
-      "Password must contain at least one lowercase letter"
-    )
-    .matches(numberRegex, "Password must contain at least one number")
-    .matches(
-      specialCharRegex,
-      "Password must contain at least one special character"
-    )
-    .matches(spacesRegex, "Password must not contain spaces")
-    .min(8, "Password must be at least 8 characters long"),
 });
 
 export const resetPasswordEmailValidationSchema = object().shape({
