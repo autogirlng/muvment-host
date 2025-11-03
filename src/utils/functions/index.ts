@@ -269,7 +269,7 @@ export const handleFilterQuery = ({
 
   if (month) filterQuery.append("month", month.toString());
   if (year) filterQuery.append("year", year.toString());
-  if (search) filterQuery.append("search", search.toString());
+  if (search) filterQuery.append("searchTerm", search.toString());
   if (startDate) filterQuery.append("startDate", startDate.toString());
   if (endDate) filterQuery.append("endDate", endDate.toString());
   return filterQuery.toString();
@@ -279,12 +279,12 @@ export const handleErrors = (
   error: AxiosError<ErrorResponse>,
   page?: string
 ) => {
-  console.log(
-    `${page} error`,
-    error,
-    error.response?.status,
-    error.response?.data
-  );
+  // console.log(
+  //   `${page} error`,
+  //   error,
+  //   error.response?.status,
+  //   error.response?.data
+  // );
 
   // const ERR_CODE = error.response?.data?.ERR_CODE;
 
@@ -292,6 +292,8 @@ export const handleErrors = (
     console.log(error);
     return toast.error("Network Error");
   }
+
+  
 
   // else if (error.response?.status === 500) {
   //   return toast.error(error.response?.data?.message);

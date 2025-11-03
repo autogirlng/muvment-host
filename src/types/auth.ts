@@ -72,6 +72,7 @@ export interface ResendVerifyEmailTokenValues {
 }
 export interface ResetPasswordEmailValues {
   email: string;
+  
 }
 
 export interface VerifyPhoneNumberTokenValues {
@@ -89,9 +90,17 @@ export interface VerifyOtpValues {
   token: string;
 }
 
+export interface AccountVerificationValues {
+  accountNumber: string,
+  bankCode: string,
+  bankName: string,
+  accountName: string,
+  otp: string
+}
+
 export interface SetNewPasswordValues {
   email: string;
-  token: string;
+  otp: string;
   password?: string;
   confirmPassword: string;
   password_checks?: PasswordChecks;
@@ -102,6 +111,12 @@ export interface ChangePasswordValues {
   password: string;
   confirmPassword: string;
   password_checks?: PasswordChecks;
+}
+
+export interface ResetPassword {
+  email: string;
+  otp: string;
+  newPassword: string;
 }
 
 export interface VerifyPhoneNumberValues {
@@ -117,12 +132,7 @@ export interface VerifyIdentityValues {
   bvn: string;
 }
 
-export interface WithdrawalAccountValues {
-  bank?: BankProp | null;
-  bankCode: string;
-  accountNumber: string;
-  accountName?: string;
-}
+
 
 
 export interface ProfileFormValues {

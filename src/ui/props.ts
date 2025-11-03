@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { BankProp } from "@/types";
+import {  Banks } from "@/types";
 
 export interface AvatarProps  {
   image?: string;
@@ -176,14 +176,14 @@ export interface OtpFieldProps {
 
 
 export interface SelectSearchInputProps  {
-    banks: BankProp[];
+    banks: Banks[];
     className?: string;
     id: string;
     label?: string;
     placeholder?: string;
     variant?: "outlined" | "filled";
-    onChange?: (bank: BankProp | null) => void;
-    value?: BankProp | null;
+    onChange?: (bank: Banks | null) => void;
+    value?: Banks | null;
     error?: string;
     info?: boolean;
     tooltipTitle?: string;
@@ -197,17 +197,17 @@ export interface BookingBadgeProps  {
 };
 
 
-export interface VehicleListingBadgeProps  {
-  status:
-    | "draft"
-    | "active"
-    | "pending"
-    | "maintenance"
-    | "booked"
-    | "submitted"
-    | "unavailable"
-    | "inactive";
-};
+// export interface VehicleListingBadgeProps  {
+//   status:
+//     | "draft"
+//     | "active"
+//     | "pending"
+//     | "maintenance"
+//     | "booked"
+//     | "submitted"
+//     | "unavailable"
+//     | "inactive";
+// };
 
 
 export interface ListingBadgeProps  {
@@ -325,6 +325,7 @@ export interface FilterByProps  {
   ) => void;
   hideOnMobile?: boolean;
   dateEnabled?: boolean;
+  singleSelect?:boolean;
 };
 
 export interface DateFilterProps  {

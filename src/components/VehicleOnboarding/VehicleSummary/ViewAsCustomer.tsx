@@ -6,21 +6,13 @@ import "swiper/css/navigation";
 import Image from "next/image";
 import cn from "classnames";
 import { useState } from "react";
-import { Chip, Icons, Button, BlurredDialog } from "@/ui";
-import {
-    addSpaceBeforeUppercase,
-    formatNumberWithCommas,
-    keyAndValueInAChip,
-} from "@/utils/functions";
-import useVehicleSummary from "@/hooks/vehicle/useVehicleSummary";
-import { VehicleInformation, VehicleInformationStepper } from "@/types";
+import { Chip, Button, BlurredDialog } from "@/ui";
+import { addSpaceBeforeUppercase } from "@/utils/functions";
+import { VehicleInformationStepper } from "@/types";
 
-type Props = { vehicle: VehicleInformation | null, vehicleInfo?: VehicleInformationStepper };
+type ViewAsCustomerProps = { vehicleInfo?: VehicleInformationStepper };
 
-export default function ViewAsCustomer({ vehicle, vehicleInfo }: Props) {
-    const { perks, vehicleDetails, vehicleImages } = useVehicleSummary({
-        vehicle,
-    });
+export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
 
     const [openCancellationModal, setOpenCancellationModal] = useState(false);
 
@@ -28,7 +20,6 @@ export default function ViewAsCustomer({ vehicle, vehicleInfo }: Props) {
         setOpenCancellationModal((prev) => !prev); // Use functional update for state
     };
 
-    console.log(vehicleInfo)
     return (
         <>
             <div className="space-y-11">
@@ -80,38 +71,10 @@ export default function ViewAsCustomer({ vehicle, vehicleInfo }: Props) {
                     </div>
                 </div>
 
-                {/* Advance Notice */}
-                <div className="bg-grey-75 p-3 flex gap-3 items-center rounded-[18px]">
-                    {/* <div className="bg-warning-75 border border-warning-400 text-warning-400 h-[50px] w-[50px] flex justify-center items-center rounded-xl">
-                        {Icons.ic_notification}
-                    </div>
-                    <h6 className="text-grey-700 text-xs md:text-base 3xl:text-h6 !font-medium">
-                        {vehicle?.tripSettings.advanceNotice} advance notice required before
-                        booking
-                    </h6> */}
-                    {/* <SectionTitle text="" /> - This component was here but 'text' prop was empty. Removed if not needed. */}
-                </div>
+
 
                 <div className="flex flex-col md:flex-row items-start gap-10 ">
                     <div className="w-full md:w-[62%] space-y-10">
-                        {/* Vehicle Details */}
-                        {/* <div className="space-y-5">
-                            <SectionTitle text="Vehicle Details" />
-                            <div className="flex flex-wrap gap-3">
-                                {vehicleDetails.map((detail, index) => {
-                                    const [key, value] = Object.entries(detail)[0];
-                                    return (
-                                        <Chip
-                                            key={index}
-                                            text={keyAndValueInAChip(key, value)}
-                                            variant="filled"
-                                            radius="sm"
-                                            color="dark"
-                                        />
-                                    );
-                                })}
-                            </div>
-                        </div> */}
 
                         {/* Vehicle Description */}
 
@@ -185,34 +148,6 @@ export default function ViewAsCustomer({ vehicle, vehicleInfo }: Props) {
                             </p>
 
                         </div>
-                        {/* Vehicle Perks */}
-                        {/* <div className="space-y-5">
-                            <SectionTitle text="Perks" />
-                            <div className="flex flex-wrap gap-3">
-                                {perks.map(
-                                    (perk, index) =>
-                                        perk.status && (
-                                            <Chip
-                                                key={index}
-                                                text={perk.name}
-                                                icon={perk.icon}
-                                                variant="outlined"
-                                                radius="md"
-                                                color="light"
-                                            />
-                                        )
-                                )}
-                                <button
-                                    onClick={handleOpenCancellationModal}
-                                    className="block w-full text-primary-500 text-base 3xl:text-xl hover:underline cursor-pointer bg-transparent border-none p-0 text-left"
-                                >
-                                    Learn more about our free cancellation
-                                </button>
-                            </div>
-                        </div> */}
-
-
-
 
                         <div className="space-y-5">
                             <SectionTitle text="Others" className="text-black" />
@@ -224,76 +159,10 @@ export default function ViewAsCustomer({ vehicle, vehicleInfo }: Props) {
                             </p>
 
                         </div>
-                        {/* Outskirt Locations */}
-                        {/* <div className="space-y-5">
-                            <SectionTitle text="Outskirt Locations" />
-                            <div className="flex flex-wrap gap-y-8 gap-x-[18px]">
-                                {vehicle?.outskirtsLocation?.map((location, index) => (
-                                    <p
-                                        key={index}
-                                        className="text-sm md:text-base 3xl:text-xl !font-medium text-black flex items-center gap-[14px] w-[170px]"
-                                    >
-                                        {Icons.ic_location}
-                                        <span>{location}</span>
-                                    </p>
-                                ))}
-                            </div>
-                        </div> */}
+
                     </div>
 
-                    {/* Pricing */}
-                    {/* <div className="w-full md:w-[38%] md:border md:border-grey-200 md:rounded-[42px]">
-                        <div className="md:p-8 divide-y divide-grey-200 text-grey-800 !font-medium text-base 3xl:text-xl">
-                            <h4 className="text-h5 3xl:text-h4 !font-medium pb-[22px]">
-                                Pricing
-                            </h4>
-                            <div className="py-[22px] flex divide-x divide-grey-200">
-                                <div className="pr-6">
-                                    <PricingTitle text="Daily (12 hrs)" />
-                                    <PricingDescription
-                                        text={`NGN ${formatNumberWithCommas(vehicle?.pricing?.dailyRate?.value || "")}/day`}
-                                    />
-                                </div>
-                                <div className="pl-6">
-                                    <PricingTitle text="Extra Hours" />
-                                    <PricingDescription
-                                        text={`NGN ${formatNumberWithCommas(vehicle?.pricing?.extraHoursFee || "")}/hr`}
-                                    />
-                                </div>
-                            </div>
-                            <div className="py-[22px]">
-                                <PricingTitle text="Trip Duration" />
-                                <PricingDescription
-                                    text={`Min: 1 day | Max: ${vehicle?.tripSettings?.maxTripDuration}`}
-                                />
-                            </div>
-                            {vehicle?.pricing?.discounts &&
-                                vehicle?.pricing?.discounts?.length > 0 && (
-                                    <div className="py-[22px] space-y-2">
-                                        <PricingTitle text="Discounts" />
-                                        {vehicle.pricing.discounts.map((discount, index) => (
-                                            <div
-                                                key={index}
-                                                className="flex items-center justify-between gap-2 max-w-[150px] md:max-w-[210px] bg-grey-75 border border-grey-300 p-2 rounded-lg text-sm md:text-xl md:text-h6"
-                                            >
-                                                <p>{discount?.durationInDays}+ days</p>
-                                                <p className="text-success-500">
-                                                    {discount.percentage || 0}% off
-                                                </p>
-                                            </div>
-                                        ))}
-                                    </div>
-                                )}
-                            {vehicle?.pricing?.airportPickupFee && (
-                                <div className="py-[22px]">
-                                    <PricingTitle text="Airport Pickups & dropoffs" />
-                                    <PricingDescription
-                                        text={`NGN ${formatNumberWithCommas(vehicle?.pricing?.airportPickupFee || "")}/hr`}
-                                    />
-                                </div>
-                            )}
-                        </div>
-                    </div> */}
+
                 </div>
             </div>
 

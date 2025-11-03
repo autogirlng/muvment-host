@@ -1,5 +1,5 @@
 import { bookingOverviewTableHeadItems } from "@/utils/data";
-import { BookingInformation } from "@/types";
+import { BookingInformation, BookingSegmentContent } from "@/types";
 import TableHead from "@/components/Table/TableHead"
 import EmptyState from "@/components/EmptyState";
 import BookingRow from "@/components/Bookings/BookingRow";
@@ -8,7 +8,7 @@ export default function BookingTable({
     items,
     emptyStateMessage,
 }: {
-    items: BookingInformation[];
+    items: BookingSegmentContent[];
     emptyStateMessage: string;
 }) {
     return items.length > 0 ? (

@@ -1,33 +1,6 @@
-import { Dispatch, SetStateAction } from "react";
 
 export interface VehiclePhotosTipsProps { photoTipIndex: number };
 
-export interface VehiclePhotosFormProps {
-    steps: string[];
-    setPhotoTipIndex: Dispatch<SetStateAction<number>>;
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-};
-
-
-export interface VehiclePhotosProps {
-  steps: string[];
-  currentStep: number;
-  setCurrentStep: (step: number) => void;
-};
-
-
-export interface VehicleSummaryProps {
-    steps: string[];
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-};
-
-export interface BasicVehicleInformationFormProps  {
-  steps: string[];
-  currentStep: number;
-  setCurrentStep: (step: number) => void;
-};
 
 
 export interface PricingRowProps  {

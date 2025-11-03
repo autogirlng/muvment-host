@@ -40,7 +40,7 @@ const Pagination = ({
           paginationComponent, we return the range [1..totalPageCount]
         */
         if (totalPageNumbers >= totalPageCount) {
-            return range(1, totalPageCount);
+            return range(0, totalPageCount - 1);
         }
 
         /*
@@ -49,7 +49,7 @@ const Pagination = ({
         const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
         const rightSiblingIndex = Math.min(
             currentPage + siblingCount,
-            totalPageCount
+            totalPageCount - 1
         );
 
         /*
@@ -58,7 +58,7 @@ const Pagination = ({
         const shouldShowLeftDots = leftSiblingIndex > 2;
         const shouldShowRightDots = rightSiblingIndex < totalPageCount - 2;
 
-        const firstPageIndex = 1;
+        const firstPageIndex = 0;
         const lastPageIndex = totalPageCount;
 
         /*
@@ -93,11 +93,10 @@ const Pagination = ({
             return [];
         }
     }, [totalCount, pageLimit, siblingCount, currentPage]);
-
     // If there are less than 2 times in pagination range we shall not render the component
-    if (currentPage === 0 || paginationRange.length < 2) {
-        return null;
-    }
+    // if (currentPage === 0 || paginationRange.length < 2) {
+    //     return null;
+    // }
 
     const onNext = () => {
         onPageChange(currentPage + 1);
@@ -112,7 +111,7 @@ const Pagination = ({
         <ul className={cn("flex gap-2 items-center justify-center", className)}>
             <button
                 className={cn("p-1 border border-grey-300 rounded-[6px] text-black")}
-                disabled={currentPage === 1}
+                disabled={currentPage === 0}
                 onClick={onPrevious}
             >
                 {Icons.ic_chevron_left}
@@ -139,7 +138,7 @@ const Pagination = ({
                             )}
                             onClick={() => onPageChange(pageNumber as number)}
                         >
-                            {pageNumber}
+                            {Number(pageNumber) + 1}
                         </button>
                     );
                 })}

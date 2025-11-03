@@ -44,7 +44,7 @@ export const resetPasswordEmailInitialValues: ResetPasswordEmailValues = {
 
 export const setNewPasswordInitialValues: SetNewPasswordValues = {
   email: "",
-  token: "",
+  otp: "",
   password: "",
   confirmPassword: "",
   password_checks: {
@@ -85,7 +85,7 @@ export const verifyIdentityValues: VerifyIdentityValues = {
 };
 
 export const withdrawalAccountValues: WithdrawalAccountValues = {
-  bank: null,
+  bankName: "",
   bankCode: "",
   accountNumber: "",
 };

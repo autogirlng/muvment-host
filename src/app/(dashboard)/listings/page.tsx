@@ -1,7 +1,7 @@
 "use client";
-
 import Link from "next/link";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 import { listingFilters } from "@/utils/data";
 import { debounce } from "@/utils/functions";
 import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy } from "@/ui";
@@ -13,9 +13,11 @@ import ListingCard from "@/components/Listings/ListingCard";
 export default function ListingsPage() {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const searchParams = useSearchParams();
+  const initialPage = Number(searchParams.get("page")) || 0
+  const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
+  const router = useRouter()
   const pageLimit = 10;
 
   const { listings, totalCount, isError, isLoading } = useListings({
@@ -24,15 +26,23 @@ export default function ListingsPage() {
     filters,
     search: debouncedSearch,
   });
-
   const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
     setFilters(selectedFilters);
-    setCurrentPage(1);
+    if (selectedFilters.status && selectedFilters.status.length >= 1) {
+      setCurrentPage(0)
+      const params = new URLSearchParams(searchParams);
+      params.set("page", "0");
+      router.push(`?${params.toString()}`, { scroll: false });
+    }
+
   };
 
   const handleSearch = (value: string) => {
     setSearch(value);
-    setCurrentPage(1);
+    setCurrentPage(0);
+    const params = new URLSearchParams(searchParams);
+    params.set("page", "0");
+    router.push(`?${params.toString()}`, { scroll: false });
   };
 
   const debouncedListingSearch = useCallback(
@@ -45,6 +55,16 @@ export default function ListingsPage() {
   useEffect(() => {
     debouncedListingSearch(search);
   }, [search, debouncedListingSearch]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    const params = new URLSearchParams(searchParams)
+    params.set("page", page.toString())
+    router.push(`?${params.toString()}`, { scroll: false })
+
+  }
+
+
 
   return (
     <main className="space-y-6 py-[56px]">
@@ -73,6 +93,7 @@ export default function ListingsPage() {
             categories={listingFilters}
             onChange={handleFilterChange}
             hideOnMobile
+            singleSelect={true}
           />
         </div>
       </div>
@@ -89,7 +110,7 @@ export default function ListingsPage() {
           )}
           {listings?.length > 0 ? (
             listings?.map((listing, index) => (
-              <ListingCard key={index} listing={listing} />
+              <ListingCard key={index} content={listing} />
             ))
           ) : (
             <EmptyState
@@ -117,8 +138,9 @@ export default function ListingsPage() {
         currentPage={currentPage}
         totalCount={totalCount}
         pageLimit={pageLimit}
-        onPageChange={(page) => setCurrentPage(page)}
+        onPageChange={handlePageChange}
       />
+
     </main>
   );
 }

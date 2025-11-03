@@ -2,16 +2,13 @@ import { Formik, Form } from "formik";
 import { StepperNavigation, FileInputField } from "@/ui";
 import { documentVehicleInformationSchema } from "@/utils/validationSchema";
 import useDocumentInformationForm from "@/hooks/vehicle/useDocumentInformationForm";
+import { VehicleOnboardingStepsHookProps } from "@/types"
 
 const DocumentInformationForm = ({
     steps,
     currentStep,
     setCurrentStep,
-}: {
-    steps: string[];
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-}) => {
+}: VehicleOnboardingStepsHookProps) => {
     const { submitStep5, saveStep5, initialValues } = useDocumentInformationForm({
         currentStep,
         setCurrentStep,
@@ -116,7 +113,7 @@ const DocumentInformationForm = ({
                     />
 
                     <StepperNavigation
-                        steps={steps}
+                        steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={async () => {

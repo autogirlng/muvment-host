@@ -27,6 +27,7 @@ export default function BookingsOverview({ }: Props) {
     const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
         setFilters(selectedFilters);
     };
+    console.log(bookings)
 
     return (
         <div className="space-y-8">
@@ -90,7 +91,7 @@ export default function BookingsOverview({ }: Props) {
                 <p>something went wrong</p>
             ) : (
                 <Table
-                    items={bookings}
+                    items={bookings?.content ?? []}
                     emptyStateMessage="Your Bookings Will Appear Here"
                 />
             )}

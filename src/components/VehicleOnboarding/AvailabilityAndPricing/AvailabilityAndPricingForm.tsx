@@ -1,29 +1,24 @@
 import { useEffect, useState } from "react";
 
 import { Formik, Form } from "formik";
-import { StepperNavigation, GroupCheckBox, SelectInput, AppSwitch, Icons, Tooltip, InputField } from "@/ui";
+import { StepperNavigation, GroupCheckBox, SelectInput, AppSwitch, Tooltip, InputField } from "@/ui";
 
 import FormRow from "@/components/VehicleOnboarding/AvailabilityAndPricing/FormRow";
 import useAvailabilityAndPricingForm from "@/hooks/vehicle/useAvailabilityAndPricingForm";
 import {
-    outskirtsLocationOptions,
     vehicleAvailabilityOptions,
 } from "@/utils/data";
 import { availabilityAndPricingSchema } from "@/utils/validationSchema";
 import { useHttp } from "@/hooks/useHttp";
-import { GeoFenceAreaResponse, BookingTypeResponse } from "@/types";
+import { GeoFenceAreaResponse, BookingTypeResponse, VehicleOnboardingStepsHookProps } from "@/types";
 
-interface AvailabilityAndPricingFormProps {
-    steps: string[];
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-};
+
 
 const AvailabilityAndPricingForm = ({
     steps,
     setCurrentStep,
     currentStep,
-}: AvailabilityAndPricingFormProps) => {
+}: VehicleOnboardingStepsHookProps) => {
     const {
         submitStep4,
         saveStep4,
@@ -369,7 +364,7 @@ const AvailabilityAndPricingForm = ({
                     </div>
 
                     <StepperNavigation
-                        steps={steps}
+                        steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={() => {

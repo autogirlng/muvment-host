@@ -10,18 +10,18 @@ import {
     BasicVehicleInformationValues,
     ErrorResponse,
     VehicleInformation,
-    VehicleInformationResponse
+    VehicleInformationResponse, 
+    VehicleInfoState, 
+    VehicleMakeTypeResponse, 
+    VehicleModelResponse, 
+    VehicleOnboardingStepsHookProps
 } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useHttp } from "@/hooks/useHttp";
 
-export default function useBasicInformationForm({
-    currentStep,
-    setCurrentStep,
-}: {
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-}) {
+
+
+export default function useBasicInformationForm({currentStep,setCurrentStep}:VehicleOnboardingStepsHookProps) {
     const http = useHttp();
     const router = useRouter();
 
@@ -29,18 +29,57 @@ export default function useBasicInformationForm({
 
     const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
     const [searchAddressQuery, setSearchAddressQuery] = useState("");
+    const [vehicleOptions, setVehicleOptions] = useState<VehicleInfoState>({
+        vehicleTypes: [],
+        vehicleMakes: [],
+        vehicleModels: []
+    })
+    const fetchVehicleOptions = async () => {
+            const [vehicleTypesRes, vehicleMakesRes, vehicleModelRes] = await Promise.all([
+                http.get<VehicleMakeTypeResponse>("/v1/public/vehicle-types"),
+                http.get<VehicleMakeTypeResponse>("/v1/public/vehicle-makes"),
+                http.get<VehicleModelResponse>("/v1/public/vehicle-models")
+            ]);
+
+            const vehicleTypes = vehicleTypesRes?.data.map((type) => ({
+                option: type.name,
+                value: type.id
+            })) ?? []
+    
+            const vehicleMakes = vehicleMakesRes?.data.map((make) => ({
+                option: make.name,
+                value: make.id
+            })) ?? []
+    
+            const vehicleModels = vehicleModelRes?.data.map((model) => ({
+                option: model.name,
+                value: model.id
+            })) ?? []
+            setVehicleOptions({
+                vehicleTypes,
+                vehicleMakes,
+                vehicleModels
+            })
+    
+    
+        }
+        useEffect(() => {
+            fetchVehicleOptions()
+        }, [])
+
     const [googlePlaces, setGooglePlaces] = useState<
         { formattedAddress: string,
          location:{latitude:number, longitude:number}
          }[]
     >([]);
+
     const [searchAddressError, setSearchAddressError] = useState("");
     const [searchAddressLoading, setSearchAddressLoading] = useState(false);
     const [showAddressList, setShowAddressList] = useState(false);
 
     const initialValues: BasicVehicleInformationValues = {
-        name: vehicle?.listingName || "",
-        city: vehicle?.location || "",
+        name: vehicle?.name || "",
+        city: vehicle?.city || "",
         address: vehicle?.address || "",
         latitude:0, 
         longitude:0, 
@@ -48,8 +87,8 @@ export default function useBasicInformationForm({
         vehicleModelId:"", 
         vehicleTypeId:"", 
         yearOfRelease: vehicle?.yearOfRelease || 0,
-     hasInsurance:
-            vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
+         hasInsurance:
+         vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
                 ? ""
                 : vehicle?.hasInsurance
                     ? "yes"
@@ -164,5 +203,6 @@ export default function useBasicInformationForm({
         setSearchAddressQuery,
         showAddressList,
         setShowAddressList,
+        vehicleOptions
     };
 }

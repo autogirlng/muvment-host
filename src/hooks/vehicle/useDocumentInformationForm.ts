@@ -33,13 +33,13 @@ const [vehicleId, setVehicleId] = useState<string>("")
     setVehicleId(id)
     }, [])
     const initialValues: DocumentVehicleInformationValues = {
-        authorizationLetter: vehicle?.VehicleDocument?.authorizationLetter ?? "",
-        insuranceCertificate: vehicle?.VehicleDocument?.insuranceCertificate ?? "",
-        maintenanceHistory: vehicle?.VehicleDocument?.maintenanceHistory ?? "",
-        proofOfOwnership: vehicle?.VehicleDocument?.proofOfOwnership ?? "",
+        authorizationLetter: "",
+        insuranceCertificate:  "",
+        maintenanceHistory: "",
+        proofOfOwnership: "",
        inspectionReport:
-            vehicle?.VehicleDocument?.inspectionReport ?? "",
-        vehicleRegistration: vehicle?.VehicleDocument?.vehicleRegistration ?? "",
+             "",
+        vehicleRegistration:  "",
     };
 
     const saveStep5 = useMutation({

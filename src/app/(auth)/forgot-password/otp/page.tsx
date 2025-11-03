@@ -19,13 +19,18 @@ export default function ResetPasswordPage() {
     const { verifyEmailOnForgotPassword, resendVerifyEmailToken } = useAuth();
     const [otp, setOtp] = useState<string>("");
 
+
     return (
         <OtpVerification
             verifyOtp={() => {
-                verifyEmailOnForgotPassword.mutate({
-                    email: email as string,
-                    token: otp,
-                });
+                // verifyEmailOnForgotPassword.mutate({
+                //     email: email as string,
+                //     token: otp,
+                // });
+
+                router.push(
+                    `/reset-password?email=${encodeURIComponent(email ?? "")}&token=${encodeURIComponent(otp)}`
+                )
             }}
             isVerifyOtpLoading={verifyEmailOnForgotPassword.isPending}
             isResendOtpLoading={resendVerifyEmailToken.isPending}

@@ -44,7 +44,8 @@ export const useHttp = () => {
         if (error instanceof AxiosError) {
           if (handleAuthError(error)) return;
           handleErrors(error);
-          throw new Error(error.response?.data.message);
+          // throw new Error(error.response?.data.message);
+          
         }
         throw error;
       }

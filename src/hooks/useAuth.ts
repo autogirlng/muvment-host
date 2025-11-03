@@ -166,12 +166,14 @@ export default function useAuth() {
 
   const resetPassword = useMutation({
     mutationFn: (values: SetNewPasswordValues) => {
-      const { password_checks, password, ...submissionValues } = values;
+      console.log(values)
+      const { otp, password } = values;
 
-      return http.post("/api/auth/reset-password", {
-        ...submissionValues,
-        newPassword: values.password,
-        token: forgotPasswordOtp,
+      return http.post("/v1/auth/reset-password", 
+        {
+        email:values.email,
+        newPassword: password,
+        otp,
       });
     },
 

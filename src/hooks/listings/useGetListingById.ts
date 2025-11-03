@@ -1,6 +1,6 @@
 import { useHttp } from "@/hooks/useHttp";
 import { useAppSelector } from "@/lib/hooks";
-import { EarningsStatistics, ListingInformation } from "@/types";
+import { VehicleInformationResponse, VehicleInformationStepper } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
 
@@ -12,46 +12,41 @@ export default function useGetListingById({ id }: { id: string }) {
     queryKey: ["getListingById", id],
 
     queryFn: async () =>
-      http.get<ListingInformation>(`/api/listings/details/${id}`),
+      http.get<VehicleInformationResponse>(`/v1/vehicles/${id}`),
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });
-
+  const vehicleData = data?.data
+console.log(vehicleData)
   const vehicleDetails = useMemo(() => {
     if (data) {
       return [
-        { make: data?.make || "N/A" },
-        { model: data?.model || "N/A" },
-        { year: data?.yearOfRelease || "N/A" },
-        { colour: data?.vehicleColor || "N/A" },
-        { city: data?.location || "N/A" },
-        { vehicleType: data?.vehicleType || "N/A" },
-        { seatingCapacity: data?.numberOfSeats || "N/A" },
+        // { make: vehicleData. || "N/A" },
+        // { model: data?.data. || "N/A" },
+        { year: vehicleData?.yearOfRelease || "N/A" },
+        // { colour: data?.vehicleColor || "N/A" },
+        { city: vehicleData?.city || "N/A" },
+        // { vehicleType: vehicleData. || "N/A" },
+        { seatingCapacity: vehicleData?.numberOfSeats || "N/A" },
       ];
     }
     return [{}];
   }, [data]);
 
   const vehicleImages = useMemo(() => {
-    if (data) {
-      return [
-        data?.VehicleImage?.frontView,
-        data?.VehicleImage?.backView,
-        data?.VehicleImage?.sideView1,
-        data?.VehicleImage?.sideView2,
-        data?.VehicleImage?.interior,
-        data?.VehicleImage?.other,
-      ];
-    }
-    console.log("data images", data);
-    return [];
+    return vehicleData?.photos.map((photo)=>{
+      return photo.cloudinaryUrl
+    })
+    
   }, [data]);
+
 
   return {
     listingDetail: {
-      ...data,
-      statistics: {} as EarningsStatistics,
-    } as ListingInformation,
+      ...vehicleData,
+      status:vehicleData?.status
+      // statistics: {} as EarningsStatistics,
+    } as VehicleInformationStepper,
     isError,
     isLoading,
     isSuccess,

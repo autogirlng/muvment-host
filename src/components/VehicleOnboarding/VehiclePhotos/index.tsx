@@ -1,16 +1,12 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { TipsPopup } from "@/ui";
 import Tips from "@/components/VehicleOnboarding/Tips";
 import VehiclePhotosForm from "@/components/VehicleOnboarding/VehiclePhotos/VehiclePhotosForm";
 import VehiclePhotosTips from "@/components/VehicleOnboarding/VehiclePhotos/VehiclePhotosTips";
-import { VehiclePhotosProps } from "@/components/VehicleOnboarding/props";
+import { VehicleOnboardingStepsHookProps } from "@/types"
 
-const VehiclePhotos = ({ steps, currentStep, setCurrentStep }: VehiclePhotosProps) => {
+const VehiclePhotos = ({ steps, currentStep, setCurrentStep }: VehicleOnboardingStepsHookProps) => {
   const [photoTipIndex, setPhotoTipIndex] = useState<number>(0);
-
-  useEffect(() => {
-    console.log(photoTipIndex);
-  }, [photoTipIndex]);
 
   return (
     <div className="space-y-[52px]">

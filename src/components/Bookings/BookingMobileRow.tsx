@@ -4,6 +4,8 @@ import { ReactNode } from "react";
 import {
     BookingBadgeStatus,
     BookingInformation,
+    BookingSegmentContent,
+    BookingStatus,
     TransactionStatus,
 } from "@/types";
 import { Popup, BookingTableBadge, TransactionBadge, MoreButton } from "@/ui";
@@ -39,7 +41,7 @@ const TableCell = ({
     </div>
 );
 
-const BookingMobileRow = ({ items }: { items: BookingInformation }) => {
+const BookingMobileRow = ({ items }: { items: BookingSegmentContent }) => {
     const {
         openAcceptModal,
         handleAcceptModal,
@@ -48,7 +50,7 @@ const BookingMobileRow = ({ items }: { items: BookingInformation }) => {
         openDeclineModal,
         handleDeclineModal,
         declineBooking,
-    } = useBookingActions({ id: items.id });
+    } = useBookingActions({ id: items.bookingId });
     return (
         <div className="space-y-3 pt-5 pb-3 border-b border-grey-300">
             <Popup
@@ -57,40 +59,39 @@ const BookingMobileRow = ({ items }: { items: BookingInformation }) => {
                     <>
                         <p className="!text-xs 3xl:!text-base !font-semibold">Actions</p>
                         <ul className="space-y-2 *:py-2">
-                            {items.bookingStatus !== BookingBadgeStatus.APPROVED &&
-                                items.bookingStatus !== BookingBadgeStatus.ACCEPTED && (
-                                    <>
-                                        <li>
-                                            <DeclineTrip
-                                                openModal={openDeclineModal}
-                                                handleModal={() => handleDeclineModal()}
-                                                isLoading={declineBooking.isPending}
-                                                handleAction={() => declineBooking.mutate()}
-                                                trigger={
-                                                    <button className="!text-xs 3xl:!text-base ">
-                                                        Decline Trip
-                                                    </button>
-                                                }
-                                            />
-                                        </li>
-                                        <li>
-                                            <AcceptTrip
-                                                openModal={openAcceptModal}
-                                                handleModal={() => handleAcceptModal()}
-                                                isLoading={acceptBooking.isPending}
-                                                handleAction={() => acceptBooking.mutate()}
-                                                trigger={
-                                                    <button className="!text-xs 3xl:!text-base ">
-                                                        Accept Trip
-                                                    </button>
-                                                }
-                                            />
-                                        </li>
-                                    </>
-                                )}
+                            {items.bookingStatus !== BookingStatus.CONFIRMED && (
+                                <>
+                                    <li>
+                                        <DeclineTrip
+                                            openModal={openDeclineModal}
+                                            handleModal={() => handleDeclineModal()}
+                                            isLoading={declineBooking.isPending}
+                                            handleAction={() => declineBooking.mutate()}
+                                            trigger={
+                                                <button className="!text-xs 3xl:!text-base ">
+                                                    Decline Trip
+                                                </button>
+                                            }
+                                        />
+                                    </li>
+                                    <li>
+                                        <AcceptTrip
+                                            openModal={openAcceptModal}
+                                            handleModal={() => handleAcceptModal()}
+                                            isLoading={acceptBooking.isPending}
+                                            handleAction={() => acceptBooking.mutate()}
+                                            trigger={
+                                                <button className="!text-xs 3xl:!text-base ">
+                                                    Accept Trip
+                                                </button>
+                                            }
+                                        />
+                                    </li>
+                                </>
+                            )}
                             <li>
                                 <Link
-                                    href={`/bookings/${items?.id}`}
+                                    href={`/bookings/${items?.bookingId}`}
                                     className="!text-xs 3xl:!text-base"
                                 >
                                     View Booking Details
@@ -100,23 +101,22 @@ const BookingMobileRow = ({ items }: { items: BookingInformation }) => {
                     </>
                 }
             />
-            <TableCell title="Guest Name" content={items?.guestName} />
-            <TableCell title="Booking ID" content={items?.id} />
+            <TableCell title="Guest Name" content={items?.customerName} />
+            <TableCell title="Booking ID" content={items?.bookingId} />
             <TableCell title="Booking Type" content={items?.bookingType} />
             <TableCell title="Duration" content={`${items?.duration} days`} />
-            <TableCell title="Vehicle" content={items?.vehicle?.listingName} />
+            <TableCell title="Vehicle" content={items?.vehicleName} />
             <TableCell
                 title="Start Date"
                 content={
-                    items?.startDate
-                        ? format(new Date(items?.startDate), "MMM d ,yyyy")
-                        : ""
+                    ""
                 }
             />
             <TableCell
                 title="End Date"
                 content={
-                    items?.endDate ? format(new Date(items?.endDate), "MMM d ,yyyy") : ""
+                    // items?.endDate ? format(new Date(items?.endDate), "MMM d ,yyyy") : ""
+                    ""
                 }
             />
 
@@ -128,7 +128,7 @@ const BookingMobileRow = ({ items }: { items: BookingInformation }) => {
             />
             <TableCell
                 title="Price"
-                content={`${items?.currencyCode} ${items?.amount}`}
+                content={`NGN ${items?.price}`}
             />
         </div>
     );

@@ -1,12 +1,12 @@
 import cn from "classnames";
 import {
     BookingBadgeProps,
-    VehicleListingBadgeProps,
     ListingBadgeProps,
     TransactionBadgeProps,
     PaymentBadgeProps,
     ReferralBadgeProps
 } from "./props";
+import { VehicleStatus } from "@/types";
 
 
 export const BookingTableBadge = ({ status }: BookingBadgeProps) => {
@@ -54,13 +54,13 @@ export const BookingBadge = ({ status }: BookingBadgeProps) => {
 };
 
 
-export const VehicleListingBadge = ({ status }: VehicleListingBadgeProps) => {
+export const VehicleListingBadge = ({ status }: { status: VehicleStatus }) => {
     const badgeColor =
-        status === "booked" || status === "active"
+        status === VehicleStatus.BOOKED || status === VehicleStatus.APPROVED
             ? "bg-success-100 text-success-600"
-            : status === "pending" || status === "maintenance"
+            : status === VehicleStatus.IN_REVIEW || status === VehicleStatus.IN_MAINTENANCE
                 ? "bg-warning-75 text-warning-500"
-                : status === "unavailable" || status === "inactive"
+                : status === VehicleStatus.UNAVAILABLE
                     ? "bg-error-100 text-error-900"
                     : "bg-grey-300 text-grey-500";
 

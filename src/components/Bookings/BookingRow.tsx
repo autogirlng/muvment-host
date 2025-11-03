@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { BookingBadgeStatus, BookingInformation } from "@/types";
+import { BookingBadgeStatus, BookingInformation, BookingSegmentContent, BookingStatus } from "@/types";
 import { Popup, Icons } from "@/ui";
 import TableCell from "@/components/Table/TableCell";
 import DeclineTrip from "@/components/Bookings/modals/DeclineTrip";
 import AcceptTrip from "@/components/Bookings/modals/AcceptTrip";
 import useBookingActions from "@/hooks/bookings/useBookingActions";
 
-const BookingRow = ({ items }: { items: BookingInformation }) => {
+const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
     const {
         openAcceptModal,
         handleAcceptModal,
@@ -16,28 +16,27 @@ const BookingRow = ({ items }: { items: BookingInformation }) => {
         openDeclineModal,
         handleDeclineModal,
         declineBooking,
-    } = useBookingActions({ id: items.id });
+    } = useBookingActions({ id: items.bookingId });
     return (
         <tr>
-            <TableCell content={items?.vehicle?.listingName} />
-            <TableCell content={items?.guestName} className="text-grey-900" />
-            <TableCell content={items?.id} />
+            <TableCell content={items?.vehicleName} />
+            <TableCell content={items?.customerName} className="text-grey-900" />
+            <TableCell content={items?.bookingId} />
             <TableCell content={items?.bookingType} />
             <TableCell content={`${items?.duration} days`} />
-            <TableCell
+            {/* <TableCell
                 content={
-                    items?.startDate
-                        ? format(new Date(items?.startDate), "MMM d ,yyyy")
-                        : ""
+                    items?.bookingType
+
                 }
-            />
-            <TableCell
+            /> */}
+            {/* <TableCell
                 content={
                     items?.endDate ? format(new Date(items?.endDate), "MMM d ,yyyy") : ""
                 }
-            />
+            /> */}
             <TableCell content={items?.bookingStatus} isBadge type="booking" />
-            <TableCell content={`${items?.currencyCode} ${items?.amount}`} />
+            <TableCell content={`NGN ${items?.price}`} />
             <td>
                 <Popup
                     trigger={
@@ -53,8 +52,8 @@ const BookingRow = ({ items }: { items: BookingInformation }) => {
                         <>
                             <p className="!text-xs 3xl:!text-base !font-semibold">Actions</p>
                             <ul className="space-y-2 *:py-2">
-                                {items.bookingStatus !== BookingBadgeStatus.APPROVED &&
-                                    items.bookingStatus !== BookingBadgeStatus.ACCEPTED && (
+                                {items.bookingStatus !== BookingStatus.CONFIRMED &&
+                                    (
                                         <>
                                             <li>
                                                 <DeclineTrip
@@ -86,7 +85,7 @@ const BookingRow = ({ items }: { items: BookingInformation }) => {
                                     )}
                                 <li>
                                     <Link
-                                        href={`/bookings/${items?.id}`}
+                                        href={`/bookings/${items?.bookingId}`}
                                         className="!text-xs 3xl:!text-base"
                                     >
                                         View Booking Details

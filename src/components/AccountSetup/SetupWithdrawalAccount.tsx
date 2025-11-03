@@ -1,7 +1,7 @@
 import { Form, Formik } from "formik";
 import { withdrawalAccountValues } from "@/utils/initialValues";
 import { withdrawalAccountSchema } from "@/utils/validationSchema";
-import { BankProp } from "@/types";
+import { Banks } from "@/types";
 import useSetupWithdrawalAccount from "@/hooks/useSetupWithdrawalAccount";
 import { Button, InputField, SelectSearchInput, Icons } from "@/ui";
 
@@ -25,7 +25,6 @@ export default function SetupWithdrawalAccount() {
         <Formik
             initialValues={withdrawalAccountValues}
             onSubmit={async (values, { setSubmitting }) => {
-                console.log(values);
                 setLoading(true);
                 setCredentialsError(false);
 
@@ -63,21 +62,22 @@ export default function SetupWithdrawalAccount() {
 
                 return (
                     <Form className="space-y-6 max-w-[375px]">
-                        {/* <SelectSearchInput
+
+                        <SelectSearchInput
                             placeholder="Select Bank"
                             variant="outlined"
                             label="Bank"
-                            id="bank"
+                            id="bankName"
                             banks={bankCodes}
                             isLoading={isLoading}
-                            value={values.bank}
-                            onChange={(bank: BankProp) => {
-                                setFieldTouched("bank", true);
-                                setFieldValue("bank", bank);
-                                setFieldValue("bankCode", bank?.code);
+                            value={{ name: values.bankName, code: values.bankCode }}
+                            onChange={(bank: Banks | null) => {
+                                setFieldTouched("bankName", true);
+                                setFieldValue("bankName", bank?.name || "");
+                                setFieldValue("bankCode", bank?.code || "");
                             }}
                             error={errors.bankCode && touched.bankCode ? errors.bankCode : ""}
-                        /> */}
+                        />
 
                         <div className="space-y-4">
                             <InputField
