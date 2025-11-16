@@ -276,6 +276,28 @@ const BasicVehicleInformationForm = ({
                             tooltipTitle="Does your vehicle have a tracker?"
                             tooltipDescription="Specify whether your vehicle is equipped with a GPS tracker. This feature is useful for safety, to track the vehicle's location when rented."
                         />
+
+                    </FormRow>
+                    <FormRow>
+
+                        <SelectInput
+                            id="isVehicleUpgraded"
+                            label="Is your vehicle upgraded?"
+                            placeholder="Select an option"
+                            variant="outlined"
+                            options={yesOrNoOptions}
+                            value={values.isVehicleUpgraded}
+                            onChange={(value: string) => {
+                                setFieldTouched("isVehicleUpgraded", true);
+                                setFieldValue("isVehicleUpgraded", value);
+                            }}
+                            error={
+                                errors.isVehicleUpgraded && touched.isVehicleUpgraded ? errors.isVehicleUpgraded : ""
+                            }
+                            info
+                            tooltipTitle="Is your vehicle upgraded"
+                            tooltipDescription="Specify whether your vehicle is upgraded from a different model or year."
+                        />
                     </FormRow>
                     <StepperNavigation
                         steps={steps ?? []}

@@ -119,6 +119,7 @@ export const basicVehicleInformationSchema = object().shape({
   yearOfRelease: string().required("Please select year of release"),
   hasInsurance: string().required("Please select insurance status"),
   hasTracker: string().required("Please select tracker status"),
+  isVehicleUpgraded: string().required("Please select upgraded status"),
 });
 
 export const addtionalVehicleInformationSchema = object().shape({

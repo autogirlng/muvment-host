@@ -3,12 +3,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { formatNumberWithCommas, keyAndValueInAChip } from "@/utils/functions";
-import { MappedInformation, VehicleInformation, HostVehicleListingContent, VehicleStatus } from "@/types";
+import { MappedInformation, VehicleStatus, VehicleInformationStepper } from "@/types";
 import { VehicleListingBadge, Popup, VerticalDivider, Chip, Icons, BlurredDialog } from "@/ui";
 import DeleteListing from "@/components/Listings/modals/DeleteListing";
 import { sedan } from "@/ui/assets";
 
-type ListingCardProps = { content: HostVehicleListingContent };
+type ListingCardProps = { content: VehicleInformationStepper };
 
 const initialExtras = [
     { name: "Fuel Included", icon: Icons.ic_fuel_station, id: "fuelProvided" },
@@ -41,12 +41,12 @@ export default function ListingCard(listing: ListingCardProps) {
                 if (extra.id === "fuelProvided") {
                     return {
                         ...extra,
-                        // status: listing?.tripSettings?.fuelProvided || false,
+                        status: listing?.content.willProvideFuel || false,
                     };
                 } else if (extra.id === "provideDriver") {
                     return {
                         ...extra,
-                        // status: listing?.tripSettings?.provideDriver || false,
+                        status: listing?.content.willProvideDriver || false,
                     };
                 }
                 return extra;
@@ -62,15 +62,18 @@ export default function ListingCard(listing: ListingCardProps) {
 
             <div className="h-[200px] w-full md:w-[200px]">
                 <Image
-                    src={sedan}
+                    src={
+                        listing?.content.photos.length > 0 && listing.content.status !== VehicleStatus.DRAFT
+                            ? listing?.content.photos[0].cloudinaryUrl
+                            : sedan
+                    }
                     alt=""
                     width={200}
                     height={200}
                     className={cn(
                         "h-full w-full rounded-2xl",
 
-                        // listing?.VehicleImage?.frontView ? "object-cover" : "object-contain"
-                        "object-contain"
+                        listing?.content.photos.length > 0 ? "object-cover" : "object-contain"
                     )}
                 />
             </div>
@@ -87,12 +90,12 @@ export default function ListingCard(listing: ListingCardProps) {
                         <VehicleListingBadge status={
                             listing?.content.status} />
                     </div>
-                    {/* {listing?.content.status !== VehicleReviewStatus.DRAFT && (
+                    {(listing?.content.status === VehicleStatus.APPROVED || listing?.content.status === VehicleStatus.IN_REVIEW) && (
                         <p className="text-base 3xl:text-xl !font-medium text-grey-700 md:text-primary-500">
-                            NGN {formatNumberWithCommas(listing?.pricing?.dailyRate?.value)}
+                            NGN {formatNumberWithCommas(listing?.content.pricing[0]?.price ?? "_")}
                             /day
                         </p>
-                    )} */}
+                    )}
                     <p className="uppercase text-xs !font-semibold hidden md:block">
                         Vehicle details
                     </p>
