@@ -176,7 +176,9 @@ export const assignNewDriverFormValidationSchema = object().shape({
       const { country } = this.parent;
       return validatePhoneNumber(val, country);
     }),
-  country: string().required("Please enter your country code"),
+  driverIdentifier: string().required("Please enter driver unique identifier"),
+    
+  // country: string().required("Please enter your country code"),
 });
 
 export const profileFormValidationSchema = object().shape({

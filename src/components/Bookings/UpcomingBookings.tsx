@@ -20,7 +20,7 @@ export default function UpcomingBookings() {
         <FullPageSpinner />
       ) : isError ? (
         <p>something went wrong</p>
-      ) : (
+      ) : upcomingBookings.length === 0 ? <p>No Upcoming Bookings</p> : (
         // <BookingAnalyticsTable
         //   items={upcomingBookings || []}
         //   emptyStateTitle="No Upcoming Bookings"

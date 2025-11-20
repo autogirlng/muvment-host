@@ -82,7 +82,7 @@ export default function VehicleInformation({ listingDetails }: VehicleInformatio
                     {listingDetails?.discounts?.map((item, index) => (
                         <PricingSection
                             key={index}
-                            text={`_ Booking Type`}
+                            text={``}
                             value={`${item?.percentage || "-"}% off`}
                         />
                     ))}

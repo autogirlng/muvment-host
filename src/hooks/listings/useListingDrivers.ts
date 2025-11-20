@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppSelector } from "@/lib/hooks";
 import { handleErrors } from "@/utils/functions";
-import { AssignNewDriver, ErrorResponse } from "@/types";
+import { AssignNewDriver, ErrorResponse, AllDrivers } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 
 export default function useListingDrivers(id: string) {
@@ -18,22 +18,21 @@ export default function useListingDrivers(id: string) {
     isError,
     isLoading,
   } = useQuery({
-    queryKey: ["getAssignedDrivers",user?.data.userId, id],
+    queryKey: ["myDrivers",user?.data.userId, id],
 
-    queryFn: () => http.get<AssignNewDriver[]>(`/api/drivers/vehicle/${id}`),
+    queryFn: () => http.get<AllDrivers>(`/v1/drivers/my-drivers`),
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });
+  console.log(drivers)
 
   const assignNewDriver = useMutation({
-    mutationFn: (values: AssignNewDriver) =>
-      http.post<AssignNewDriver>("/api/drivers", values),
-
+    mutationFn: (values: AssignNewDriver) => http.post<AssignNewDriver>(`/v1/drivers` , values),
     onSuccess: (data) => {
       console.log("Assign New Driver successful", data);
 
       queryClient.setQueryData(
-        ["getAssignedDrivers", user?.data.userId, id],
+        ["assignDriver", user?.data.userId, id],
         (oldData: AssignNewDriver[] | undefined) => {
           // If there's no existing data, return array with new driver
           if (!oldData) return [data];

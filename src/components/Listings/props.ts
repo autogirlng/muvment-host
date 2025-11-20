@@ -50,8 +50,8 @@ export interface BookingDataProps  {
 
 export interface BookingCardProps {
     guestName: string;
-    startDate: string;
-    endDate: string;
+    duration: string;
+    status: string;
     active: boolean;
 }
 

@@ -2,7 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { useAppSelector } from "@/lib/hooks";
-import { BookingsDataType } from "@/types";
+import { BookingsDataType, UpcomingBookings } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 
 
@@ -22,8 +22,8 @@ export default function useUpcomingBookings({
     queryKey: ["getUpcomingBookings",user?.data.userId, currentPage],
 
     queryFn: async () =>
-      http.get<BookingsDataType>(
-        `/v1/bookings/upcoming-booking/${user?.data.userId}`
+      http.get<UpcomingBookings>(
+        `/v1/bookings/upcoming-booking`
       ),
     enabled: !!user?.data.userId,
     retry: false,
@@ -32,8 +32,8 @@ export default function useUpcomingBookings({
 
 
   return {
-    upcomingBookings: data?.data || [],
-    totalCount: data?.totalCount || 0,
+    upcomingBookings: data?.data.content || [],
+    totalCount: data?.data.totalElements || 0,
     isError,
     isLoading,
     isSuccess,
