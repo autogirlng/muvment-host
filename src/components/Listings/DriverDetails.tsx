@@ -38,9 +38,9 @@ export default function DriversDetails({ id }: DriverDetailsProps) {
                 />
             </div>
 
-            {drivers?.map((driver, index) => (
+            {/* {drivers?.map((driver, index) => (
                 <DriverCard key={index} driver={driver} />
-            ))}
+            ))} */}
         </div>
     );
 }

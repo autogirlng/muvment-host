@@ -1,33 +1,36 @@
 import cn from "classnames";
 import DashboardSectionTitle from "@/components/DashBoard/SectionTitle";
 import EmptyState from "@/components/EmptyState";
-import useVehicleUpcomingBooking from "@/hooks/listings/useVehicleUpcomingBooking";
+import useVehicleUpcomingBooking from "@/hooks/listings/useVehicleBooking";
 import { Spinner, Icons } from "@/ui";
 import { ListingDetailsUpcomingBookingsProps, BookingCardProps, BookingDataProps } from "./props";
 
 
 export default function ListingDetailsUpcomingBookings({ vehicleId }: ListingDetailsUpcomingBookingsProps) {
 
-    const { upcomingBookings, isError, error, isLoading } = useVehicleUpcomingBooking(vehicleId);
+    const { vehicleBookings, isError, error, isLoading } = useVehicleUpcomingBooking(vehicleId);
 
     return (
         <div className="hidden lg:block bg-grey-50 w-full max-w-[320px] xl:max-w-[360px] 3xl:max-w-[500px] absolute right-0 top-[86px] min-h-screen h-auto px-4 py-[86px]">
-            <DashboardSectionTitle icon={Icons.ic_ticket} title="Upcoming Bookings" />
+            <DashboardSectionTitle icon={Icons.ic_ticket} title="Bookings" />
 
             <div className="space-y-2">
+                {
+
+                }
                 {isLoading ? (
                     <Spinner />
                 ) : isError ? (
                     <p>something went wrong</p>
-                ) : upcomingBookings?.length > 0 ? (
-                    upcomingBookings?.map((data, index) => {
+                ) : vehicleBookings?.length > 0 ? (
+                    vehicleBookings?.map((data, index) => {
                         return (
                             <BookingCard
                                 key={index}
                                 active={index === 0}
-                                guestName={data.guestName}
-                                startDate={data.startDate}
-                                endDate={data.endDate}
+                                guestName={data.customerName}
+                                duration={data.duration}
+                                status={data.bookingStatus}
                             />
                         );
                     })
@@ -45,8 +48,8 @@ export default function ListingDetailsUpcomingBookings({ vehicleId }: ListingDet
 
 const BookingCard = ({
     guestName,
-    startDate,
-    endDate,
+    duration,
+    status,
     active,
 }: BookingCardProps) => (
     <div
@@ -61,8 +64,8 @@ const BookingCard = ({
 
         <div className="flex justify-between items-center gap-3">
             <BookingData title="Guest Name" value={guestName} />
-            <BookingData title="Start date" value={startDate} />
-            <BookingData title="End date" value={endDate} />
+            <BookingData title="Duration" value={duration} />
+            <BookingData title="Booking Status" value={status} />
         </div>
     </div>
 );

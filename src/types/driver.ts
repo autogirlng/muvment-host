@@ -1,3 +1,5 @@
+import {BaseResponse} from "@/types"
+
 export enum DriverStatus {
   ASSIGNED = "ASSIGNED",
   UNASSIGNED = "UNASSIGNED",
@@ -18,9 +20,35 @@ export interface AssignedDriver {
 
 
 export interface AssignNewDriver {
-  vehicleId: string;
+  driverIdentifier: string;
   // bookingId: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
+}
+
+export interface DriverContent {
+      
+        id: string;
+        driverIdentifier: string;
+        fullName: string;
+        phoneNumber: string;
+        ownerType: string;
+        ownerName: string;
+        assignedVehicleId: string;
+        assignedVehicleIdentifier: string;
+        assignedVehicleName: string;
+        profilePictureUrl: string;
+        active: boolean;
+      
+}
+
+export interface AllDrivers extends BaseResponse{
+  data: {
+    content: DriverContent[];
+    currentPage: number,
+    pageSize:number,
+    totalItems: number,
+    totalPages: number
+  }
 }
