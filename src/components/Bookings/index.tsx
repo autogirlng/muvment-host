@@ -29,14 +29,14 @@ export default function Bookings() {
     }, [search, debouncedBookingSearch]);
 
     const tabs = [
-        // {
-        //     name: "Upcoming",
-        //     value: "tab1",
-        //     content: <UpcomingBookings />,
-        // },
+        {
+            name: "Upcoming",
+            value: "tab1",
+            content: <UpcomingBookings />,
+        },
         {
             name: "History",
-            value: "tab1",
+            value: "tab2",
             content: <BookingHistory search={debouncedSearch} filters={filters} />,
         },
     ];

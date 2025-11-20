@@ -87,8 +87,8 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
         vehicleModelId:"", 
         vehicleTypeId:"", 
         yearOfRelease: vehicle?.yearOfRelease || 0,
-         hasInsurance:
-         vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
+        hasInsurance:
+        vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
                 ? ""
                 : vehicle?.hasInsurance
                     ? "yes"
@@ -97,6 +97,12 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
             vehicle?.hasTracker === undefined || vehicle?.hasTracker === null
                 ? ""
                 : vehicle?.hasTracker
+                    ? "yes"
+                    : "no",
+        isVehicleUpgraded:
+            vehicle?.isVehicleUpgraded === undefined || vehicle?.isVehicleUpgraded === null
+                ? ""
+                : vehicle?.isVehicleUpgraded
                     ? "yes"
                     : "no",
     };
@@ -151,6 +157,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
                 ...values,
                 hasTracker: values.hasTracker === "yes",
                 hasInsurance: values.hasInsurance === "yes",
+                isVehicleUpgraded:values.isVehicleUpgraded === "yes"
                 // ...(vehicle?.id && { id: vehicle.id }),
             }),
 
@@ -160,7 +167,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
                 // @ts-ignore
                 updateVehicleInformation({ ...vehicle, ...data })
             );
-            router.push("/listings");
+            // router.push("/listings");
         },
 
         onError: (error: AxiosError<ErrorResponse>) =>
@@ -173,6 +180,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
                 ...values,
                hasTracker: values.hasTracker === "yes",
                 hasInsurance: values.hasInsurance === "yes",
+                isVehicleUpgraded:values.isVehicleUpgraded === "yes"
                 // ...(vehicle?.id && { id: vehicle.id }),
             }),
 

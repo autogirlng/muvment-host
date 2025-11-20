@@ -74,7 +74,7 @@ export interface HostVehicleListingContent {
 
 export interface HostVehicleListings extends BaseResponse {
   data: {
-    content:HostVehicleListingContent[],
+    content:VehicleInformationStepper[],
     currentPage: number,
     pageSize: number,
     totalItems: number,
@@ -107,6 +107,7 @@ export interface BasicVehicleInformationValues {
   yearOfRelease: number,
   hasInsurance: string,
   hasTracker: string
+  isVehicleUpgraded:string
 }
 
 
@@ -188,6 +189,7 @@ export interface VehicleInformation extends BaseResponse {
     extraHourlyRate: number,
     outskirtFee: number,
     extremeFee: number,
+    isVehicleUpgraded:boolean
 
  
 }
@@ -197,6 +199,15 @@ discountDurationId: string,
   percentage: number
 }
 
+export interface VehiclePricing {
+
+      bookingTypeId: string,
+      bookingTypeName: string,
+      price: number,
+      platformFeeType: string,
+      id: string
+    
+}
 
 export interface VehicleInformationStepper {
     id:string,
@@ -220,7 +231,7 @@ export interface VehicleInformationStepper {
     documents: any[],
     features: VehicleFeatures[],
     supportedBookingTypes: BookingTypeData[],
-    pricing: any[],
+    pricing: VehiclePricing[],
     discounts: VehicleDiscounts[],
     outOfBoundsAreaIds: string[]
     licensePlateNumber: string,

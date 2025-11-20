@@ -17,16 +17,18 @@ export default function useUpcomingBookings({
   const http = useHttp();
   const { user } = useAppSelector((state) => state.user);
 
+
   const { data, isError, isLoading, isSuccess } = useQuery({
     queryKey: ["getUpcomingBookings",user?.data.userId, currentPage],
 
     queryFn: async () =>
       http.get<BookingsDataType>(
-        `/api/bookings/host/upcoming/${user?.data.userId}?page=${currentPage}&limit=${pageLimit}`
+        `/v1/bookings/upcoming-booking/${user?.data.userId}`
       ),
     enabled: !!user?.data.userId,
     retry: false,
   });
+  console.log(data)
 
 
   return {
