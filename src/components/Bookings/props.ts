@@ -11,7 +11,7 @@ export interface BookingInfoCardsProps  {
     linkText?: string;
     copyText?: string;
     children?: ReactNode;
-    status?: BookingBadgeStatus;
+    status?: BookingBadgeStatus | string;
 };
 
 export interface PopupContentProps {

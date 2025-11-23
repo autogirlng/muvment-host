@@ -73,18 +73,18 @@ export default function BookingDetailPage({
             chipTitle="Booking Dates"
             chipData={bookingDates as MappedInformation[]}
             nameTitle="Booking ID"
-            nameValue={bookingDetail?.id || ""}
-            copyText={bookingDetail?.id || ""}
-            status={bookingDetail?.bookingStatus}
+            nameValue={bookingDetail?.data.bookingId || ""}
+            copyText={bookingDetail?.data.bookingId || ""}
+            status={bookingDetail?.data.bookingStatus || ""}
           >
             <div className="flex items-center gap-8">
               <div className="space-y-2">
                 <p className="text-grey-500 text-sm 3xl:text-base">Amount</p>
                 <p className="text-primary-500 text-4xl 3xl:text-h2">
-                  {`${bookingDetail?.currencyCode} ${bookingDetail?.amount}`}
+                  {`NGN ${bookingDetail?.data.totalPrice}`}
                 </p>
               </div>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <p className="text-grey-500 text-sm 3xl:text-base">
                   Payment Status
                 </p>
@@ -95,7 +95,7 @@ export default function BookingDetailPage({
                     }
                   />
                 </p>
-              </div>
+              </div> */}
             </div>
           </BookingInfoCards>
           <div className="block lg:hidden">
@@ -113,7 +113,7 @@ export default function BookingDetailPage({
               content={
                 <BookingActions
                   bookingStatus={
-                    bookingDetail?.bookingStatus as BookingBadgeStatus
+                    bookingDetail?.data.bookingStatus as BookingBadgeStatus
                   }
                   openReportModal={openReportModal}
                   handleReportModal={handleReportModal}
@@ -136,7 +136,7 @@ export default function BookingDetailPage({
           </div>
           <div className="hidden lg:block">
             <BookingActions
-              bookingStatus={bookingDetail?.bookingStatus as BookingBadgeStatus}
+              bookingStatus={bookingDetail?.data.bookingStatus as BookingBadgeStatus}
               openReportModal={openReportModal}
               handleReportModal={handleReportModal}
               handleReportTrip={() => reportBooking.mutate({ message: report })}
@@ -159,7 +159,7 @@ export default function BookingDetailPage({
           chipTitle="Contact Information"
           chipData={contactInformation as MappedInformation[]}
           nameTitle="Guest Name"
-          nameValue={bookingDetail?.guestName || ""}
+          nameValue={bookingDetail?.data.booker.fullName || ""}
         />
 
         {/* vehicle info */}
@@ -168,8 +168,8 @@ export default function BookingDetailPage({
           chipTitle="Vehicle Details"
           chipData={vehicleDetails as MappedInformation[]}
           nameTitle="Vehicle Requested"
-          nameValue={bookingDetail?.vehicle?.listingName || ""}
-          link={`/listings/${bookingDetail?.vehicleId}`}
+          nameValue={bookingDetail?.data.vehicle.name || ""}
+          link={`/listings/${bookingDetail?.data.vehicle.id}`}
           linkText="View Vehicle"
         />
       </div>

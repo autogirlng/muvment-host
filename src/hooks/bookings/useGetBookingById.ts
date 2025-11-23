@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { useHttp } from "@/hooks/useHttp";
 import { useAppSelector } from "@/lib/hooks";
-import { BookingInformation } from "@/types";
+import { BookingInformation, SingleBookingInformation } from "@/types";
 
 export default function useGetBookingById({ id }: { id?: string }) {
   const http = useHttp();
@@ -13,7 +13,7 @@ export default function useGetBookingById({ id }: { id?: string }) {
     queryKey: ["getBookingById", id],
 
     queryFn: async () =>
-      http.get<BookingInformation>(`/api/bookings/getSingle/${id}`),
+      http.get<SingleBookingInformation>(`/v1/bookings/${id}`),
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });
@@ -21,11 +21,13 @@ export default function useGetBookingById({ id }: { id?: string }) {
   const vehicleDetails = useMemo(() => {
     if (data) {
       return [
-        { make: data?.vehicle?.make || "N/A" },
-        { model: data?.vehicle?.model || "N/A" },
-        { year: data?.vehicle?.yearOfRelease || "N/A" },
-        { colour: data?.vehicle?.vehicleColor || "N/A" },
-        { seatingCapacity: data?.vehicle?.numberOfSeats || "N/A" },
+        // @ts-ignore
+        { make: data?.data.vehicle.vehicleName || "N/A" },
+        // @ts-ignore
+        { licenseNumber: data?.data.vehicle.licensePlate || "N/A" },
+        { status: data?.data.vehicle.status || "N/A" },
+        // { colour: data?.vehicle?.vehicleColor || "N/A" },
+        // { seatingCapacity: data?.vehicle?.numberOfSeats || "N/A" },
       ];
     }
     return [{}];
@@ -34,34 +36,36 @@ export default function useGetBookingById({ id }: { id?: string }) {
   const contactInformation = useMemo(() => {
     if (data) {
       return [
-        { email: data?.guestEmail || "N/A" },
-        { phone: data?.guestPhoneNumber || "N/A" },
-        { pickupLocation: data?.pickupLocation || "N/A" },
-        { dropoffLocation: data?.dropoffLocation || "N/A" },
+        { email: data?.data.booker.email || "N/A" },
+        { phone: data?.data.booker.customerPhone || "N/A" },
+        { pickupLocation: data?.data.segments[0].pickupLocation || "N/A" },
+        { dropoffLocation: data?.data?.segments[0].dropoffLocation || "N/A" },
       ];
     }
     return [{}];
   }, [data]);
 
   const bookingDates = useMemo(() => {
+    const startDateTime = data?.data.segments[0].startDateTime;
+    const endDateTime = data?.data.segments[0].endDateTime;
     if (data) {
       return [
         {
-          startDate: data?.startDate
-            ? `${format(new Date(data?.startDate), "do MMM yyyy")} | ${format(new Date(data?.startDate), "h:mma")}`
+          startDate: startDateTime
+            ? `${format(new Date(startDateTime), "do MMM yyyy")} | ${format(new Date(startDateTime), "h:mma")}`
             : "N/A",
         },
         {
-          endDate: data?.endDate
-            ? `${format(new Date(data?.endDate), "do MMM yyyy")} | ${format(new Date(data?.endDate), "h:mma")}`
+          endDate: endDateTime
+            ? `${format(new Date(endDateTime), "do MMM yyyy")} | ${format(new Date(endDateTime), "h:mma")}`
             : "N/A",
         },
-        { duration: `${data?.duration} days` || "N/A" },
+        // { duration: `${data?.duration} days` || "N/A" },
       ];
     }
     return [{}];
   }, [data]);
-
+console.log(data)
   return {
     bookingDetail: data,
     isError,

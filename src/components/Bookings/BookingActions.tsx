@@ -29,7 +29,7 @@ const BookingActions = ({
     return (
         <div className="flex flex-col lg:flex-row items-start lg:items-center gap-1">
             <>
-                <AcceptTrip
+                {/* <AcceptTrip
                     trigger={
                         <ActionButton
                             color="bg-success-500 disabled:!text-success-500 disabled:!bg-success-50"
@@ -48,9 +48,9 @@ const BookingActions = ({
                     openModal={openAcceptModal}
                     handleModal={handleAcceptModal}
                     isLoading={isLoadingAcceptTrip}
-                />
+                /> */}
 
-                <DeclineTrip
+                {/* <DeclineTrip
                     trigger={
                         <ActionButton
                             color=" bg-error-900"
@@ -65,9 +65,9 @@ const BookingActions = ({
                     handleModal={handleDeclineModal}
                     handleAction={handleDeclineTrip}
                     isLoading={isLoadingDeclineTrip}
-                />
+                /> */}
             </>
-
+            {/* 
             <ReportTrip
                 trigger={
                     <ActionButton
@@ -81,7 +81,7 @@ const BookingActions = ({
                 handleAction={handleReportTrip}
                 isLoading={isLoadingReportTrip}
                 setReport={setReport}
-            />
+            /> */}
         </div>
     );
 };
