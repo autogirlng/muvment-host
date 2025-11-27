@@ -3,7 +3,7 @@ import cn from "classnames";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Popover from "@radix-ui/react-popover";
 import { Icons } from "./Icons";
-import { PopupProps } from "./props";
+import { PopupProps } from "./types";
 
 
 export const TipsPopup = ({ trigger, content }: PopupProps) => (

@@ -1,6 +1,8 @@
 import * as Avatar from "@radix-ui/react-avatar";
 import cn from "classnames";
-import { AvatarProps } from "./props";
+import { AvatarProps } from "./types";
+
+
 
 export const AvatarImage = ({ image, initials, size, color }: AvatarProps) => (
     <Avatar.Root

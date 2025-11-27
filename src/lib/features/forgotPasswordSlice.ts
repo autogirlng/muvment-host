@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ForgotPasswordSliceOtpState } from "./types";
+import { OtpStateForgotPassword } from "@/types";
 
-const initialState: ForgotPasswordSliceOtpState = {
+const initialState: OtpStateForgotPassword = {
   forgotPasswordOtp: "",
 };
 

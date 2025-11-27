@@ -1,6 +1,6 @@
 import { JSX } from "react";
-import { User, BankProp } from "@/types";
-
+import { User } from "./user";
+import { BankProp } from "./transactions_payment_finance";
 
 
 export interface AccountSetupTask {
@@ -9,7 +9,7 @@ export interface AccountSetupTask {
   link: string;
   linkText: string;
   isCompleted: boolean;
-  taskId: keyof User["data"];
+  taskId: keyof User;
 }
 
 interface PasswordChecks {
@@ -22,15 +22,13 @@ interface PasswordChecks {
 }
 
 export interface SignupFormValues {
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string,
-  phoneNumber: string,
-  userType: "HOST",
-  referralCode?: string,
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  email: string;
   country: string;
   countryCode: string;
+  password: string;
   password_checks?: PasswordChecks;
 }
 
@@ -39,32 +37,9 @@ export interface LoginFormValues {
   password: string;
 }
 
-export interface loginResponse {
-  status: string;
-  message: string;
-  errorCode: string;
-  data: {
-    accessToken: string;
-    refreshToken: string;
-    userId: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    profilePictureUrl: string;
-    emailVerified: boolean;
-    phoneVerified: boolean;
-  },
-  timestamp: string;
-}
-
 export interface verifyEmailValues {
   email: string;
   token: string;
-}
-
-export interface verifyEmail {
-  email:string;
-  otp:string;
 }
 
 export interface ResendVerifyEmailTokenValues {
@@ -72,35 +47,34 @@ export interface ResendVerifyEmailTokenValues {
 }
 export interface ResetPasswordEmailValues {
   email: string;
-  
 }
 
 export interface VerifyPhoneNumberTokenValues {
-  phoneNumber?: string;
-  email?:string;
-  otp: string;
+  phoneNumber: string;
+  token: string;
 }
 
 export interface SendPhoneNumberTokenValues {
   phoneNumber: string;
-  email:string;
 }
 
 export interface VerifyOtpValues {
   token: string;
 }
 
-export interface AccountVerificationValues {
-  accountNumber: string,
-  bankCode: string,
-  bankName: string,
-  accountName: string,
-  otp: string
+export interface OtpStateForgotPassword {
+  forgotPasswordOtp: string;
+}
+
+export interface OtpStateAccountSetup {
+  phoneNumberToVerify: string;
+  accountDetails: WithdrawalAccountValues;
+  withdrawalAccountSetupOtp: string;
 }
 
 export interface SetNewPasswordValues {
   email: string;
-  otp: string;
+  token: string;
   password?: string;
   confirmPassword: string;
   password_checks?: PasswordChecks;
@@ -111,12 +85,6 @@ export interface ChangePasswordValues {
   password: string;
   confirmPassword: string;
   password_checks?: PasswordChecks;
-}
-
-export interface ResetPassword {
-  email: string;
-  otp: string;
-  newPassword: string;
 }
 
 export interface VerifyPhoneNumberValues {
@@ -132,26 +100,33 @@ export interface VerifyIdentityValues {
   bvn: string;
 }
 
-
+export interface WithdrawalAccountValues {
+  bank?: BankProp | null;
+  bankCode: string;
+  accountNumber: string;
+  accountName?: string;
+}
 
 
 export interface ProfileFormValues {
   firstName: string;
   lastName: string;
   phoneNumber: string;
+  // email: string;
   country: string;
   countryCode: string;
   bio: string;
+
   profileImage?: string;
   city: string;
-  // isBusiness: boolean;
-  // businessAddress: string;
-  // businessEmail: string;
-  // businessLogo?: string;
-  // businessName: string;
-  // businessPhoneNumber: string;
-  // businessCountry?: string;
-  // businessCountryCode?: string;
+  isBusiness: boolean;
+  businessAddress: string;
+  businessEmail: string;
+  businessLogo?: string;
+  businessName: string;
+  businessPhoneNumber: string;
+  businessCountry?: string;
+  businessCountryCode?: string;
 }
 
 export interface WithdrawalValues {

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -18,11 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"],
-      // "@repo/assets": ["../../packages/assets/src"]
-
+      "@/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "../../packages/ui/src/avatar.tsx", "src/components/VehicleOnboarding/AdditionalInformation"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "tailwind.config.ts"],
   "exclude": ["node_modules"]
 }

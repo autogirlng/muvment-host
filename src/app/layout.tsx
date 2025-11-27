@@ -1,18 +1,18 @@
-import type { Metadata } from "next";
 import { ReactNode } from "react";
+import type { Metadata } from "next";
 import { ToastContainer } from "react-toastify";
-import { Inter } from "next/font/google";
-import StoreProvider from "./StoreProvider";
-import ReactQueryClientProvider from "./ReactQueryClientProvider";
-
 import "react-toastify/dist/ReactToastify.css";
+import { Inter } from "next/font/google";
+import { ReactQueryClientProvider, StoreProvider } from "@/providers";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
 
+
+const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Muvment - Start a business with Muvment",
   description: "Start a business with Muvment",
+
 };
 
 export default function RootLayout({

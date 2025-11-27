@@ -1,27 +1,14 @@
-import { User,
-    VehicleStatus,
-    VehiclePhotos,
-    BookingInformation, 
-    Pricing, 
-    TripSettings, 
-    AssignedDriver,
-    BaseResponse, 
-    CloudinaryPhotoUpload,
-    PricingOptions
-} from "@/types";
-
+import { VehicleStatus, VehiclePhotos } from "./vehicle";
+import { User } from "./user";
+import { BookingInformation } from "./booking";
 
 export enum ListingStatus {
-  DRAFT = "DRAFT",
-  IN_REVIEW = "IN_REVIEW",
-  APPROVED = "APPROVED",
-  REJECTED = "REJECTED",
-  IN_MAINTENANCE = "IN_MAINTENANCE",
-  COMPANY_USE = " COMPANY_USE",
-  BOOKED = "BOOKED",
-  IN_TRIP = "IN_TRIP",
-  UNAVAILABLE = "UNAVAILABLE"
-  
+  REVIEW = "review",
+  REJECTED = "rejected",
+  APPROVED = "approved",
+  ACCEPTED = "accepted",
+  FEEDBACK = "feedback",
+  SUSPENDED = "suspended",
 }
 
 export interface ListingInformation {
@@ -57,34 +44,4 @@ export interface ListingInformation {
   user: User;
   AssignedDriver: AssignedDriver[];
   Booking: BookingInformation[];
-}
-
-export interface VehicleListingInformationPublic {
-    id: string,
-    name: string,
-    photos: CloudinaryPhotoUpload[],
-    city: string,
-    allPricingOptions: PricingOptions[],
-    extraHourlyRate: number,
-    vehicleTypeName: string,
-    willProvideDriver: boolean,
-    willProvideFuel: boolean,
-    numberOfSeats: number,
-    advanceNotice: string,
-    vehicleMakeName: string,
-    vehicleModelName: string,
-    vehicleColorName: string,
-    year: number,
-    description: string,
-    vehicleFeatures: string[],
-    maxTripDuration: string,
-    discounts: {
-        durationName: string,
-        percentage: number
-      }[]
-  }
-
-export interface VehicleListingInformationPublicResponse{
-  data: VehicleListingInformationPublic
-
 }

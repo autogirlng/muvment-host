@@ -1,5 +1,17 @@
 import cn from "classnames";
-import { ButtonProps } from "./props";
+import { ReactNode } from "react";
+
+type ButtonProps = {
+    children: ReactNode;
+    onClick?: () => void;
+    variant?: "filled" | "outlined";
+    color?: "primary" | "white" | "transparent";
+    radius?: "full" | "rounded" | "lg" | "md";
+    fullWidth?: boolean;
+    loading?: boolean;
+    className?: string;
+    [key: string]: any;
+};
 
 const Button = ({
     children,
@@ -61,4 +73,4 @@ const Button = ({
     );
 };
 
-export { Button };
+export default Button;
