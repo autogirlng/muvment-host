@@ -37,7 +37,7 @@ const BookingInfoCards = ({
                             </button>
                         )}
                     </h5>
-                    {status && <BookingBadge status={status} />}
+                    {/* {status && <BookingBadge status={status} />} */}
                 </div>
                 <div className="space-y-2">
                     <p className="text-grey-500 text-sm 3xl:text-base">{chipTitle}</p>

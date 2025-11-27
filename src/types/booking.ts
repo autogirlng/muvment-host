@@ -212,6 +212,79 @@ export interface BookingInformation {
   currencyCode: string;
 }
 
+export interface SingleBookingInformation extends BaseResponse {
+  data: {
+    bookingId:string,
+    invoiceNumber: string,
+    bookingStatus: string,
+    paymentMethod: string,
+    channel: string,
+    bookedAt: string,
+    purposeOfRide: string,
+    extraDetails: string,
+    primaryPhoneNumber: string,
+    totalPrice: number,
+    calculationId: string,
+    booker: {
+      userId:string,
+      fullName: string,
+      email: string,
+      customerPhone: string
+    },
+    recipient: {
+      fullName: string,
+      email: string,
+      phoneNumber: string
+    },
+    vehicle: {
+      id: string,
+      vehicleIdentifier: string,
+      name: string,
+      licensePlateNumber: string,
+      ownerName: string,
+      status: string,
+      operationalStatus: string
+    },
+    segments: [
+      {
+        segmentId: string,
+        startDateTime: string,
+        endDateTime: string,
+        duration: string,
+        pickupLocation: string,
+        dropoffLocation: string,
+        pickupLatitude: number,
+        pickupLongitude: number,
+        bookingTypeName: string,
+        bookingId: string,
+        bookingStatus: string,
+        bookingTotalPrice: number,
+        vehicle: {
+          id: string,
+          vehicleIdentifier: string,
+          name: string,
+          licensePlateNumber: string,
+          ownerName: string,
+          status: string,
+          operationalStatus: string
+        },
+        booker: {
+          userId: string,
+          fullName: string,
+          email: string,
+          customerPhone: string
+        },
+        recipient: {
+          fullName: string,
+          email: string,
+          phoneNumber: string
+        }
+      }
+    ]
+  },
+
+}
+
 export interface BookingTypeData {
       id: string,
       name: string,
