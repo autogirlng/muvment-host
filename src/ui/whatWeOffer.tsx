@@ -8,7 +8,7 @@ function WhatWeOffer({ title, list, className }: WhatWeOfferProps) {
     return (
         <section
             className={cn(
-                "px-5 sm:px-9 3xl:px-[61px] md:py-[92px] md:pb-[200px]",
+                "px-5 sm:px-9 3xl:px-[61px] pb-[120px]  md:py-[92px] md:pb-[200px]",
                 className
             )}
         >

@@ -52,7 +52,7 @@ function Earn() {
                 {/* Centered Form Card */}
                 <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl overflow-hidden">
                     {/* Blue Header Accent */}
-                    <div className="h-2 bg-blue-700 w-full" />
+                    <div className="h-2 bg-blue-700 w-full mt-5 " />
 
                     <div className="p-8 lg:p-10">
                         <header className="text-center mb-8">
@@ -97,9 +97,9 @@ function Earn() {
                                     </div>
 
                                     {/* Grid Row: Experience & Age */}
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="gap-4">
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-700 uppercase tracking-tight ml-1">Driving Exp.</label>
+                                            <label className="text-xs font-bold text-slate-700 uppercase tracking-tight ml-1">Driving Experience</label>
                                             <Field
                                                 name="yearsOfExperience"
                                                 type="number"
@@ -124,8 +124,9 @@ function Earn() {
                                             <ErrorMessage name="primaryPhoneNumber" component="div" className="text-[11px] text-[red] mt-1 ml-1" />
                                         </div>
                                         <div className="space-y-1">
-                                            <label className="text-xs font-bold text-slate-700 uppercase tracking-tight ml-1">Phone Number (other)</label>
-                                            <Field
+                                            <label className="text-xs font-bold text-slate-700 uppercase tracking-tight ml-1 whitespace-nowrap">
+                                                Phone Number (other)
+                                            </label>                                            <Field
                                                 name="alternativePhoneNumber"
                                                 type="text"
                                                 placeholder="Other phone number"
