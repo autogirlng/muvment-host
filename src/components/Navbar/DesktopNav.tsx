@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import cn from "classnames";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { customerAppUrl, popupNavItemsforNoUser } from "@/utils/data";
 import { getInitialsFromName } from "@/utils/functions";
 import { nav_logo } from "@/ui/assets";
@@ -12,6 +13,7 @@ import { DesktopNavProps } from "@/components/Navbar/props";
 
 export function DesktopNav({ user, userToken }: DesktopNavProps) {
   const [sticky, setSticky] = useState<boolean>(false);
+  const router = useRouter()
 
   useEffect(() => {
     window.addEventListener("scroll", () => {
@@ -28,7 +30,7 @@ export function DesktopNav({ user, userToken }: DesktopNavProps) {
           : "bg-[#F9FAFB59] backdrop-blur-xl"
       )}
     >
-      <Image className="" src={nav_logo} alt="" width={114} height={40} />
+      <Image className="cursor-pointer" onClick={() => router.push("/")} src={nav_logo} alt="" width={114} height={40} />
       <nav className="flex items-center gap-4">
         <Link
           className={cn(
