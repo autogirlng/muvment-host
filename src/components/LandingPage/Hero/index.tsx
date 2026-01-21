@@ -4,7 +4,6 @@ import Link from "next/link";
 import React from "react";
 import { Button } from "@/ui";
 
-
 function Hero() {
   return (
     <section className="bg-grey-75 h-full flex relative">
@@ -17,25 +16,26 @@ function Hero() {
             Join our community of successful hosts and experience a new way to
             earn extra income effortlessly.
           </p>
-          <div className="flex flex-col md:flex-row gap-6 items-center max-w-[220px] md:max-w-fit mx-auto md:mx-0">
-            <Link href="/signup" className="!w-full md:!w-fit">
+          <div className="flex flex-col xs:flex-row gap-4 md:gap-6 items-center w-full max-w-[280px] xs:max-w-full mx-auto md:mx-0">
+            <Link href="/signup" className="w-full md:w-fit">
               <Button
                 color="primary"
                 variant="filled"
                 radius="lg"
-                className="!w-full md:!w-fit"
+                className="!w-full md:!min-w-[160px] !px-8 !py-4"
               >
-                Sign Up
+                <span className="whitespace-nowrap">Sign Up</span>
               </Button>
             </Link>
-            <Link href="/#calculator" className="!w-full md:!w-fit">
+
+            <Link href="/#calculator" className="w-full md:w-fit">
               <Button
                 color="transparent"
                 variant="outlined"
                 radius="lg"
-                className="!w-full md:!w-fit"
+                className="!w-full md:!min-w-[210px] !px-8 !py-4"
               >
-                Calculate earnings
+                <span className="whitespace-nowrap">Calculate earnings</span>
               </Button>
             </Link>
           </div>
