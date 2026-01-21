@@ -16,6 +16,7 @@ import {
   Overview,
   GetStarted
 } from "@/components/LandingPage";
+import { ElectricalVehicleHero } from "@/components/LandingPage/ElectricVehicleHero";
 
 
 export default function HomePage() {
@@ -39,6 +40,7 @@ export default function HomePage() {
       <DesktopNav user={data ?? null} userToken={userToken} />
       <MobileNav user={data ?? null} userToken={userToken} />
       <Hero />
+      {/* <ElectricalVehicleHero /> */}
       <Benefits />
       <JoinUs />
       <Steps />
