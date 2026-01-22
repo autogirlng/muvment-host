@@ -40,7 +40,7 @@ export default function HomePage() {
       <DesktopNav user={data ?? null} userToken={userToken} />
       <MobileNav user={data ?? null} userToken={userToken} />
       <Hero />
-      {/* <ElectricalVehicleHero /> */}
+      <ElectricalVehicleHero />
       <Benefits />
       <JoinUs />
       <Steps />
