@@ -1,6 +1,6 @@
+import { VehicleInformation } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { VehicleInformation, VehicleState } from "@/types"
-
+import { VehicleState } from "./types";
 
 
 const initialState: VehicleState = {

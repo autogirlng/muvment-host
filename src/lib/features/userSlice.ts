@@ -1,8 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User, UserState } from "@/types";
+import { UserSliceState } from "./types";
+import { User } from "@/types";
 
 
-const initialState: UserState = {
+const initialState: UserSliceState = {
   user: null,
   userToken: "",
   isAuthenticated: false,
@@ -21,7 +22,7 @@ const userSlice = createSlice({
       localStorage.setItem("user_token", action.payload);
       state.isAuthenticated = true;
     },
-    setUser: (state, action: PayloadAction<UserState>) => {
+    setUser: (state, action: PayloadAction< UserSliceState>) => {
       state.user = action.payload.user;
       state.isLoading = action.payload.isLoading;
       state.userToken = action.payload.userToken;

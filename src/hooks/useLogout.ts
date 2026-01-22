@@ -12,6 +12,20 @@ export default function useLogout() {
     router.push("/login");
   };
 
+  //   const logoutUser = useMutation({
+  //     mutationFn: () => http.put("/api/user/logout"),
+
+  //     onSuccess: (data) => {
+  //       console.log("User logged out Successfully", data.data);
+  //       dispatch(clearUser());
+  // router.push("/login");
+  //     },
+
+  //     onError: (error: AxiosError<ErrorResponse>) => {
+  //       handleErrors("Logout", error);
+  //     },
+  //   });
+
   return {
     logoutUser,
   };

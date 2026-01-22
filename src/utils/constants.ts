@@ -2,6 +2,8 @@ import { SignupFormValues } from "@/types";
 
 export const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
+export const baseAPIURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export const fullNameRegEx = /^[A-Za-z'-]+\s[A-Za-z'-]+(?:\s[A-Za-z'-]+)*\s*$/;
 
 export const phoneNumberRegEx = /^(\d{11})$/;
@@ -18,7 +20,7 @@ export const specialCharRegex = /[@$!#%*?_&]/;
 
 export const spacesRegex = /^\S*$/;
 
-export const standardServiceFeeInPercentage = 0.2;
+// export const standardServiceFeeInPercentage = 0.2;
 
 type PasswordCheckKey = keyof NonNullable<SignupFormValues["password_checks"]>;
 export const passwordChecks: { label: string; check: PasswordCheckKey }[] = [
@@ -30,3 +32,7 @@ export const passwordChecks: { label: string; check: PasswordCheckKey }[] = [
   { label: "Must not include spaces", check: "no_space" },
 ];
 
+
+export enum UserType {
+  HOST="HOST"
+}

@@ -1,11 +1,24 @@
-import { User } from "./user";
+import { User } from "@/types";
+import { ReactNode } from "react";
+
+
+export interface BaseResponse {
+  status: string,
+  message: string,
+  errorCode: string,
+  timestamp: string
+}
+
+export interface Option { 
+  option: string, value: string 
+}
 
 
 export interface ErrorResponse {
-  ERR_CODE: string;
-  message: string;
+    status: string,
+    data: string,
+    timestamp: string
 }
-
 export type MappedInformation = {
   [key: string]: string | number;
 };
@@ -39,3 +52,14 @@ export type ReviewReply = {
 };
 
 export type DateRange = { startDate: Date | null; endDate: Date | null };
+
+export type ReviewsDataType = {
+  data: Review[];
+  totalCount: number;
+};
+
+export interface Extras {
+  name: string;
+  icon: ReactNode;
+  id: string;
+};

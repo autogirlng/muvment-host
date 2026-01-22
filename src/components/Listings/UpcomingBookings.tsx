@@ -1,0 +1,78 @@
+import cn from "classnames";
+import DashboardSectionTitle from "@/components/DashBoard/SectionTitle";
+import EmptyState from "@/components/EmptyState";
+import useVehicleUpcomingBooking from "@/hooks/listings/useVehicleBooking";
+import { Spinner, Icons } from "@/ui";
+import { ListingDetailsUpcomingBookingsProps, BookingCardProps, BookingDataProps } from "./props";
+
+
+export default function ListingDetailsUpcomingBookings({ vehicleId }: ListingDetailsUpcomingBookingsProps) {
+
+    const { vehicleBookings, isError, error, isLoading } = useVehicleUpcomingBooking(vehicleId);
+
+    return (
+        <div className="hidden lg:block bg-grey-50 w-full max-w-[320px] xl:max-w-[360px] 3xl:max-w-[500px] absolute right-0 top-[86px] min-h-screen h-auto px-4 py-[86px]">
+            <DashboardSectionTitle icon={Icons.ic_ticket} title="Bookings" />
+
+            <div className="space-y-2">
+                {
+
+                }
+                {isLoading ? (
+                    <Spinner />
+                ) : isError ? (
+                    <p>something went wrong</p>
+                ) : vehicleBookings?.length > 0 ? (
+                    vehicleBookings?.map((data, index) => {
+                        return (
+                            <BookingCard
+                                key={index}
+                                active={index === 0}
+                                guestName={data.customerName}
+                                duration={data.duration}
+                                status={data.bookingStatus}
+                            />
+                        );
+                    })
+                ) : (
+                    <EmptyState
+                        image="/icons/empty_booking_state.png"
+                        title="No upcoming bookings"
+                        imageSize="w-[90px] 2xl:w-[165px]"
+                    />
+                )}
+            </div>
+        </div>
+    );
+}
+
+const BookingCard = ({
+    guestName,
+    duration,
+    status,
+    active,
+}: BookingCardProps) => (
+    <div
+        className={cn(
+            "rounded-3xl px-5 3xl:px-10 py-3 3xl:py-6 bg-white space-y-2",
+            active ? "border border-warning-400 text-grey-900" : "text-grey-800"
+        )}
+    >
+        {active && (
+            <p className="text-warning-400 text-sm 3xl:text-base">Up Next</p>
+        )}
+
+        <div className="flex justify-between items-center gap-3">
+            <BookingData title="Guest Name" value={guestName} />
+            <BookingData title="Duration" value={duration} />
+            <BookingData title="Booking Status" value={status} />
+        </div>
+    </div>
+);
+
+const BookingData = ({ title, value }: BookingDataProps) => (
+    <div className={cn("text-xs 3xl:text-sm !font-medium")}>
+        <p className="">{title}</p>
+        <p className="">{value}</p>
+    </div>
+);

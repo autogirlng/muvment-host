@@ -12,7 +12,7 @@ export enum NotificationType {
   SPECIAL_OFFER = " SPECIAL_OFFER",
 }
 
-export type Notification = {
+export interface Notification  {
   id: string;
   title: string;
   message: string;
@@ -23,4 +23,10 @@ export type Notification = {
   trxReference: null;
   transaction: null;
   notificationType: NotificationType;
+};
+
+export interface NotificationDataType  {
+  data: Notification[];
+  totalCount: number;
+  unreadCount: number;
 };

@@ -1,12 +1,12 @@
+import { WithdrawalAccountValues } from "@/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { WithdrawalAccountValues, OtpStateAccountSetup } from "@/types";
+import { AccountSetupSliceOtpState  } from "./types";
 
 
-
-const initialState: OtpStateAccountSetup = {
+const initialState: AccountSetupSliceOtpState  = {
   phoneNumberToVerify: "",
   withdrawalAccountSetupOtp: "",
-  accountDetails: { accountNumber: "", bankCode: "", accountName: "" },
+  accountDetails: { accountNumber: "", bankCode: "", accountName: "", bankName:"" },
 };
 
 const accountSetupSlice = createSlice({
