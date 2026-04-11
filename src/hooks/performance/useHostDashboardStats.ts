@@ -1,4 +1,3 @@
-// hooks/performance/useHostDashboardStats.ts
 import { useMemo } from "react";
 import { useHostPerformance } from "./useHostPerformance";
 
