@@ -43,14 +43,14 @@ export default function useSetupWithdrawalAccount() {
 
   const { data, isLoading } = useQuery({
     queryKey: ["getAllBankCodes"],
-    queryFn: () => http.get<BankList>("/v1/banks"),
+    queryFn: () => http.get<BankList>("/banks"),
     retry: 2,
   });
 
   const validateBankAccount = useMutation({
     mutationFn: (values: WithdrawalAccountValues) =>
       http.get<WithdrawalAccountValuesResponse>(
-        `/v1/banks/resolve?accountNumber=${values.accountNumber}&bankCode=${values.bankCode}`
+        `/banks/resolve?accountNumber=${values.accountNumber}&bankCode=${values.bankCode}`
       ),
 
     onSuccess: (data) => {
@@ -67,9 +67,9 @@ export default function useSetupWithdrawalAccount() {
   });
 
   const sendBankAccountOtp = useMutation({
-    mutationFn: () => http.post("/v1/hosts/me/bank-details/request-otp", {channel:"EMAIL"}),
+    mutationFn: () => http.post("/hosts/me/bank-details/request-otp", {channel:"EMAIL"}),
     onSuccess: (data) => {
-      router.push(`/account-setup/withdrawal-account/otp`);
+      router.push(`/settings/withdrawal-account/otp`);
       setLoading(false);
       console.log("Bank Account Otp Sent Successfully", data);
     },
@@ -82,7 +82,7 @@ export default function useSetupWithdrawalAccount() {
 
   const verifyBankAccountOtp = useMutation({
     mutationFn: (values: VerifyOtpValues) => {
-      return http.put<WithdrawalAccountValuesResponse>("/v1/hosts/me/bank-details", {otp:values.token, ...accountDetails})
+      return http.put<WithdrawalAccountValuesResponse>("/hosts/me/bank-details", {otp:values.token, ...accountDetails})
     },
 
     onMutate: (values) => {
@@ -115,7 +115,7 @@ export default function useSetupWithdrawalAccount() {
 
   const addBankAccount = useMutation({
     mutationFn: (values: WithdrawalAccountValues) =>
-      http.post("/api/withdrawal-account/addWithdrawalAccount", {
+      http.post("/withdrawal-account/addWithdrawalAccount", {
         ...values,
         country: user?.message,
         token: withdrawalAccountSetupOtp,

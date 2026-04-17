@@ -17,7 +17,7 @@ export function AccountSetupTasks() {
     const fetchHostAccountDetails = async () => {
         let response
         try {
-            response = await http.get<BankDetails>("/v1/hosts/me/bank-details");
+            response = await http.get<BankDetails>("/hosts/me/bank-details");
             setBankAccountSetupCompleted(response?.status !== "SUCCESSFUL")
 
         } catch (err) {
@@ -63,7 +63,7 @@ export function AccountSetupTasks() {
                     <TaskCard
                         icon={Icons.ic_lock}
                         title="Setup Withdrawal Account"
-                        link="/account-setup/withdrawal-account"
+                        link="/settings/withdrawal-account"
                         linkText="Get Started"
                     />
                 )

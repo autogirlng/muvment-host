@@ -17,7 +17,7 @@ export default function VehicleSummary({
     const http = useHttp();
 
     const fetchVehicleDetails = async () => {
-        const vehicle = await http.get<VehicleInformationResponse>(`/v1/vehicles/${vehicleId}`)
+        const vehicle = await http.get<VehicleInformationResponse>(`/vehicles/${vehicleId}`)
         setVehicleInfo(vehicle?.data)
 
     }

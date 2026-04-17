@@ -27,7 +27,7 @@ export default function useBookings({
     queryFn: async () =>
       http.get<BookingSegments>(
         // `/v1/bookings/my-vehicles/segments?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({ filters, search })}`
-        `/v1/bookings/my-vehicles/segments?${handleFilterQuery({ filters, search })}`
+        `/bookings/my-vehicles/segments?${handleFilterQuery({ filters, search })}`
       ),
 
     enabled: !!user?.data.userId,

@@ -1,4 +1,3 @@
-import cn from "classnames";
 import BackLink from "@/components/BackLink";
 import { InnerPageProps } from "./props";
 
@@ -12,10 +11,7 @@ export default function DashboardInnerPage({
 }: InnerPageProps) {
     return (
         <main
-            className={cn(
-                "space-y-10 2xl:space-y-[52px]",
-                isInnerPage ? "py-8 2xl:py-11" : "py-11 2xl:py-[70px]"
-            )}
+            className="space-y-10 2xl:space-y-[52px] py-8 2xl:py-11"
         >
             <div className="space-y-3 2xl:space-y-5">
                 {isInnerPage && <BackLink backLink={backLink || ""} />}
@@ -23,11 +19,6 @@ export default function DashboardInnerPage({
                     {title}
                 </h2>
                 {description && <p className="text-grey-500 text-sm 2xl:text-base">{description}</p>}
-                {!isInnerPage && (
-                    <h6 className="text-base 2xl:text-h6 text-black font-semibold">
-                        Tasks
-                    </h6>
-                )}
             </div>
             {children}
         </main>

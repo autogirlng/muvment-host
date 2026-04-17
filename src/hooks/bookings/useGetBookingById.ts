@@ -13,7 +13,7 @@ export default function useGetBookingById({ id }: { id?: string }) {
     queryKey: ["getBookingById", id],
 
     queryFn: async () =>
-      http.get<SingleBookingInformation>(`/v1/bookings/${id}`),
+      http.get<SingleBookingInformation>(`/bookings/${id}`),
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });

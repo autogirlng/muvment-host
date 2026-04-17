@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSession } from "next-auth/react";
 import { User } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
@@ -21,12 +21,8 @@ import { ElectricalVehicleHero } from "@/components/LandingPage/ElectricVehicleH
 
 export default function HomePage() {
   const http = useHttp();
-  const [userToken, setUserToken] = useState<string>("");
-
-  useEffect(() => {
-    const user_token = window.localStorage.getItem("user_token");
-    setUserToken(user_token || "");
-  }, []);
+  const { data: session } = useSession();
+  const userToken = session?.user?.accessToken || "";
 
   const { data } = useQuery({
     queryKey: ["getUser"],

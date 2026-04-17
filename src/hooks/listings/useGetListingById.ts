@@ -12,7 +12,7 @@ export default function useGetListingById({ id }: { id: string }) {
     queryKey: ["getListingById", id],
 
     queryFn: async () =>
-      http.get<VehicleInformationResponse>(`/v1/vehicles/${id}`),
+      http.get<VehicleInformationResponse>(`/vehicles/${id}`),
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });

@@ -47,7 +47,7 @@ export default function useAdditionalInformationForm({
     const saveStep2 = useMutation({
         mutationFn: (values: AdditionalVehicleInformationValues) =>
             http.patch<VehicleInformation>(
-                `/v1/vehicles/details/${vehicleId}`,
+                `/vehicles/details/${vehicleId}`,
                 {
                     ...values,
                     numberOfSeats: values.numberOfSeats,
@@ -73,7 +73,7 @@ export default function useAdditionalInformationForm({
         mutationFn: (values: AdditionalVehicleInformationValues) => {
             console.log(values)
             return http.patch<VehicleInformationResponse>(
-                `/v1/vehicles/details?id=${vehicleId}`,
+                `/vehicles/details?id=${vehicleId}`,
                 values
             )
         },

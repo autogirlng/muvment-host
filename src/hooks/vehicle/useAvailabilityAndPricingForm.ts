@@ -73,7 +73,7 @@ export default function useAvailabilityAndPricingForm({
   const saveStep4 = useMutation({
     mutationFn: (values: any) =>
       http.patch<VehicleInformation>(
-        `/v1/vehicles/configuration?id=${vehicleId}`,
+        `/vehicles/configuration?id=${vehicleId}`,
         values
       ),
 
@@ -94,7 +94,7 @@ export default function useAvailabilityAndPricingForm({
           ...values, 
         })
       return  http.patch<VehicleInformation>(
-        `/v1/vehicles/configuration?id=${vehicleId}`,
+        `/vehicles/configuration?id=${vehicleId}`,
         {
           ...values, 
         }

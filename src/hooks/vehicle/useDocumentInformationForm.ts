@@ -46,7 +46,7 @@ const [vehicleId, setVehicleId] = useState<string>("")
         mutationFn: async (formData: FormData) => {
         
             const vehicleDocuments = await uploadToCloudinary(formData, "documents")
-            return http.patch(`/v1/vehicles/documents?id=${vehicleId}`, {documents:vehicleDocuments});
+            return http.patch(`/vehicles/documents?id=${vehicleId}`, {documents:vehicleDocuments});
         },
         onSuccess: (data) => {
             console.log("Vehicle Onboarding Step 5 Saved", data);
@@ -65,7 +65,7 @@ const [vehicleId, setVehicleId] = useState<string>("")
         mutationFn: async (formData: FormData) => {
 
             const vehicleDocuments = await uploadToCloudinary(formData, "documents")
-            return http.patch(`/v1/vehicles/documents?id=${vehicleId}`, {documents:vehicleDocuments});
+            return http.patch(`/vehicles/documents?id=${vehicleId}`, {documents:vehicleDocuments});
         },
         onSuccess: (data) => {
             console.log("Vehicle Onboarding Step 5 Submitted", data);

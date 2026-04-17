@@ -44,7 +44,7 @@ function Earn() {
         yearsOfExperience: Number(values.yearsOfExperience),
       };
 
-      await http.post("/v1/driver-applications", payload);
+      await http.post("/driver-applications", payload);
       toast.success(
         "Application submitted successfully! We'll be in touch soon.",
       );

@@ -12,11 +12,19 @@ import { useAppSelector } from "@/lib/hooks";
 export default function VerifyPhoneNumber() {
     const { user } = useAppSelector((state) => state.user);
     const { sendPhoneNumberToken } = usePhoneNumberVerification();
+
+    // Strip country code prefix if present to get raw local number
+    const getRawPhoneNumber = (phone: string) => {
+        if (phone.startsWith("+234")) return phone.slice(4);
+        if (phone.startsWith("234") && phone.length > 11) return phone.slice(3);
+        return phone;
+    };
+
     return (
         <Formik
             initialValues={{
                 ...verifyPhoneNumberValues,
-                phoneNumber: user?.data.phoneNumber || "",
+                phoneNumber: getRawPhoneNumber(user?.data.phoneNumber || ""),
                 country: "NG",
                 countryCode: "+234",
             }}
@@ -53,7 +61,6 @@ export default function VerifyPhoneNumber() {
                             selectPlaceholder="+234"
                             inputValue={values.phoneNumber}
                             selectValue={values.country}
-                            inputDisabled={true}
                             inputOnChange={(event) => {
                                 const number = replaceCharactersWithString(event.target.value);
                                 setFieldTouched("phoneNumber", true);

@@ -28,7 +28,7 @@ export default function useTransactions({
 
     queryFn: () =>
       http.get<TransactionDataType>(
-        `/api/transactions?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({filters})}`
+        `/transactions?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({filters})}`
       ),
     enabled: !!user?.data.userId,
     retry: false,

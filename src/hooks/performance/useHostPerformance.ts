@@ -388,7 +388,7 @@ export function useHostPerformance() {
       queryFn: async (): Promise<ApiResponse<CompletedTrip[]>> => {
         const queryString = buildQueryString(params);
         const result = await http.get<ApiResponse<CompletedTrip[]>>(
-          `/v1/host-performance/completed-trip${queryString}`,
+          `/host-performance/completed-trip${queryString}`,
         );
         if (!result) throw new Error("Failed to fetch completed trips");
         return result;
@@ -404,7 +404,7 @@ export function useHostPerformance() {
       queryFn: async (): Promise<ApiResponse<EarningHistoryData>> => {
         const queryString = buildQueryString(params);
         const result = await http.get<ApiResponse<EarningHistoryData>>(
-          `/v1/host-performance/earning-history${queryString}`,
+          `/host-performance/earning-history${queryString}`,
         );
         if (!result) throw new Error("Failed to fetch earning history");
         return result;
@@ -423,7 +423,7 @@ export function useHostPerformance() {
         const queryString = buildQueryString(params);
         const result = await http.get<
           ApiResponse<PageableResponse<BookingHistoryItem>>
-        >(`/v1/host-performance/host-booking-history${queryString}`);
+        >(`/host-performance/host-booking-history${queryString}`);
         if (!result) throw new Error("Failed to fetch booking history");
         return result;
       },
@@ -441,7 +441,7 @@ export function useHostPerformance() {
         const queryString = buildQueryString(params);
         const result = await http.get<
           ApiResponse<PageableResponse<UpcomingTrip>>
-        >(`/v1/host-performance/host-upcoming-trip${queryString}`);
+        >(`/host-performance/host-upcoming-trip${queryString}`);
         if (!result) throw new Error("Failed to fetch upcoming trips");
         return result;
       },
@@ -456,7 +456,7 @@ export function useHostPerformance() {
       queryFn: async (): Promise<ApiResponse<OnboardedVehicleData>> => {
         const queryString = buildQueryString(params);
         const result = await http.get<ApiResponse<OnboardedVehicleData>>(
-          `/v1/host-performance/onboarded-vehicle${queryString}`,
+          `/host-performance/onboarded-vehicle${queryString}`,
         );
         if (!result) throw new Error("Failed to fetch onboarded vehicles");
         return result;
@@ -472,7 +472,7 @@ export function useHostPerformance() {
       queryFn: async (): Promise<ApiResponse<TopRatedVehicle[]>> => {
         const queryString = buildQueryString(params);
         const result = await http.get<ApiResponse<TopRatedVehicle[]>>(
-          `/v1/host-performance/top-rated${queryString}`,
+          `/host-performance/top-rated${queryString}`,
         );
         if (!result) throw new Error("Failed to fetch top rated vehicles");
         return result;

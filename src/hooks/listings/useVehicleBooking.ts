@@ -16,7 +16,7 @@ export default function useVehicleBookings(id: string) {
 
     queryFn: () =>
       http.get<VehicleBookings>(
-        `/v1/bookings/${id}/bookings`
+        `/bookings/${id}/bookings`
       ),
     enabled: !!user?.data.userId && !!id,
     retry: false,
