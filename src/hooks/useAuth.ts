@@ -3,11 +3,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { signIn, useSession } from "next-auth/react";
 import { useHttp } from "@/hooks/useHttp";
 import { setForgotPasswordOtp } from "@/lib/features/forgotPasswordSlice";
-import { setToken } from "@/lib/features/userSlice";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { handleErrors } from "@/utils/functions";
 import { UserType } from "@/utils/constants";
@@ -27,24 +26,14 @@ import {
 export default function useAuth() {
   const http = useHttp();
   const queryClient = useQueryClient();
-  const [userToken, setUserToken] = useState<string>("");
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { forgotPasswordOtp } = useAppSelector((state) => state.forgotPassword);
-
-  useEffect(() => {
-    const user_token = window.localStorage.getItem("user_token");
-    setUserToken(user_token || "");
-
-    if (user_token) {
-      router.push("/dashboard");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data: session } = useSession();
 
   const signupMutation = useMutation({
     mutationFn: (values: SignupFormValues) =>
-      http.post("/v1/auth/signup", { ...values, userType: UserType.HOST }),
+      http.post("/auth/signup", { ...values, userType: UserType.HOST }),
 
     onMutate: (values) => {
       return { email: values.email };
@@ -64,14 +53,11 @@ export default function useAuth() {
 
   const verifyEmailOnSignup = useMutation({
     mutationFn: (values: verifyEmail) => 
-      http.post<string>("/v1/auth/verify-account", values),
+      http.post<string>("/auth/verify-account", values),
 
-    onSuccess: (data) => {
-      console.log("Email verified successfully", data);
+    onSuccess: () => {
       toast.success("Account created successfully");
-      dispatch(setToken(data || ""));
-      router.push("/dashboard");
-      queryClient.clear();
+      router.push("/login");
     },
 
     onError: (error: AxiosError<ErrorResponse>) =>
@@ -80,7 +66,7 @@ export default function useAuth() {
 
   const resendVerifyEmailToken = useMutation({
     mutationFn: (values: ResendVerifyEmailTokenValues) =>
-      http.post("/v1/auth/resend-verification-otp", values),
+      http.post("/auth/resend-verification-otp", values),
 
     onSuccess: (data) => {
       console.log("Resend Token successful", data);
@@ -92,25 +78,30 @@ export default function useAuth() {
   });
 
 
-  const loginMutation = useMutation<loginResponse | undefined, AxiosError<ErrorResponse>, LoginFormValues, {email:string}>({
-    mutationFn: (values: LoginFormValues) =>
-      http.post<loginResponse>("/v1/auth/login", values),
+  const loginMutation = useMutation<void, AxiosError<ErrorResponse>, LoginFormValues, {email:string}>({
+    mutationFn: async (values: LoginFormValues) => {
+      const result = await signIn("credentials", {
+        email: values.email,
+        password: values.password,
+        redirect: false,
+      });
+
+      if (result?.error) {
+        throw new AxiosError(result.error);
+      }
+    },
 
     onMutate: (values) => {
       return { email: values.email };
     },
 
-    onSuccess: (loginResponse) => {
-      dispatch(setToken(loginResponse?.data.accessToken || ""));
-      console.log("Login successful");
+    onSuccess: () => {
       router.push("/dashboard");
       queryClient.clear();
     },
 
     onError: (error: AxiosError<ErrorResponse>, _values, context) => {
       if (error.response?.data?.data === "EMAIL_NOT_CONFIRMED") {
-        console.log("redirect user");
-
         router.push(
           `/verify-email?email=${encodeURIComponent(context?.email ?? "")}`
         );
@@ -122,7 +113,7 @@ export default function useAuth() {
 
   const forgotPassword = useMutation({
     mutationFn: (values: ResetPasswordEmailValues) =>
-      http.post("/v1/auth/forgot-password", values),
+      http.post("/auth/forgot-password", values),
 
     onMutate: (values) => {
       return { email: values.email };
@@ -169,7 +160,7 @@ export default function useAuth() {
       console.log(values)
       const { otp, password } = values;
 
-      return http.post("/v1/auth/reset-password", 
+      return http.post("/auth/reset-password", 
         {
         email:values.email,
         newPassword: password,
@@ -196,6 +187,6 @@ export default function useAuth() {
     resendVerifyEmailToken,
     forgotPassword,
     resetPassword,
-    user_token: userToken,
+    session,
   };
 }

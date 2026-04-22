@@ -1,30 +1,18 @@
 "use client";
+import { signOut } from "next-auth/react";
 import { clearUser } from "@/lib/features/userSlice";
 import { useAppDispatch } from "@/lib/hooks";
-import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function useLogout() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
+  const queryClient = useQueryClient();
 
   const logoutUser = () => {
     dispatch(clearUser());
-    router.push("/login");
+    queryClient.clear();
+    signOut({ callbackUrl: "/login" });
   };
-
-  //   const logoutUser = useMutation({
-  //     mutationFn: () => http.put("/api/user/logout"),
-
-  //     onSuccess: (data) => {
-  //       console.log("User logged out Successfully", data.data);
-  //       dispatch(clearUser());
-  // router.push("/login");
-  //     },
-
-  //     onError: (error: AxiosError<ErrorResponse>) => {
-  //       handleErrors("Logout", error);
-  //     },
-  //   });
 
   return {
     logoutUser,

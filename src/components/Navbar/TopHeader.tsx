@@ -85,10 +85,6 @@ export function TopHeader() {
                     }
                 />
 
-                <Link href="/settings">
-                    <IconWrapper icon={Icons.ic_setting} />
-                </Link>
-
                 <Popup
                     open={true}
                     isOpen={popupIsOpen}

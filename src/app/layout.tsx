@@ -4,6 +4,7 @@ import { ToastContainer } from "react-toastify";
 import { Inter } from "next/font/google";
 import StoreProvider from "./StoreProvider";
 import ReactQueryClientProvider from "./ReactQueryClientProvider";
+import NextAuthSessionProvider from "./NextAuthSessionProvider";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
@@ -47,9 +48,11 @@ export default function RootLayout({
           theme="light"
         />
 
-        <StoreProvider>
-          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
-        </StoreProvider>
+        <NextAuthSessionProvider>
+          <StoreProvider>
+            <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+          </StoreProvider>
+        </NextAuthSessionProvider>
       </body>
     </html>
   );

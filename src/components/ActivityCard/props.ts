@@ -1,11 +1,10 @@
-import { ReactNode } from "react";
-export interface ActivityCardProps  {
+export interface ActivityCardProps {
   primary?: boolean;
   title: string;
-  value: string;
+  value: string | number;
   modalTitle?: string;
   modalName?: string;
-  modalIcon?: ReactNode;
+  modalIcon?: React.ReactNode;
   isLoading?: boolean;
   className?: string;
-};
+}

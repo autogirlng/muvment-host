@@ -36,9 +36,9 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
     })
     const fetchVehicleOptions = async () => {
             const [vehicleTypesRes, vehicleMakesRes, vehicleModelRes] = await Promise.all([
-                http.get<VehicleMakeTypeResponse>("/v1/public/vehicle-types"),
-                http.get<VehicleMakeTypeResponse>("/v1/public/vehicle-makes"),
-                http.get<VehicleModelResponse>("/v1/public/vehicle-models")
+                http.get<VehicleMakeTypeResponse>("/public/vehicle-types"),
+                http.get<VehicleMakeTypeResponse>("/public/vehicle-makes"),
+                http.get<VehicleModelResponse>("/public/vehicle-models")
             ]);
 
             const vehicleTypes = vehicleTypesRes?.data.map((type) => ({
@@ -153,7 +153,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
 
     const saveStep1 = useMutation({
         mutationFn: (values: BasicVehicleInformationValues) =>
-            http.post<VehicleInformation>("/v1/vehicles", {
+            http.post<VehicleInformation>("/vehicles", {
                 ...values,
                 hasTracker: values.hasTracker === "yes",
                 hasInsurance: values.hasInsurance === "yes",
@@ -176,7 +176,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
 
     const submitStep1 = useMutation({
         mutationFn: (values: BasicVehicleInformationValues) =>
-            http.post<VehicleInformationResponse>("/v1/vehicles", {
+            http.post<VehicleInformationResponse>("/vehicles", {
                 ...values,
                hasTracker: values.hasTracker === "yes",
                 hasInsurance: values.hasInsurance === "yes",

@@ -26,7 +26,7 @@ useEffect(()=>{
   const submitVehicleOnboarding = useMutation({
     mutationFn: () =>
       http.post<VehicleInformation>(
-        `/v1/vehicles/submit-review?id=${vehicleId}`),
+        `/vehicles/submit-review?id=${vehicleId}`),
 
     onSuccess: (data) => {
       console.log("Vehicle Onboarding Submitted for Review Successful", data);

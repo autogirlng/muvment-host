@@ -23,7 +23,7 @@ export default function useListings({
     queryKey: ["getListings", user?.data.userId, currentPage, JSON.stringify(filters), search],
     queryFn: () =>
       http.get<HostVehicleListings>(
-        `/v1/hosts/my-vehicles?size=${pageLimit}&page=${currentPage}&${handleFilterQuery({filters, search})}`
+        `/hosts/my-vehicles?size=${pageLimit}&page=${currentPage}&${handleFilterQuery({filters, search})}`
       
       ), 
     enabled: !!user?.data.userId,

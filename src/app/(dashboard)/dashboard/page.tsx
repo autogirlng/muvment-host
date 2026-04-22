@@ -32,10 +32,10 @@ export default function DashboardPage() {
             </p>
           </div>
           <Link
-            href="/account-setup"
+            href="/settings"
             className="block w-fit text-sm 2xl:text-base text-white !font-semibold py-2 2xl:py-3 px-3 2xl:px-4 rounded-[63px] bg-warning-700 hover:text-warning-400 hover:bg-white"
           >
-            View Tasks Left
+            Complete Setup
           </Link>
         </div>
       )}

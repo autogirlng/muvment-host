@@ -30,7 +30,7 @@ export default function useBookingsOverview({
     queryFn: async () =>
       http.get<BookingSegments>(
         // `/api/bookings/host/${user?.data.userId}?page=1&limit=10&${handleFilterQuery({ filters, month, year })}`
-        `/v1/bookings/my-vehicles/segments`
+        `/bookings/my-vehicles/segments`
       ),
     enabled: !!user?.data.userId,
     retry: false,
