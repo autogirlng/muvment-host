@@ -19,9 +19,11 @@ import {
   SignupFormValues,
   verifyEmailValues,
   verifyEmail,
-  loginResponse, 
+  loginResponse,
+  // Make sure these two types are exported from your types file
+  ApiResponse,
+  SwitchHostData 
 } from "@/types";
-
 
 export default function useAuth() {
   const http = useHttp();
@@ -29,7 +31,9 @@ export default function useAuth() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { forgotPasswordOtp } = useAppSelector((state) => state.forgotPassword);
-  const { data: session } = useSession();
+  
+  // Destructure update function to refresh tokens after switching
+  const { data: session, update: updateSession } = useSession();
 
   const signupMutation = useMutation({
     mutationFn: (values: SignupFormValues) =>
@@ -49,7 +53,6 @@ export default function useAuth() {
     onError: (error: AxiosError<ErrorResponse>) =>
       handleErrors(error, "Signup"),
   });
-
 
   const verifyEmailOnSignup = useMutation({
     mutationFn: (values: verifyEmail) => 
@@ -76,7 +79,6 @@ export default function useAuth() {
     onError: (error: AxiosError<ErrorResponse>) =>
       handleErrors(error, "Resend Verify Email Token"),
   });
-
 
   const loginMutation = useMutation<void, AxiosError<ErrorResponse>, LoginFormValues, {email:string}>({
     mutationFn: async (values: LoginFormValues) => {
@@ -130,7 +132,6 @@ export default function useAuth() {
       handleErrors(error, "Forgot Password"),
   });
 
-
   const verifyEmailOnForgotPassword = useMutation({
     mutationFn: (values: verifyEmailValues) =>
       http.post("/api/auth/verify-reset-otp", values),
@@ -150,10 +151,6 @@ export default function useAuth() {
     onError: (error: AxiosError<ErrorResponse>) =>
       handleErrors(error, "Verify Email"),
   });
-
-
-
-
 
   const resetPassword = useMutation({
     mutationFn: (values: SetNewPasswordValues) => {
@@ -179,6 +176,47 @@ export default function useAuth() {
       handleErrors(error, "Password Reset"),
   });
 
+
+  const switchToHostMutation = useMutation({
+    mutationFn: async (): Promise<ApiResponse<SwitchHostData>> => {
+      const token = session?.user?.accessToken;
+      if (!token) throw new Error("Authentication required");
+
+      const result = await http.post<ApiResponse<SwitchHostData>>(
+        "/users/me/switch-to-host"
+      );
+      if (!result) throw new Error("Failed to switch to host");
+      
+      return result;
+    },
+    onSuccess: async (response) => {
+      toast.success(response.message || "Successfully switched to Host");
+
+      if (response.data) {
+        await updateSession({
+          ...session,
+          user: {
+            ...session?.user,
+            accessToken: response.data.accessToken,
+            refreshToken: response.data.refreshToken,
+            // role: 'HOST' 
+          }
+        });
+      }
+
+      // 3. Clear/Invalidate queries so UI fetches fresh host-specific data
+      queryClient.invalidateQueries({ queryKey: ["getUser"] });
+      queryClient.invalidateQueries({ queryKey: ["host"] });
+      queryClient.invalidateQueries({ queryKey: ["host-performance"] });
+
+      // 4. (Optional) Redirect to the host dashboard
+      // router.push("/host/dashboard"); 
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      handleErrors(error, "Switch to Host");
+    },
+  });
+
   return {
     signupMutation,
     loginMutation,
@@ -187,6 +225,7 @@ export default function useAuth() {
     resendVerifyEmailToken,
     forgotPassword,
     resetPassword,
+    switchToHostMutation, 
     session,
   };
 }

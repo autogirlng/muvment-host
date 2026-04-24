@@ -1,33 +1,34 @@
 import { useMemo } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { getSession, signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { baseAPIURL } from "@/utils/constants";
 import { handleErrors } from "@/utils/functions";
 import { ErrorResponse } from "@/types";
 
 export const useHttp = () => {
+  const { data: session } = useSession();
+  const token = session?.user?.accessToken;
+
   const http = useMemo(() => {
     const instance = axios.create({
       baseURL: baseAPIURL,
       timeout: 20000,
     });
 
-    instance.interceptors.request.use(async (config) => {
-      const session = await getSession();
-      if (session?.user?.accessToken) {
-        config.headers.Authorization = `Bearer ${session.user.accessToken}`;
+    instance.interceptors.request.use((config) => {
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
       return config;
     });
 
     return instance;
-  }, []);
+  }, [token]);
 
   const handleAuthError = (error: AxiosError<ErrorResponse>) => {
     if (
       error?.response?.data?.data === "NOT_PERMITTED_REAUTHENICATE" ||
-      error?.response?.status === 401 ||
-      error?.response?.status === 403
+      error?.response?.status === 401
     ) {
       signOut({ callbackUrl: "/login?session_expired=true" });
       return true;
