@@ -41,16 +41,16 @@ export const dashboardNavItems = [
     name: "Wallet",
     link: "/wallet",
   },
-  {
-    icon: Icons.ic_support,
-    name: "Support",
-    link: "/support",
-  },
-  {
-    icon: Icons.ic_setting,
-    name: "Settings",
-    link: "/settings",
-  },
+  // {
+  //   icon: Icons.ic_support,
+  //   name: "Support",
+  //   link: "/support",
+  // },
+  // {
+  //   icon: Icons.ic_setting,
+  //   name: "Settings",
+  //   link: "/settings",
+  // },
 ];
 
 export const popupNavItems = [
@@ -64,11 +64,11 @@ export const popupNavItems = [
     name: "Settings",
     link: "/settings",
   },
-  {
-    icon: Icons.ic_help_circle,
-    name: "About Us",
-    link: "/about",
-  },
+  // {
+  //   icon: Icons.ic_help_circle,
+  //   name: "About Us",
+  //   link: "/about",
+  // },
   {
     icon: Icons.ic_logout,
     name: "Log out",
@@ -91,11 +91,11 @@ export const popupNavItemsHome = [
     name: "Settings",
     link: "/settings",
   },
-  {
-    icon: Icons.ic_help_circle,
-    name: "About Us",
-    link: "/about",
-  },
+  // {
+  //   icon: Icons.ic_help_circle,
+  //   name: "About Us",
+  //   link: "/about",
+  // },
   {
     icon: Icons.ic_logout,
     name: "Log out",
@@ -113,11 +113,11 @@ export const popupNavItemsforNoUser = [
     name: "Login",
     link: "/login",
   },
-  {
-    icon: Icons.ic_help_circle,
-    name: "About Us",
-    link: "/",
-  },
+  // {
+  //   icon: Icons.ic_help_circle,
+  //   name: "About Us",
+  //   link: "/",
+  // },
 ];
 
 // export const completeAccountSetupTasks: AccountSetupTask[] = [
@@ -723,20 +723,15 @@ export const bookingHistoryTableHeadItems: string[] = [
   "Purpose",
 ];
 
-export const upcomingTripTableHeadItems: string[] = [
+export const tripTableHeadItems: string[] = [
+  "Trip ID",
   "Vehicle",
-  "Customer",
-  "Pickup Location",
-  "Duration",
+  "Driver",
+  "Start Date",
+  "End Date",
   "Booking Status",
   "Trip Status",
   "Price",
-];
-
-export const completedTripTableHeadItems: string[] = [
-  "Vehicle ID",
-  "Trip Dates",
-  "Total Fare",
 ];
 
 export const earningHistoryTableHeadItems: string[] = [

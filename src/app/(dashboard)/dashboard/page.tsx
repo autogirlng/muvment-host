@@ -2,6 +2,9 @@
 import { useAppSelector } from "@/lib/hooks";
 import Link from "next/link";
 import dynamic from "next/dynamic";
+import HostRolePrompt from "@/components/Mou/HostRolePrompt";
+import MouModal from "@/components/Mou/MouModal";
+import { useSession } from "next-auth/react";
 
 // Dynamically import components that may use window
 const AccountActivity = dynamic(() => import("@/components/AccountActivity"), {
@@ -14,9 +17,12 @@ const BookingsOverview = dynamic(
 
 export default function DashboardPage() {
   const { user } = useAppSelector((state) => state.user);
+  const { data: session } = useSession();
 
   return (
     <main className="py-8 2xl:py-11 space-y-11 2xl:space-y-[68px]">
+      <HostRolePrompt />
+      <MouModal />
       {/* complete tasks component starts */}
       {/* {(!user?.withdrawalAccountVerified || !user?.phoneVerified) && ( */}
       {!(user?.data.phoneVerified) && (

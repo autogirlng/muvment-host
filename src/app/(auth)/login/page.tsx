@@ -9,10 +9,25 @@ import usePasswordValidation from "@/hooks/usePasswordValidation";
 import { loginFormValidationSchema } from "@/utils/validationSchema";
 import { loginFormInitialValues } from "@/utils/initialValues";
 
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export default function LoginPage() {
     const { isPasswordHidden, toggleHiddenPassword } = usePasswordValidation();
     const { loginMutation } = useAuth();
+    const searchParams = useSearchParams();
+
+    useEffect(() => {
+        const reason = searchParams.get("reason");
+        const switched = searchParams.get("switched_to_host");
+
+        if (reason === "hosts_only") {
+            toast.info("You were logged out because this platform is exclusively for hosts.");
+        } else if (switched === "true") {
+            toast.success("Successfully switched to a host profile! Please log in again to continue.");
+        }
+    }, [searchParams]);
 
     return (
         <div className="space-y-8">
