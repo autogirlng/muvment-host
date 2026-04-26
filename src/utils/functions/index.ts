@@ -50,11 +50,16 @@ export const isSpaceValid = (password: string): boolean => {
 };
 
 export const validatePhoneNumber = (phoneNumber: string, country: string) => {
+  if (!phoneNumber) return false;
+
+  const normalizedPhoneNumber = replaceCharactersWithString(phoneNumber);
   let isPhoneNumberValid = false;
+
   if (country === "NG") {
-    isPhoneNumberValid = phoneNumber.length === 11;
+    isPhoneNumberValid =
+      normalizedPhoneNumber.length === 11 || normalizedPhoneNumber.length === 10;
   } else {
-    isPhoneNumberValid = phoneNumber.length === 10;
+    isPhoneNumberValid = normalizedPhoneNumber.length === 10;
   }
 
   return isPhoneNumberValid;

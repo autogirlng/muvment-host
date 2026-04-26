@@ -1,14 +1,13 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import DashboardInnerPage from "@/components/DashBoard/InnerPage";
 
 const Settings = dynamic(() => import("@/components/Settings"), { ssr: false });
 
 export default function SettingsPage() {
     return (
-        <DashboardInnerPage title="Settings">
+        <main className="py-[56px]">
             <Settings />
-        </DashboardInnerPage>
+        </main>
     );
 }

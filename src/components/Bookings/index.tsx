@@ -58,7 +58,7 @@ export default function Bookings() {
     ];
 
     return (
-        <div className="space-y-8 pt-[50px]">
+        <div className="space-y-8">
             <div className="flex items-center justify-between gap-3">
                 <SearchInput
                     placeholder="Search with Booking ID"
