@@ -6,7 +6,6 @@ import { listingFilters } from "@/utils/data";
 import { debounce } from "@/utils/functions";
 import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy } from "@/ui";
 import EmptyState from "@/components/EmptyState";
-import DashboardSectionTitle from "@/components/DashBoard/SectionTitle";
 import useListings from "@/hooks/listings/useListings";
 import ListingCard from "@/components/Listings/ListingCard";
 
@@ -68,8 +67,7 @@ export default function ListingsPage() {
 
   return (
     <main className="space-y-6 py-[56px]">
-      <DashboardSectionTitle icon={Icons.ic_car} title="Listings" />
-      <div className="flex justify-between items-center gap-2">
+      <div className="flex justify-between items-center gap-3">
         <SearchInput
           placeholder="Search"
           name="listingsSearch"
@@ -77,6 +75,8 @@ export default function ListingsPage() {
           onChange={(event: ChangeEvent<HTMLInputElement>) =>
             handleSearch(event.target.value)
           }
+          className="w-full max-w-[310px]"
+          icon
         />
         <div className="flex items-center justify-between gap-3">
           <Link href="/vehicle-onboarding">

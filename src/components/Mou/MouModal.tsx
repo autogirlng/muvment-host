@@ -72,10 +72,14 @@ export default function MouModal() {
   const [address, setAddress] = useState("");
   const [signature, setSignature] = useState("");
 
-  const user = (session as any)?.user;
-  const fullName = `${user?.firstName ?? ""} ${user?.lastName ?? ""}`.trim();
-  const email = user?.email ?? "";
-  const phone = user?.phone ?? "";
+  const sessionUser = (session as any)?.user;
+  const profileUser = (reduxUser as any)?.data ?? reduxUser;
+
+  const firstName = profileUser?.firstName ?? sessionUser?.firstName ?? "";
+  const lastName = profileUser?.lastName ?? sessionUser?.lastName ?? "";
+  const fullName = `${firstName} ${lastName}`.trim() || sessionUser?.name || "";
+  const email = profileUser?.email ?? sessionUser?.email ?? "";
+  const phone = profileUser?.phoneNumber ?? sessionUser?.phoneNumber ?? "";
 
   useEffect(() => {
     // Show MOU modal when user is host and no MOU exists
