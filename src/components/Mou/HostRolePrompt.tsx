@@ -31,7 +31,12 @@ export default function HostRolePrompt() {
       // 2. Fallback: Fetch profile to determine role if not in session
       try {
         // Ensure path matches your setup (e.g., "/v1/users/me")
-        const res = await http.get<{ data?: any; userType?: string; role?: string; user_type?: string }>("/v1/users/me");
+        const res = await http.get<{
+          data?: any;
+          userType?: string;
+          role?: string;
+          user_type?: string;
+        }>("/users/me");
         if (!mounted) return;
 
         const user = res?.data ?? res;
@@ -60,7 +65,7 @@ export default function HostRolePrompt() {
   const handleBecomeHost = () => {
     switchToHostMutation.mutate(undefined, {
       onSuccess: () => {
-        // After switching tokens on the backend, force sign out 
+        // After switching tokens on the backend, force sign out
         // so the user logs in fresh with the new HOST role/tokens.
         signOut({ callbackUrl: "/login?switched_to_host=true" });
       },
@@ -104,7 +109,9 @@ export default function HostRolePrompt() {
             disabled={switchToHostMutation.isPending}
             className="px-5 py-2.5 rounded-xl bg-primary-600 text-white hover:bg-primary-700 transition-colors text-sm font-medium tracking-wide disabled:opacity-50 flex items-center justify-center min-w-[160px]"
           >
-            {switchToHostMutation.isPending ? "Switching..." : "Yes, become a host"}
+            {switchToHostMutation.isPending
+              ? "Switching..."
+              : "Yes, become a host"}
           </button>
         </div>
       }

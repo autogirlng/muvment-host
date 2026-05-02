@@ -11,7 +11,7 @@ const AccountActivity = dynamic(() => import("@/components/AccountActivity"), {
 });
 const BookingsOverview = dynamic(
   () => import("@/components/Bookings/BookingsOverview"),
-  { ssr: false }
+  { ssr: false },
 );
 
 export default function DashboardPage() {
@@ -29,16 +29,15 @@ export default function DashboardPage() {
         </div>
         {/* complete tasks component starts */}
         {/* {(!user?.withdrawalAccountVerified || !user?.phoneVerified) && ( */}
-        {!(user?.data.phoneVerified) && (
-
+        {!user?.data.phoneVerified && (
           <div className="py-4 px-6 2xl:px-[33px] bg-warning-400 rounded-[32px] text-white space-y-[18px]">
             <div className="space-y-2">
               <h6 className="text-xl 2xl:text-h6 !font-bold">
                 Complete Account Setup
               </h6>
               <p className="text-xs 2xl:text-sm">
-                Please complete account setup to get full access to Muvment&apos;s
-                functionalities
+                Please complete account setup to get full access to
+                Muvment&apos;s functionalities
               </p>
             </div>
             <Link

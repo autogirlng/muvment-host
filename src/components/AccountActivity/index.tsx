@@ -7,8 +7,9 @@ import { Icons } from "@/ui";
 import { useHostDashboardStats } from "@/hooks/performance/useHostDashboardStats";
 
 export default function AccountActivity() {
-  const { dashboardStats, isLoading, isError, refetch } = useHostDashboardStats();
-  console.log(dashboardStats.totalEarnings)
+  const { dashboardStats, isLoading, isError, refetch } =
+    useHostDashboardStats();
+  console.log(dashboardStats.totalEarnings);
   if (isError) {
     return (
       <div className="space-y-6 2xl:space-y-8">
@@ -17,9 +18,9 @@ export default function AccountActivity() {
           title="Account Activity"
         />
         <div className="text-red-500 text-center p-8">
-          Error loading dashboard data. 
-          <button 
-            onClick={() => refetch()} 
+          Error loading dashboard data.
+          <button
+            onClick={() => refetch()}
             className="ml-2 px-3 py-1 bg-blue-500 text-white rounded"
           >
             Retry
