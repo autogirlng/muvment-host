@@ -6,7 +6,6 @@ import { useAppSelector } from "@/lib/hooks";
 import { CalendarValue, NotificationDataType } from "@/types";
 import { handleFilterQuery } from "@/utils/functions";
 
-
 export default function useNotifications({
   currentPage,
   pageLimit,
@@ -30,8 +29,8 @@ export default function useNotifications({
       filters && Array.isArray(filters) && filters[1]
         ? formatDate(
             new Date(
-              (filters[1] as Date).setDate((filters[1] as Date).getDate() - 1)
-            )
+              (filters[1] as Date).setDate((filters[1] as Date).getDate() - 1),
+            ),
           )
         : "";
     return { startDate, endDate };
@@ -41,7 +40,7 @@ export default function useNotifications({
     queryKey: ["getNotifications", currentPage, pageLimit, startDate, endDate],
     queryFn: () =>
       http.get<NotificationDataType>(
-        `/api/notifications?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({ filters: {}, startDate, endDate })}`
+        `/notification?page=${currentPage}&limit=${pageLimit}&${handleFilterQuery({ filters: {}, startDate, endDate })}`,
       ),
     enabled: !!user?.data.userId,
     retry: false,
