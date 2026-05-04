@@ -22,7 +22,7 @@ export function TopHeader() {
     const { user } = useAppSelector((state) => state.user);
     const { notifications, isError, isLoading, totalCount } = useNotifications({
         pageLimit,
-        currentPage: 1,
+        currentPage: 0,
     });
 
     const pathname = usePathname();

@@ -1,26 +1,23 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useEffect, useMemo } from "react";
 import { MappedInformation, Extras } from "@/types";
 import { FullPageSpinner, AppTabs, Icons } from "@/ui";
 import ListingDetailsHeader from "@/components/Listings/Header";
 import ListingDetailsVehicleImages from "@/components/Listings/VehicleImages";
 import useGetListingById from "@/hooks/listings/useGetListingById";
 import ListingDetailsVehicleDetails from "@/components/Listings/VehicleDetails";
-import ListingDetailsEarnings from "@/components/Listings/Earnings";
 import ListingDetailsUpcomingBookings from "@/components/Listings/UpcomingBookings";
 import VehicleInformation from "@/components/Listings/VehicleInformation";
 import VehicleReviews from "@/components/Listings/VehicleReviews";
 import DriversDetails from "@/components/Listings/DriverDetails";
 
-
-
 const initialExtras: Extras[] = [
   {
     name: "Fuel Included",
     icon: Icons.ic_fuel_station,
-    id: "fuelProvided"
+    id: "fuelProvided",
   },
   {
     name: "Driver Available",
@@ -29,46 +26,44 @@ const initialExtras: Extras[] = [
   },
 ];
 
-export default function ListingsPage({ params }: { params: { id: string } }) {
+export default function ListingsPage() {
   const router = useRouter();
-  const [extras, setExtras] = useState<Extras[]>(initialExtras);
+  const params = useParams();
+  const id = params.id as string;
+
   const {
     listingDetail,
     isError,
     isLoading,
-    isSuccess,
     vehicleDetails,
     vehicleImages,
-  } = useGetListingById({
-    id: params.id,
-  });
+  } = useGetListingById({ id });
+
   useEffect(() => {
-    if (!params.id) {
+    if (!id) {
       router.push("/listings");
     }
-  }, [params.id]);
+  }, [id, router]);
 
-  // use useMemo here
-  useEffect(() => {
-    if (isSuccess) {
-      // update extras
-      const updatedExtras = extras.map((extra) => {
-        if (extra.id === "fuelProvided") {
-          return {
-            ...extra,
-            status: listingDetail?.willProvideFuel || false,
-          };
-        } else if (extra.id === "provideDriver") {
-          return {
-            ...extra,
-            status: listingDetail?.willProvideDriver || false,
-          };
-        }
-        return extra;
-      });
-      setExtras(updatedExtras);
-    }
-  }, [isSuccess]);
+
+  const extras = useMemo(() => {
+    if (!listingDetail) return initialExtras;
+
+    return initialExtras.map((extra) => {
+      if (extra.id === "fuelProvided") {
+        return {
+          ...extra,
+          status: listingDetail?.willProvideFuel || false,
+        };
+      } else if (extra.id === "provideDriver") {
+        return {
+          ...extra,
+          status: listingDetail?.willProvideDriver || false,
+        };
+      }
+      return extra;
+    });
+  }, [listingDetail]);
 
   const tabs = [
     {
@@ -79,12 +74,12 @@ export default function ListingsPage({ params }: { params: { id: string } }) {
     {
       name: "Reviews",
       value: "tab2",
-      content: <VehicleReviews id={params.id} />,
+      content: <VehicleReviews id={id} />,
     },
     {
       name: "Driver details",
       value: "tab3",
-      content: <DriversDetails id={params.id} />,
+      content: <DriversDetails id={id} />,
     },
   ];
 
@@ -93,33 +88,35 @@ export default function ListingsPage({ params }: { params: { id: string } }) {
   }
 
   if (isError) {
-    return <p>something went wrong </p>;
+    return <p>something went wrong</p>;
   }
+
   return (
     <main className="flex gap-10">
       <div className="py-[56px] w-full lg:w-[calc(100%-320px)] xl:w-[calc(100%-360px)] 3xl:w-[calc(100%-500px)]">
         <div className="text-grey-800 space-y-[52px]">
-          {/* name */}
           <ListingDetailsHeader
             name={listingDetail?.name}
             id={listingDetail?.id}
             status={listingDetail?.status}
           />
+
           <ListingDetailsVehicleImages
             vehicleImages={vehicleImages as string[]}
           />
+
           <ListingDetailsVehicleDetails
             extras={extras}
             vehicleDetails={vehicleDetails as MappedInformation[]}
           />
 
-          {/* <ListingDetailsEarnings statistics={listingDetail?.user.statistics} /> */}
-
           <AppTabs label="listing details tabs" tabs={tabs} />
         </div>
       </div>
 
-      <ListingDetailsUpcomingBookings vehicleId={listingDetail?.id || ""} />
+      <ListingDetailsUpcomingBookings
+        vehicleId={listingDetail?.id || ""}
+      />
     </main>
   );
 }

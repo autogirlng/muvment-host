@@ -14,47 +14,25 @@ export function useHostDashboardStats() {
   const onboardedVehiclesQuery = useGetOnboardedVehicle({ page: 0, size: 100 });
   const topRatedQuery = useGetTopRated({ page: 0, size: 5 });
 
-  const isLoading =
-    completedTripsQuery.isLoading ||
-    earningHistoryQuery.isLoading ||
-    onboardedVehiclesQuery.isLoading ||
-    topRatedQuery.isLoading;
-
-  const isError =
-    completedTripsQuery.isError ||
-    earningHistoryQuery.isError ||
-    onboardedVehiclesQuery.isError ||
-    topRatedQuery.isError;
-
   const dashboardStats = useMemo(() => {
-    if (isLoading || isError) {
-      console.log("trigger");
-      return {
-        totalEarnings: 0,
-        totalCompletedRides: 0,
-        totalOnboardedVehicles: 0,
-        topRatedVehicle: null,
-        walletBalance: 0,
-      };
-    }
-
-    const totalEarnings = earningHistoryQuery.data?.data?.totalEarnings || 0;
+    // Safely extract the data directly based on your API types
+    const totalEarnings = Number(earningHistoryQuery.data?.data?.totalEarnings || 0);
+    
+    // Fallbacks for the other arrays depending on how the backend sends them
     const totalCompletedRides = completedTripsQuery.data?.data?.length || 0;
-    const totalOnboardedVehicles =
-      onboardedVehiclesQuery.data?.data?.totalVehicles || 0;
-    const topRatedVehicle = topRatedQuery.data?.data?.[0] || null;
-    const walletBalance = totalEarnings;
+    const totalOnboardedVehicles = onboardedVehiclesQuery.data?.data?.totalVehicles || 0;
+    const topRatedVehicle = Array.isArray(topRatedQuery.data?.data) 
+      ? topRatedQuery.data?.data[0] 
+      : null;
 
     return {
       totalEarnings,
       totalCompletedRides,
       totalOnboardedVehicles,
       topRatedVehicle,
-      walletBalance,
+      walletBalance: totalEarnings, // Ensure wallet balance matches earnings
     };
   }, [
-    isLoading,
-    isError,
     earningHistoryQuery.data,
     completedTripsQuery.data,
     onboardedVehiclesQuery.data,
@@ -63,8 +41,19 @@ export function useHostDashboardStats() {
 
   return {
     dashboardStats,
-    isLoading,
-    isError,
+    // Bulletproof loading states: If we have the number, it is NOT loading. Period.
+    loadingStates: {
+      earnings: dashboardStats.totalEarnings === 0 && earningHistoryQuery.isPending,
+      trips: dashboardStats.totalCompletedRides === 0 && completedTripsQuery.isPending,
+      vehicles: dashboardStats.totalOnboardedVehicles === 0 && onboardedVehiclesQuery.isPending,
+      topRated: !dashboardStats.topRatedVehicle && topRatedQuery.isPending,
+    },
+    errorStates: {
+      earnings: earningHistoryQuery.isError,
+      trips: completedTripsQuery.isError,
+      vehicles: onboardedVehiclesQuery.isError,
+      topRated: topRatedQuery.isError,
+    },
     refetch: () => {
       completedTripsQuery.refetch();
       earningHistoryQuery.refetch();

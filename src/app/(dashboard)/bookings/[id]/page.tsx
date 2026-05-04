@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { useEffect } from "react";
 
 import { PaymentBadge, Popup, FullPageSpinner, Icons } from "@/ui";
@@ -15,12 +15,10 @@ import {
   PaymentBadgeStatus,
 } from "@/types";
 
-export default function BookingDetailPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default function BookingDetailPage() {
   const router = useRouter();
+  const params = useParams();
+  const id = params.id as string;
 
   const {
     isError,
@@ -29,7 +27,7 @@ export default function BookingDetailPage({
     vehicleDetails,
     bookingDates,
     contactInformation,
-  } = useGetBookingById({ id: params.id });
+  } = useGetBookingById({ id });
 
   const {
     openReportModal,
@@ -45,21 +43,20 @@ export default function BookingDetailPage({
     openDeclineModal,
     handleDeclineModal,
     declineBooking,
-  } = useBookingActions({ id: params.id });
+  } = useBookingActions({ id });
 
   useEffect(() => {
-    if (!params.id) {
+    if (!id) {
       router.push("/bookings");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+  }, [id, router]);
 
   if (isLoading) {
     return <FullPageSpinner />;
   }
 
   if (isError) {
-    return <p>something went wrong </p>;
+    return <p>something went wrong</p>;
   }
 
   return (
@@ -84,29 +81,14 @@ export default function BookingDetailPage({
                   {`NGN ${bookingDetail?.data.totalPrice}`}
                 </p>
               </div>
-              {/* <div className="space-y-2">
-                <p className="text-grey-500 text-sm 3xl:text-base">
-                  Payment Status
-                </p>
-                <p className="text-primary-500 text-4xl 3xl:text-h2">
-                  <PaymentBadge
-                    status={
-                      bookingDetail?.paymentStatus.toLocaleLowerCase() as PaymentBadgeStatus
-                    }
-                  />
-                </p>
-              </div> */}
             </div>
           </BookingInfoCards>
+
           <div className="block lg:hidden">
             <Popup
               className="!w-[150px]"
               trigger={
-                <button
-                  className={
-                    "block border border-grey-200 bg-white text-black rounded-lg p-2 w-fit mx-auto"
-                  }
-                >
+                <button className="block border border-grey-200 bg-white text-black rounded-lg p-2 w-fit mx-auto">
                   {Icons.ic_more}
                 </button>
               }
@@ -134,12 +116,17 @@ export default function BookingDetailPage({
               }
             />
           </div>
+
           <div className="hidden lg:block">
             <BookingActions
-              bookingStatus={bookingDetail?.data.bookingStatus as BookingBadgeStatus}
+              bookingStatus={
+                bookingDetail?.data.bookingStatus as BookingBadgeStatus
+              }
               openReportModal={openReportModal}
               handleReportModal={handleReportModal}
-              handleReportTrip={() => reportBooking.mutate({ message: report })}
+              handleReportTrip={() =>
+                reportBooking.mutate({ message: report })
+              }
               setReport={setReport}
               isLoadingReportTrip={reportBooking.isPending}
               handleAcceptTrip={() => acceptBooking.mutate()}
@@ -153,6 +140,7 @@ export default function BookingDetailPage({
             />
           </div>
         </div>
+
         {/* guest info */}
         <BookingInfoCards
           title="GUEST INFORMATION"

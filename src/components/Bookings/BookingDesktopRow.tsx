@@ -24,7 +24,7 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
                 className="!text-grey-900 !font-medium"
             />
             <TableCell content={items?.bookingId} />
-            <TableCell content={items?.bookingType} />
+            <TableCell content={items?.bookingCategory} />
             <TableCell content={`${items?.duration} days`} />
             <TableCell content={items?.vehicleName} />
             <TableCell
