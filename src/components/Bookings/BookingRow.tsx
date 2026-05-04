@@ -22,7 +22,7 @@ const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
             <TableCell content={items?.vehicleName} />
             <TableCell content={items?.customerName} className="text-grey-900" />
             <TableCell content={items?.bookingId} />
-            <TableCell content={items?.bookingType} />
+            <TableCell content={items?.bookingCategory} />
             <TableCell content={`${items?.duration} days`} />
             {/* <TableCell
                 content={
