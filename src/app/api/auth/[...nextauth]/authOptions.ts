@@ -27,7 +27,7 @@ function pickString(
 }
 
 export const authOptions: NextAuthOptions = {
-  trustHost: true,
+  // trustHost: true,
   providers: [
     CredentialsProvider({
       name: "Credentials",

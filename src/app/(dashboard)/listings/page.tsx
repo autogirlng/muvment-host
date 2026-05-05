@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { listingFilters } from "@/utils/data";
 import { debounce } from "@/utils/functions";
@@ -9,7 +9,7 @@ import EmptyState from "@/components/EmptyState";
 import useListings from "@/hooks/listings/useListings";
 import ListingCard from "@/components/Listings/ListingCard";
 
-export default function ListingsPage() {
+function ListingsPageContent() {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const searchParams = useSearchParams();
@@ -142,5 +142,13 @@ export default function ListingsPage() {
       />
 
     </main>
+  );
+}
+
+export default function ListingsPage() {
+  return (
+    <Suspense fallback={<FullPageSpinner />}>
+      <ListingsPageContent />
+    </Suspense>
   );
 }
