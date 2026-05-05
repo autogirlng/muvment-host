@@ -3,6 +3,32 @@ import { Spinner, FullPageDialog } from "@/ui";
 import EarningsModal from "@/components/ActivityCard/modal/EarningsModal";
 import ReviewsModal from "@/components/ActivityCard/modal/ReviewsModal"
 import { ActivityCardProps } from "./props";
+import {
+    formatLocaleCount,
+    formatNgnAmount,
+    parseLooseNumber,
+} from "@/utils/formatters";
+
+function formatDisplayValue(
+    value: string,
+    modalName?: string,
+    showCurrency?: boolean
+): string {
+    if (value === "-" || value === "") return value;
+    const n = parseLooseNumber(value);
+    if (n === null) return value;
+
+    const asMoney =
+        showCurrency ||
+        modalName === "graph" ||
+        modalName === "balance";
+
+    if (asMoney) {
+        return `₦${formatNgnAmount(n)}`;
+    }
+
+    return formatLocaleCount(n);
+}
 
 export default function ActivityCard({
     primary,
@@ -11,6 +37,7 @@ export default function ActivityCard({
     modalTitle,
     modalName,
     modalIcon,
+    showCurrency,
     isLoading,
     className,
 }: ActivityCardProps) {
@@ -51,7 +78,7 @@ export default function ActivityCard({
                         primary && value !== "-" ? "text-white" : "text-black"
                     )}
                 >
-                    {(modalName == "graph" || modalName == "balance") && value !== "-" ? `₦${Number(value).toFixed(2)}` : value}
+                    {formatDisplayValue(value, modalName, showCurrency)}
                 </h2>
             )}
         </div>

@@ -703,6 +703,24 @@ export const transactionTableHeadItems: string[] = [
   "Actions",
 ];
 
+export const hostPendingBalanceTableHeadItems: string[] = [
+  "Invoice",
+  "Vehicle",
+  "Booking date",
+  "Base price",
+  "To pay host",
+  "Payment status",
+  "Actions",
+];
+
+export const hostEarningHistoryTableHeadItems: string[] = [
+  "Paid by",
+  "Email",
+  "Amount",
+  "Date paid",
+  "Actions",
+];
+
 // ======================== Page Filters ======================== //
 export const listingFilters = [
   {
@@ -723,18 +741,21 @@ export const listingFilters = [
 ];
 
 
-export const bookingOverviewFilters: {
+/** Returns a fresh copy; compose vehicle filters in hooks — do not mutate a shared array. */
+export function getBookingOverviewBaseFilters(): {
   title: string;
   options: OptionType[];
-}[] = [
-  {
-    title: "bookingType",
-    options: [
-      { option: "Single day rides", value: BookingType.SINGLE_DAY },
-      { option: "Multi day rides", value: BookingType.MULTI_DAY },
-    ],
-  },
-];
+}[] {
+  return [
+    {
+      title: "bookingType",
+      options: [
+        { option: "Single day rides", value: BookingType.SINGLE_DAY },
+        { option: "Multi day rides", value: BookingType.MULTI_DAY },
+      ],
+    },
+  ];
+}
 
 // add type
 export const bookingFilters = [

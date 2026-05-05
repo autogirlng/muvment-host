@@ -1,33 +1,23 @@
-import React, { useEffect, useState } from "react";
-import { Icons, SelectInput, FilterBy, FullPageSpinner } from "@/ui";
+import React, { useState } from "react";
+import { Icons, FilterBy, FullPageSpinner } from "@/ui";
 
 import Table from "@/components/Bookings/BookingTable";
-import { monthsFilter } from "@/utils/data";
 import useBookingsOverview from "@/hooks/bookings/useBookingsOverview";
 import SectionTitle from "@/components/DashBoard/SectionTitle";
-import cn from "classnames";
-import { useAppSelector } from "@/lib/hooks";
 
 type Props = {};
 
 export default function BookingsOverview({ }: Props) {
-    const { user } = useAppSelector((state) => state.user);
-
     const [filters, setFilters] = useState<Record<string, string[]>>({});
-    const [selectedMonth, setSelectedMonth] = React.useState<number>();
-    const [selectedYear, setSelectedYear] = React.useState<string>();
 
     const { bookings, isError, isLoading, bookingOverviewFilters } =
         useBookingsOverview({
-            month: selectedMonth,
-            year: selectedYear,
             filters,
         });
 
     const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
         setFilters(selectedFilters);
     };
-    console.log(bookings)
 
     return (
         <div className="space-y-8">

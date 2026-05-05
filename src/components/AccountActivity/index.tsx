@@ -7,8 +7,7 @@ import useDashboardStats from "@/hooks/useHostStats";
 
 
 export default function AccountActivity() {
-    const { isError, isLoading, dashboardStats } = useDashboardStats();
-    console.log(dashboardStats)
+    const { isLoading, dashboardStats } = useDashboardStats();
 
     return (
         <div className="space-y-6 2xl:space-y-8">
@@ -34,7 +33,7 @@ export default function AccountActivity() {
                     />
                     <ActivityCard
                         title="Total Completed Rides"
-                        value={`${dashboardStats?.totalOnboardedVehicles || "-"}`}
+                        value={`${dashboardStats?.totalCompletedRides ?? "-"}`}
                         // modalTitle={
                         //   dashboardStats?.totalCompletedRides ? "Show Reviews" : ""
                         // }

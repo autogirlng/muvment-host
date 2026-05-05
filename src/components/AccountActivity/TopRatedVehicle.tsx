@@ -3,12 +3,36 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import { Spinner } from "@/ui";
+import {
+    formatLocaleCount,
+    formatNgnAmount,
+    parseLooseNumber,
+} from "@/utils/formatters";
 import { TopRatedVehicleProps } from "./props";
 
+function formatTagValue(raw: string, kind: "count" | "money" | "text"): string {
+    if (!raw.trim()) return raw;
+    if (kind === "text") return raw;
+    const n = parseLooseNumber(raw);
+    if (n === null) return raw;
+    if (kind === "money") return `₦${formatNgnAmount(n)}`;
+    return formatLocaleCount(n);
+}
 
-const Tag = ({ value, title }: { value: string; title: string }) => (
+const Tag = ({
+    value,
+    title,
+    format,
+}: {
+    value: string;
+    title: string;
+    format?: "count" | "money" | "text";
+}) => (
     <p className="bg-primary-50 rounded-lg py-2 px-3 text-2xs 2xl:text-xs text-grey-500">
-        {title} <span className="text-xs 2xl:text-sm text-grey-800">{value}</span>
+        {title}{" "}
+        <span className="text-xs 2xl:text-sm text-grey-800">
+            {formatTagValue(value, format ?? "text")}
+        </span>
     </p>
 );
 
@@ -32,18 +56,24 @@ export default function TopRatedVehicle({ topRatedVehicle, isLoading }: TopRated
                             </h6>
                             <div className="flex flex-wrap gap-3">
                                 <Tag value={topRatedVehicle?.make || ""} title="Make" />
-                                <Tag value={topRatedVehicle?.color || ""} title="Colour" />
+                                <Tag
+                                    value={topRatedVehicle?.color || topRatedVehicle?.colour || ""}
+                                    title="Colour"
+                                />
                                 <Tag
                                     value={topRatedVehicle?.seatingCapacity || ""}
                                     title="Seating Capacity"
+                                    format="count"
                                 />
                                 <Tag
                                     value={topRatedVehicle?.totalRides || ""}
                                     title="Total Rides"
+                                    format="count"
                                 />
                                 <Tag
                                     value={topRatedVehicle?.totalEarnings || ""}
                                     title="Total Earnings"
+                                    format="money"
                                 />
                             </div>
                         </div>

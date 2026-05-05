@@ -4,16 +4,15 @@ import { ToastContainer } from "react-toastify";
 import { Inter } from "next/font/google";
 import StoreProvider from "./StoreProvider";
 import ReactQueryClientProvider from "./ReactQueryClientProvider";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { seoController } from "@/lib/seo";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
 
-export const metadata: Metadata = {
-  title: "Muvment - Start a business with Muvment",
-  description: "Start a business with Muvment",
-};
+export const metadata: Metadata = seoController.metadata.root();
 
 export default function RootLayout({
   children,
@@ -21,8 +20,9 @@ export default function RootLayout({
   children: ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang={seoController.defaults.locale.replace("_", "-")}>
       <body className={inter.className}>
+        <JsonLd document={seoController.schema.rootGraph()} />
         <ToastContainer
           autoClose={5000}
           hideProgressBar
