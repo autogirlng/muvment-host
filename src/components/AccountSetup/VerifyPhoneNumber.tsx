@@ -1,5 +1,5 @@
 import { Form, Formik } from "formik";
-import { getCountryCallingCode } from "react-phone-number-input";
+import { getCountryCallingCode, parsePhoneNumber } from "react-phone-number-input";
 import { verifyPhoneNumberValues } from "@/utils/initialValues";
 import { verifyPhoneNumberSchema } from "@/utils/validationSchema";
 import { PhoneNumberAndCountryField, Button } from "@/ui";
@@ -12,13 +12,50 @@ import { useAppSelector } from "@/lib/hooks";
 export default function VerifyPhoneNumber() {
     const { user } = useAppSelector((state) => state.user);
     const { sendPhoneNumberToken } = usePhoneNumberVerification();
+
+    const getPhoneDefaults = (phone: string) => {
+        if (!phone) {
+            return {
+                phoneNumber: verifyPhoneNumberValues.phoneNumber,
+                country: verifyPhoneNumberValues.country,
+                countryCode: verifyPhoneNumberValues.countryCode,
+            };
+        }
+
+        const parsedPhone = parsePhoneNumber(phone);
+        if (parsedPhone?.country && parsedPhone?.countryCallingCode) {
+            return {
+                phoneNumber: parsedPhone.nationalNumber,
+                country: parsedPhone.country,
+                countryCode: `+${parsedPhone.countryCallingCode}`,
+            };
+        }
+
+        const numericPhone = replaceCharactersWithString(phone);
+        if (numericPhone.startsWith("234") && numericPhone.length > 10) {
+            return {
+                phoneNumber: numericPhone.slice(3),
+                country: "NG",
+                countryCode: "+234",
+            };
+        }
+
+        return {
+            phoneNumber: numericPhone,
+            country: verifyPhoneNumberValues.country,
+            countryCode: verifyPhoneNumberValues.countryCode,
+        };
+    };
+
+    const phoneDefaults = getPhoneDefaults(user?.data.phoneNumber || "");
+
     return (
         <Formik
             initialValues={{
                 ...verifyPhoneNumberValues,
-                phoneNumber: user?.data.phoneNumber || "",
-                country: "NG",
-                countryCode: "+234",
+                phoneNumber: phoneDefaults.phoneNumber,
+                country: phoneDefaults.country,
+                countryCode: phoneDefaults.countryCode,
             }}
             onSubmit={async (values, { setSubmitting }) => {
                 sendPhoneNumberToken.mutate({ phoneNumber: values.phoneNumber, email: user?.data.email || "" });
@@ -53,7 +90,6 @@ export default function VerifyPhoneNumber() {
                             selectPlaceholder="+234"
                             inputValue={values.phoneNumber}
                             selectValue={values.country}
-                            inputDisabled={true}
                             inputOnChange={(event) => {
                                 const number = replaceCharactersWithString(event.target.value);
                                 setFieldTouched("phoneNumber", true);

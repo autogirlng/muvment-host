@@ -24,7 +24,7 @@ export default function useWithdrawFunds() {
   };
 
   const sendOtp = useMutation({
-    mutationFn: () => http.get("/api/payment/send-otp"),
+    mutationFn: () => http.get("/payment/send-otp"),
 
     onSuccess: (data) => {
       console.log("send withdrawal token Successful", data);

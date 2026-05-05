@@ -13,7 +13,7 @@ export default function useWallet() {
   const { data, isError, isLoading } = useQuery({
     queryKey: ["getWalletBalance"],
 
-    queryFn: () => http.get<WalletBalance>(`/api/wallet`),
+    queryFn: () => http.get<WalletBalance>(`/wallet`),
     enabled: !!user?.data.userId,
     retry: 1,
   });

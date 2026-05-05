@@ -27,6 +27,11 @@ export const dashboardNavItems = [
     link: "/bookings",
   },
   {
+    icon: Icons.ic_car_tracker,
+    name: "Trips",
+    link: "/trips",
+  },
+  {
     icon: Icons.ic_car,
     name: "Listings",
     link: "/listings",
@@ -36,11 +41,16 @@ export const dashboardNavItems = [
     name: "Wallet",
     link: "/wallet",
   },
-  {
-    icon: Icons.ic_support,
-    name: "Support",
-    link: "/support",
-  },
+  // {
+  //   icon: Icons.ic_support,
+  //   name: "Support",
+  //   link: "/support",
+  // },
+  // {
+  //   icon: Icons.ic_setting,
+  //   name: "Settings",
+  //   link: "/settings",
+  // },
 ];
 
 export const popupNavItems = [
@@ -54,11 +64,11 @@ export const popupNavItems = [
     name: "Settings",
     link: "/settings",
   },
-  {
-    icon: Icons.ic_help_circle,
-    name: "About Us",
-    link: "/about",
-  },
+  // {
+  //   icon: Icons.ic_help_circle,
+  //   name: "About Us",
+  //   link: "/about",
+  // },
   {
     icon: Icons.ic_logout,
     name: "Log out",
@@ -81,11 +91,11 @@ export const popupNavItemsHome = [
     name: "Settings",
     link: "/settings",
   },
-  {
-    icon: Icons.ic_help_circle,
-    name: "About Us",
-    link: "/about",
-  },
+  // {
+  //   icon: Icons.ic_help_circle,
+  //   name: "About Us",
+  //   link: "/about",
+  // },
   {
     icon: Icons.ic_logout,
     name: "Log out",
@@ -103,11 +113,11 @@ export const popupNavItemsforNoUser = [
     name: "Login",
     link: "/login",
   },
-  {
-    icon: Icons.ic_help_circle,
-    name: "About Us",
-    link: "/",
-  },
+  // {
+  //   icon: Icons.ic_help_circle,
+  //   name: "About Us",
+  //   link: "/",
+  // },
 ];
 
 // export const completeAccountSetupTasks: AccountSetupTask[] = [
@@ -116,7 +126,7 @@ export const completeAccountSetupTasks: AccountSetupTask[] = [
   {
     icon: Icons.ic_lock,
     title: "Verify Phone Number",
-    link: "/account-setup/verify-number",
+    link: "/settings/verify-number",
     linkText: "Start Verification",
     isCompleted: false,
     taskId: "phoneVerified",
@@ -721,6 +731,34 @@ export const hostEarningHistoryTableHeadItems: string[] = [
   "Actions",
 ];
 
+export const bookingHistoryTableHeadItems: string[] = [
+  "Booking ID",
+  "Guest Name",
+  "Vehicle",
+  "Status",
+  "Total Price",
+  "Booked At",
+  "Purpose",
+];
+
+export const tripTableHeadItems: string[] = [
+  "Trip ID",
+  "Vehicle",
+  "Driver",
+  "Start Date",
+  "End Date",
+  "Booking Status",
+  "Trip Status",
+  "Price",
+];
+
+export const earningHistoryTableHeadItems: string[] = [
+  "Paid By",
+  "Email",
+  "Amount",
+  "Date",
+];
+
 // ======================== Page Filters ======================== //
 export const listingFilters = [
   {
@@ -773,6 +811,37 @@ export const bookingFilters = [
       { option: "Completed", value: BookingBadgeStatus.COMPLTETED },
       { option: "Approved", value: BookingBadgeStatus.APPROVED },
       { option: "Cancelled", value: BookingBadgeStatus.CANCELLED },
+    ],
+  },
+];
+
+export const bookingHistoryFilters = [
+  {
+    title: "bookingStatus",
+    options: [
+      { option: "Pending Payment", value: "PENDING_PAYMENT" },
+      { option: "Confirmed", value: "CONFIRMED" },
+      { option: "Failed Availability", value: "FAILED_AVAILABILITY" },
+      { option: "Cancelled by User", value: "CANCELLED_BY_USER" },
+      { option: "Cancelled by Host", value: "CANCELLED_BY_HOST" },
+      { option: "Cancelled by Admin", value: "CANCELLED_BY_ADMIN" },
+      { option: "In Progress", value: "IN_PROGRESS" },
+      { option: "Completed", value: "COMPLETED" },
+      { option: "No Show", value: "NO_SHOW" },
+      { option: "Void", value: "VOID" },
+      { option: "Abandoned", value: "ABANDONED" },
+    ],
+  },
+  {
+    title: "vehicleTypeName",
+    options: [
+      { option: "Sedan", value: "Sedan" },
+      { option: "SUV", value: "SUV" },
+      { option: "Truck", value: "Truck" },
+      { option: "Bus", value: "Bus" },
+      { option: "Luxury", value: "Luxury" },
+      { option: "Electric Vehicle", value: "Electric vehicle" },
+      { option: "Hybrid Vehicle", value: "Hybrid vehicle" },
     ],
   },
 ];

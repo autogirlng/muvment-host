@@ -30,7 +30,7 @@ export default function usePhoneNumberVerification() {
 
   const sendPhoneNumberToken = useMutation({
     mutationFn: (values: SendPhoneNumberTokenValues) =>
-      http.post("/v1/auth/request-phone-otp", {email:values.email}),
+      http.post("/auth/request-phone-otp", {email:values.email}),
 
     onMutate: (values) => {
       return { phoneNumber: values.phoneNumber, email:values.email };
@@ -39,7 +39,7 @@ export default function usePhoneNumberVerification() {
     onSuccess: (data, _values, context) => {
       console.log("Verify Phone Number successful", data);
       dispatch(setPhoneNumberToVerify(context?.phoneNumber));
-      router.push(`/account-setup/verify-number/otp`);
+      router.push(`/settings/verify-number/otp`);
     },
 
     onError: (error: AxiosError<ErrorResponse>) =>
@@ -61,7 +61,7 @@ export default function usePhoneNumberVerification() {
 
   const verifyPhoneNumberToken = useMutation({
     mutationFn: (values: VerifyPhoneNumberTokenValues) =>
-      http.post("/v1/auth/verify-phone", {email:user?.data.email, otp:values.otp}),
+      http.post("/auth/verify-phone", {email:user?.data.email, otp:values.otp}),
 
     onSuccess: (data) => {
       console.log("Phone Number Verified Successfully", data);

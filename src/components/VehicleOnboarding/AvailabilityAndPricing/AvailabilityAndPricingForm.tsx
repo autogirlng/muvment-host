@@ -35,8 +35,8 @@ const AvailabilityAndPricingForm = ({
     const fetchAvailabilityAndPricingInfo = async () => {
 
         const [bookingTypesRes, geoFenceAreasRes] = await Promise.all([
-            http.get<BookingTypeResponse>("/v1/booking-types"),
-            http.get<GeoFenceAreaResponse>("/v1/geofence-areas")
+            http.get<BookingTypeResponse>("/booking-types"),
+            http.get<GeoFenceAreaResponse>("/geofence-areas")
         ])
 
         const bookingTypes = bookingTypesRes?.data.map((booking) => {

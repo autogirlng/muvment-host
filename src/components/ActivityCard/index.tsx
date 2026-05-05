@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { Spinner, FullPageDialog } from "@/ui";
 import EarningsModal from "@/components/ActivityCard/modal/EarningsModal";
-import ReviewsModal from "@/components/ActivityCard/modal/ReviewsModal"
+import ReviewsModal from "@/components/ActivityCard/modal/ReviewsModal";
 import { ActivityCardProps } from "./props";
 import {
     formatLocaleCount,
@@ -41,15 +41,20 @@ export default function ActivityCard({
     isLoading,
     className,
 }: ActivityCardProps) {
+    const displayRaw =
+        value === undefined || value === null || value === ""
+            ? "-"
+            : String(value);
+
     return (
         <div
             className={cn(
                 "rounded-xl px-3 py-5 space-y-4",
 
-                primary && value !== "-"
+                primary && displayRaw !== "-"
                     ? "bg-primary-500 border border-grey-200 text-white"
                     : "bg-white border border-grey-200 text-grey-500",
-                className
+                className,
             )}
         >
             <div className="flex justify-between gap-1 text-xs 3xl:text-sm">
@@ -75,10 +80,10 @@ export default function ActivityCard({
                 <h2
                     className={cn(
                         "text-h3 2xl:text-4xl",
-                        primary && value !== "-" ? "text-white" : "text-black"
+                        primary && displayRaw !== "-" ? "text-white" : "text-black",
                     )}
                 >
-                    {formatDisplayValue(value, modalName, showCurrency)}
+                    {formatDisplayValue(displayRaw, modalName, showCurrency)}
                 </h2>
             )}
         </div>

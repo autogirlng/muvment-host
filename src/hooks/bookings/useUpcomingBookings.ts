@@ -23,7 +23,7 @@ export default function useUpcomingBookings({
 
     queryFn: async () =>
       http.get<UpcomingBookings>(
-        `/v1/bookings/upcoming-booking`
+        `/bookings/upcoming-booking`
       ),
     enabled: !!user?.data.userId,
     retry: false,

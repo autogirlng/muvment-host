@@ -22,7 +22,7 @@ export function TopHeader() {
     const { user } = useAppSelector((state) => state.user);
     const { notifications, isError, isLoading, totalCount } = useNotifications({
         pageLimit,
-        currentPage: 1,
+        currentPage: 0,
     });
 
     const pathname = usePathname();
@@ -35,10 +35,26 @@ export function TopHeader() {
         setPopupIsOpen(false);
     }, [pathname]);
 
+    const getHeaderTitle = () => {
+        if (pathname === "/dashboard") return "Dashboard";
+        if (pathname.startsWith("/listings")) return "Listings";
+        if (pathname.startsWith("/trips")) return "Trips";
+        if (pathname.startsWith("/notifications")) return "Notifications";
+        if (pathname.startsWith("/settings/mou")) return "MOU Agreement";
+        if (pathname.startsWith("/settings/account-setup")) return "Account Setup";
+        if (pathname.startsWith("/settings")) return "Settings";
+
+        const currentSegment = pathname.split("/").filter(Boolean).at(-1) ?? "dashboard";
+        return currentSegment
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+    };
+
     return (
         <div className="hidden md:flex w-full md:px-6 2xl:px-8 py-5 items-center justify-between bg-white border-b border-grey-300 shadow-[0_4px_100px_0_#00000012]">
             <h6 className="text-base 2xl:text-h6 text-black">
-                Hello, {user?.data.firstName}
+                {getHeaderTitle()}
             </h6>
             <div className="flex items-center gap-3">
                 <Popup
@@ -84,10 +100,6 @@ export function TopHeader() {
                         </div>
                     }
                 />
-
-                <Link href="/settings">
-                    <IconWrapper icon={Icons.ic_setting} />
-                </Link>
 
                 <Popup
                     open={true}

@@ -86,7 +86,7 @@ export interface BookingSegmentContent {
     vehicleName: string,
     createdAt: string,
     customerName: string,
-    bookingType: string,
+    bookingCategory: string,
     city: string,
     duration: string,
     bookingStatus: BookingStatus,

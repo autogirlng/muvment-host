@@ -159,3 +159,13 @@ export interface WithdrawalValues {
 }
 
 
+export interface SwitchHostData {
+  accessToken: string;
+  refreshToken: string;
+  userId: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  emailVerified: boolean;
+  phoneVerified: boolean;
+}

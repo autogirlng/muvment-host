@@ -1,35 +1,36 @@
 import { useMemo } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import {  baseAPIURL} from "@/utils/constants";
+import { useSession, signOut } from "next-auth/react";
+import { baseAPIURL } from "@/utils/constants";
 import { handleErrors } from "@/utils/functions";
 import { ErrorResponse } from "@/types";
-import { clearUser } from "@/lib/features/userSlice";
-import { useAppDispatch } from "@/lib/hooks";
-import { useRouter } from "next/navigation";
 
 export const useHttp = () => {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
+  const { data: session } = useSession();
+  const token = session?.user?.accessToken;
 
   const http = useMemo(() => {
-    return axios.create({
+    const instance = axios.create({
       baseURL: baseAPIURL,
       timeout: 20000,
     });
-  }, []);
 
-  http.interceptors.request.use((config) => {
-    const token = localStorage.getItem("user_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
+    instance.interceptors.request.use((config) => {
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    });
+
+    return instance;
+  }, [token]);
 
   const handleAuthError = (error: AxiosError<ErrorResponse>) => {
-    if (error?.response?.data?.data === "NOT_PERMITTED_REAUTHENICATE") {
-      dispatch(clearUser());
-      router.push("/login");
+    if (
+      error?.response?.data?.data === "NOT_PERMITTED_REAUTHENICATE" ||
+      error?.response?.status === 401
+    ) {
+      signOut({ callbackUrl: "/login?session_expired=true" });
       return true;
     }
     return false;

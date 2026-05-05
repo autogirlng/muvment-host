@@ -1,8 +1,9 @@
-import { ReactNode } from "react";
-export interface ActivityCardProps  {
+import type { ReactNode } from "react";
+
+export interface ActivityCardProps {
   primary?: boolean;
   title: string;
-  value: string;
+  value: string | number;
   modalTitle?: string;
   modalName?: string;
   modalIcon?: ReactNode;
@@ -10,4 +11,4 @@ export interface ActivityCardProps  {
   showCurrency?: boolean;
   isLoading?: boolean;
   className?: string;
-};
+}

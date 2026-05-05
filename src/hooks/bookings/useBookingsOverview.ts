@@ -17,9 +17,7 @@ export default function useBookingsOverview({
   const { data, isError, isLoading } = useQuery({
     queryKey: ["getBookingsOverview", user?.data.userId, filters],
     queryFn: async () =>
-      http.get<BookingSegments>(
-        `/v1/bookings/my-vehicles/segments`
-      ),
+      http.get<BookingSegments>(`/bookings/my-vehicles/segments`),
     enabled: !!user?.data.userId,
     retry: false,
   });

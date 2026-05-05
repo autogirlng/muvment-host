@@ -20,7 +20,7 @@ export default function useUpdateProfile(
 
   const updateProfileMutation = useMutation({
     mutationFn: (values: ProfileFormValues) =>
-      http.patch<User>("/v1/users/me", { ...values }),
+      http.patch<User>("/users/me", { ...values }),
 
     onMutate: (values) => {
       return { ...values };
@@ -39,7 +39,7 @@ export default function useUpdateProfile(
 
   const uploadImage = useMutation({
     mutationFn: (values: FormData) =>
-      http.patch<UpdateProfilePictureResponse>("/v1/users/me/profile-picture", values, { headers: { "Content-Type": "multipart/form-data" },}),
+      http.patch<UpdateProfilePictureResponse>("/users/me/profile-picture", values, { headers: { "Content-Type": "multipart/form-data" },}),
 
     onSuccess: (data) => {
       console.log("Update Image successful", data);

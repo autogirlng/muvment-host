@@ -1,8 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { clearUser, setUser } from "@/lib/features/userSlice";
 import { useAppDispatch } from "@/lib/hooks";
 import { useHttp } from "@/hooks/useHttp";
@@ -11,35 +11,22 @@ import { User } from "@/types";
 export default function useUser() {
   const http = useHttp();
   const dispatch = useAppDispatch();
-  const router = useRouter();
-
-  const [userToken, setUserToken] = useState<string>("");
-
-  useEffect(() => {
-    const user_token = window.localStorage.getItem("user_token");
-    setUserToken(user_token || "");
-
-    if (!user_token) {
-      router.push("/login");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { data: session, status } = useSession();
 
   const getUser = useQuery({
     queryKey: ["getUser"],
-    queryFn: () => http.get<User>("/v1/users/me"),
-    enabled: !!userToken,
+    queryFn: () => http.get<User>("/users/me"),
+    enabled: !!session?.user?.accessToken,
     retry: 1,
   });
 
   useEffect(() => {
     if (getUser.isSuccess) {
-      console.log("User data fetched successfully", getUser.data);
       dispatch(
         setUser({
           // @ts-ignore
           user: getUser.data,
-          userToken: userToken || "",
+          userToken: session?.user?.accessToken || "",
           isAuthenticated: true,
           isLoading: false,
         })
@@ -47,16 +34,14 @@ export default function useUser() {
     }
 
     if (getUser.isError) {
-      console.log("Error fetching user", getUser.error);
       dispatch(clearUser());
-      router.push("/login");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getUser.isError, getUser.isSuccess]);
 
   return {
     getUser,
-    user_token: userToken,
+    session,
   };
   
 }

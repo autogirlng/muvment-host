@@ -19,8 +19,8 @@ const AdditionalInformationForm = ({
 
     const fetchAdditionalVehicleDetails = async () => {
         const [vehicleFeaturesRes, vehicleColorsRes] = await Promise.all([
-            http.get<VehicleFeaturesResponse>("/v1/public/vehicle-features"),
-            http.get<VehicleColorResponse>("/v1/public/vehicle-colors")
+            http.get<VehicleFeaturesResponse>("/public/vehicle-features"),
+            http.get<VehicleColorResponse>("/public/vehicle-colors")
         ]);
 
         const vehicleFeatures = vehicleFeaturesRes?.data.map((feature) => {
