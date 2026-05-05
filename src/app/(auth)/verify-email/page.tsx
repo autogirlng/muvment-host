@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import OtpVerification from "@/components/OtpVerification";
@@ -8,17 +8,23 @@ import useAuth from "@/hooks/useAuth";
 import AuthPageHeader from "@/components/Header/AuthPageHeader";
 
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
     const router = useRouter();
     const emailParams = useSearchParams();
     const email = emailParams.get("email");
 
-    if (!email) {
-        router.push("/signup");
-    }
+    useEffect(() => {
+        if (!email) {
+            router.replace("/signup");
+        }
+    }, [email, router]);
 
     const { verifyEmailOnSignup, resendVerifyEmailToken } = useAuth();
     const [otp, setOtp] = useState<string>("");
+
+    if (!email) {
+        return null;
+    }
 
     return (
         <OtpVerification
@@ -47,5 +53,13 @@ export default function VerifyEmailPage() {
           check your spam first before resending the code."
             />
         </OtpVerification>
+    );
+}
+
+export default function VerifyEmailPage() {
+    return (
+        <Suspense fallback={null}>
+            <VerifyEmailContent />
+        </Suspense>
     );
 }

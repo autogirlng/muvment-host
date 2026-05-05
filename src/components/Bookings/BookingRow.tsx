@@ -1,11 +1,17 @@
 import Link from "next/link";
-import { format } from "date-fns";
-import { BookingBadgeStatus, BookingInformation, BookingSegmentContent, BookingStatus } from "@/types";
+import { BookingSegmentContent, BookingStatus } from "@/types";
 import { Popup, Icons } from "@/ui";
 import TableCell from "@/components/Table/TableCell";
 import DeclineTrip from "@/components/Bookings/modals/DeclineTrip";
 import AcceptTrip from "@/components/Bookings/modals/AcceptTrip";
 import useBookingActions from "@/hooks/bookings/useBookingActions";
+
+function formatDurationLabel(duration: string | undefined): string {
+    if (duration == null || duration === "") return "";
+    const s = String(duration).trim();
+    if (/day/i.test(s)) return s;
+    return `${s} days`;
+}
 
 const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
     const {
@@ -23,7 +29,7 @@ const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
             <TableCell content={items?.customerName} className="text-grey-900" />
             <TableCell content={items?.bookingId} />
             <TableCell content={items?.bookingCategory} />
-            <TableCell content={`${items?.duration} days`} />
+            <TableCell content={formatDurationLabel(items?.duration)} />
             {/* <TableCell
                 content={
                     items?.bookingType

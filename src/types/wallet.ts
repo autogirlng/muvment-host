@@ -136,6 +136,62 @@ export type Transaction = {
   updatedAt: string;
 };
 
+/** POST /v1/host-performance/earning-history `data` payload */
+export interface HostEarningPaidBy {
+  fullName: string;
+  email: string;
+}
+
+export interface HostEarningItem {
+  amountPaid: number;
+  paidAt: string;
+  paidBy: HostEarningPaidBy;
+}
+
+export interface HostEarningHistoryData {
+  totalEarnings: number;
+  hostEarningItems: HostEarningItem[];
+}
+
+export interface HostEarningHistoryResponse extends BaseResponse {
+  data: HostEarningHistoryData;
+}
+
+/** GET /v1/host-performance/pending-balance */
+export type HostPaymentStatus = string;
+
+export interface HostPendingBalanceBooking {
+  bookingId: string;
+  invoiceNumber: string;
+  vehicleName: string;
+  bookingDate: string;
+  basePrice: number;
+  geofenceSurcharge?: number;
+  appliedGeofenceCount?: number;
+  adminDeduction?: number;
+  toPayToHost: number;
+  hostPaymentStatus: HostPaymentStatus;
+}
+
+export interface HostPendingBalanceBookingsPage {
+  content: HostPendingBalanceBooking[];
+  currentPage: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+}
+
+export interface HostPendingBalanceData {
+  totalAmountToPay: number;
+  totalPaidToHost: number;
+  totalAmountHostHaveMade: number;
+  bookings: HostPendingBalanceBookingsPage;
+}
+
+export interface HostPendingBalanceResponse extends BaseResponse {
+  data: HostPendingBalanceData;
+}
+
 export type TransactionTableRow = {
   transactionId: string;
   date: string;

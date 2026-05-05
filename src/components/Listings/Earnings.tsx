@@ -12,6 +12,7 @@ export default function ListingDetailsEarnings({ statistics }: ListingDetailsEar
                     primary
                     title="Revenue Generated"
                     value={`${statistics?.totalRevenue || "-"}`}
+                    showCurrency
                 />
                 <ActivityCard
                     title="Number Of Customers"

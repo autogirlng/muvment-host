@@ -6,9 +6,12 @@ import { ShieldAlert } from "lucide-react";
 import { BlurredDialog } from "@/ui/dialog";
 import useAuth from "@/hooks/useAuth";
 import { useHttp } from "@/hooks/useHttp";
+import { useAppSelector } from "@/lib/hooks";
+import { USER_ME_PATH } from "@/utils/constants";
 
 export default function HostRolePrompt() {
   const { data: session, status } = useSession();
+  const userToken = useAppSelector((s) => s.user.userToken);
   const { switchToHostMutation } = useAuth();
   const http = useHttp();
   const [open, setOpen] = useState(false);
@@ -17,26 +20,28 @@ export default function HostRolePrompt() {
     let mounted = true;
 
     const checkRole = async () => {
-      if (status !== "authenticated" || !session?.user) return;
+      const bearer = session?.user?.accessToken ?? userToken ?? "";
+      if (!bearer) return;
 
-      // 1. Check role directly from the session first
-      const roleFromSession = (session.user as any)?.role;
-      if (roleFromSession) {
-        if (roleFromSession === "CUSTOMER") {
-          setOpen(true);
+      // 1. Role already present on NextAuth session
+      if (status === "authenticated" && session?.user) {
+        const roleFromSession = (session.user as { role?: string }).role;
+        if (roleFromSession) {
+          if (roleFromSession === "CUSTOMER") {
+            setOpen(true);
+          }
+          return;
         }
-        return;
       }
 
-      // 2. Fallback: Fetch profile to determine role if not in session
+      // 2. Redux-only login or session without role — resolve via profile API
       try {
-        // Ensure path matches your setup (e.g., "/v1/users/me")
         const res = await http.get<{
           data?: any;
           userType?: string;
           role?: string;
           user_type?: string;
-        }>("/users/me");
+        }>(USER_ME_PATH);
         if (!mounted) return;
 
         const user = res?.data ?? res;
@@ -55,7 +60,7 @@ export default function HostRolePrompt() {
     return () => {
       mounted = false;
     };
-  }, [session, status, http]);
+  }, [session, status, http, userToken]);
 
   const handleCancel = () => {
     // Immediately sign out and redirect to login or landing
@@ -81,7 +86,6 @@ export default function HostRolePrompt() {
 
   return (
     <BlurredDialog
-      trigger={<></>}
       open={open}
       onOpenChange={handleOpenChange}
       title={

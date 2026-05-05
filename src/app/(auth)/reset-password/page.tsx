@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense, useEffect } from "react";
 import { Form, Formik } from "formik";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button, InputField } from "@/ui"
@@ -11,17 +12,23 @@ import useAuth from "@/hooks/useAuth";
 import usePasswordValidation from "@/hooks/usePasswordValidation";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 
-export default function ResetPasswordPage() {
+function ResetPasswordContent() {
     const { isPasswordHidden, toggleHiddenPassword } = usePasswordValidation();
 
     const router = useRouter();
     const params = useSearchParams();
     const email = params.get("email") ?? "";
-    const otp = params.get("token") ?? ""
+    const otp = params.get("token") ?? "";
     const { resetPassword } = useAuth();
 
+    useEffect(() => {
+        if (!email || !otp) {
+            router.replace("/forgot-password");
+        }
+    }, [email, otp, router]);
+
     if (!email || !otp) {
-        router.push("/forgot-password");
+        return null;
     }
 
     return (
@@ -120,5 +127,13 @@ export default function ResetPasswordPage() {
                 }}
             </Formik>
         </div>
+    );
+}
+
+export default function ResetPasswordPage() {
+    return (
+        <Suspense fallback={null}>
+            <ResetPasswordContent />
+        </Suspense>
     );
 }

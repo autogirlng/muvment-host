@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Suspense, useEffect } from "react";
 import { Button, InputField } from "@/ui";
 import { Form, Formik } from "formik";
 import useAuth from "@/hooks/useAuth";
@@ -10,10 +11,9 @@ import { loginFormValidationSchema } from "@/utils/validationSchema";
 import { loginFormInitialValues } from "@/utils/initialValues";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect } from "react";
 import { toast } from "react-toastify";
 
-export default function LoginPage() {
+function LoginPageContent() {
     const { isPasswordHidden, toggleHiddenPassword } = usePasswordValidation();
     const { loginMutation } = useAuth();
     const searchParams = useSearchParams();
@@ -38,9 +38,12 @@ export default function LoginPage() {
 
             <Formik
                 initialValues={loginFormInitialValues}
-                onSubmit={(values, { setSubmitting }) => {
-                    loginMutation.mutate(values);
-                    setSubmitting(false);
+                onSubmit={async (values, { setSubmitting }) => {
+                    try {
+                        await loginMutation.mutateAsync(values);
+                    } finally {
+                        setSubmitting(false);
+                    }
                 }}
                 validationSchema={loginFormValidationSchema}
                 enableReinitialize={true}
@@ -114,5 +117,13 @@ export default function LoginPage() {
                 }}
             </Formik>
         </div>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense fallback={null}>
+            <LoginPageContent />
+        </Suspense>
     );
 }
