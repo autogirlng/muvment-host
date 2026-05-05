@@ -6,7 +6,7 @@ import { useAppSelector } from "@/lib/hooks";
 import type { HostEarningHistoryResponse } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 
-const EARNING_HISTORY_URL = "/v1/host-performance/earning-history";
+const EARNING_HISTORY_URL = "/host-performance/earning-history";
 
 export default function useHostEarningHistory({
   currentPage = 1,

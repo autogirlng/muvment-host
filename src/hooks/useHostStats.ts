@@ -7,11 +7,11 @@ import { useHttp } from "./useHttp";
 
 /** Swagger: Host Performance */
 const HOST_PERF = {
-  onboardedVehicle: "/v1/host-performance/onboarded-vehicle",
-  completedTrip: "/v1/host-performance/completed-trip",
-  earningHistory: "/v1/host-performance/earning-history",
-  pendingBalance: "/v1/host-performance/pending-balance",
-  topRated: "/v1/host-performance/top-rated",
+  onboardedVehicle: "/host-performance/onboarded-vehicle",
+  completedTrip: "/host-performance/completed-trip",
+  earningHistory: "/host-performance/earning-history",
+  pendingBalance: "/host-performance/pending-balance",
+  topRated: "/host-performance/top-rated",
 } as const;
 
 function pickNum(

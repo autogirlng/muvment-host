@@ -1,5 +1,6 @@
 "use client";
 
+import { startTransition } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -7,9 +8,11 @@ import { toast } from "react-toastify";
 import { signIn, useSession } from "next-auth/react";
 import { useHttp } from "@/hooks/useHttp";
 import { setForgotPasswordOtp } from "@/lib/features/forgotPasswordSlice";
+import { setToken, setUser } from "@/lib/features/userSlice";
+import { getClientStore } from "@/lib/storeHolder";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { handleErrors } from "@/utils/functions";
-import { UserType } from "@/utils/constants";
+import { AUTH_API_BASE, UserType, USER_ME_PATH } from "@/utils/constants";
 import {
   ErrorResponse,
   LoginFormValues,
@@ -22,8 +25,98 @@ import {
   loginResponse,
   // Make sure these two types are exported from your types file
   ApiResponse,
-  SwitchHostData 
+  SwitchHostData,
+  User,
 } from "@/types";
+
+function pickLoginString(obj: Record<string, unknown>, ...keys: string[]): string | undefined {
+  for (const k of keys) {
+    const v = obj[k];
+    if (typeof v === "string" && v.length > 0) return v;
+    if (typeof v === "number" && Number.isFinite(v)) return String(v);
+  }
+  return undefined;
+}
+
+function coerceLoginDataPayload(obj: Record<string, unknown>): loginResponse["data"] | null {
+  const accessToken =
+    pickLoginString(obj, "accessToken", "access_token", "token") ?? "";
+  if (!accessToken) return null;
+
+  return {
+    accessToken,
+    refreshToken: pickLoginString(obj, "refreshToken", "refresh_token") ?? "",
+    userId:
+      pickLoginString(obj, "userId", "user_id", "id", "sub") ?? "",
+    firstName: pickLoginString(obj, "firstName", "first_name") ?? "",
+    lastName: pickLoginString(obj, "lastName", "last_name") ?? "",
+    email: pickLoginString(obj, "email") ?? "",
+    profilePictureUrl: pickLoginString(obj, "profilePictureUrl", "profile_picture_url"),
+    emailVerified: Boolean(obj.emailVerified ?? obj.email_verified),
+    phoneVerified: Boolean(obj.phoneVerified ?? obj.phone_verified),
+    roles: obj.roles as unknown[] | undefined,
+    organizations: obj.organizations as unknown[] | undefined,
+  };
+}
+
+/** Axios body may be the envelope or one level wrapped; supports camelCase and snake_case tokens. */
+function normalizeLoginEnvelope(raw: unknown): loginResponse | null {
+  if (raw == null || typeof raw !== "object") return null;
+  const r = raw as Record<string, unknown>;
+  const d = r.data;
+
+  let payload: Record<string, unknown> | null = null;
+
+  if (d && typeof d === "object" && d !== null && !Array.isArray(d)) {
+    const dd = d as Record<string, unknown>;
+    if (coerceLoginDataPayload(dd)) {
+      payload = dd;
+    } else {
+      const inner = dd.data;
+      if (inner && typeof inner === "object" && inner !== null && !Array.isArray(inner)) {
+        const innerObj = inner as Record<string, unknown>;
+        if (coerceLoginDataPayload(innerObj)) payload = innerObj;
+      }
+    }
+  }
+
+  if (!payload && coerceLoginDataPayload(r as Record<string, unknown>)) {
+    payload = r as Record<string, unknown>;
+  }
+
+  const coerced = payload ? coerceLoginDataPayload(payload) : null;
+  if (!coerced) return null;
+
+  return {
+    status: String(r.status ?? "SUCCESSFUL"),
+    message: String(r.message ?? ""),
+    errorCode: r.errorCode as string | undefined,
+    data: coerced,
+    timestamp: String(r.timestamp ?? ""),
+  };
+}
+
+function userFromLoginResponse(res: loginResponse): User {
+  const d = res.data;
+  return {
+    status: res.status,
+    message: res.message,
+    errorCode: res.errorCode,
+    data: {
+      userId: d.userId,
+      firstName: d.firstName,
+      lastName: d.lastName,
+      email: d.email,
+      phoneNumber: "",
+      userType: "HOST",
+      emailVerified: d.emailVerified,
+      phoneVerified: d.phoneVerified,
+      profilePictureUrl: d.profilePictureUrl,
+      referralCode: undefined,
+    },
+    timestamp: res.timestamp,
+  };
+}
 
 export default function useAuth() {
   const http = useHttp();
@@ -37,7 +130,7 @@ export default function useAuth() {
 
   const signupMutation = useMutation({
     mutationFn: (values: SignupFormValues) =>
-      http.post("/auth/signup", { ...values, userType: UserType.HOST }),
+      http.post(`${AUTH_API_BASE}/signup`, { ...values, userType: UserType.HOST }),
 
     onMutate: (values) => {
       return { email: values.email };
@@ -56,7 +149,7 @@ export default function useAuth() {
 
   const verifyEmailOnSignup = useMutation({
     mutationFn: (values: verifyEmail) => 
-      http.post<string>("/auth/verify-account", values),
+      http.post<string>(`${AUTH_API_BASE}/verify-account`, values),
 
     onSuccess: () => {
       toast.success("Account created successfully");
@@ -69,7 +162,7 @@ export default function useAuth() {
 
   const resendVerifyEmailToken = useMutation({
     mutationFn: (values: ResendVerifyEmailTokenValues) =>
-      http.post("/auth/resend-verification-otp", values),
+      http.post(`${AUTH_API_BASE}/resend-verification-otp`, values),
 
     onSuccess: (data) => {
       console.log("Resend Token successful", data);
@@ -82,24 +175,46 @@ export default function useAuth() {
 
   const loginMutation = useMutation<void, AxiosError<ErrorResponse>, LoginFormValues, {email:string}>({
     mutationFn: async (values: LoginFormValues) => {
-      const result = await signIn("credentials", {
+      const raw = await http.post<unknown>(`${AUTH_API_BASE}/login`, {
         email: values.email,
         password: values.password,
-        redirect: false,
+        userType: UserType.HOST,
       });
 
-      if (result?.error) {
-        throw new AxiosError(result.error);
+      const data = normalizeLoginEnvelope(raw);
+      const payload = data?.data;
+      if (!data || !payload?.accessToken) {
+        throw new AxiosError("Login failed");
       }
+
+      dispatch(
+        setUser({
+          user: userFromLoginResponse(data),
+          userToken: payload.accessToken,
+          isAuthenticated: true,
+          isLoading: false,
+        })
+      );
+
+      const nextAuthResult = await signIn("credentials", {
+        redirect: false,
+        email: values.email,
+        accessToken: payload.accessToken,
+        refreshToken: payload.refreshToken ?? "",
+      });
+      if (nextAuthResult?.error) {
+        console.warn("NextAuth session sync after login:", nextAuthResult.error);
+      }
+
+      queryClient.clear();
+      startTransition(() => {
+        router.push("/dashboard");
+        router.refresh();
+      });
     },
 
     onMutate: (values) => {
       return { email: values.email };
-    },
-
-    onSuccess: () => {
-      router.push("/dashboard");
-      queryClient.clear();
     },
 
     onError: (error: AxiosError<ErrorResponse>, _values, context) => {
@@ -115,7 +230,7 @@ export default function useAuth() {
 
   const forgotPassword = useMutation({
     mutationFn: (values: ResetPasswordEmailValues) =>
-      http.post("/auth/forgot-password", values),
+      http.post(`${AUTH_API_BASE}/forgot-password`, values),
 
     onMutate: (values) => {
       return { email: values.email };
@@ -157,7 +272,7 @@ export default function useAuth() {
       console.log(values)
       const { otp, password } = values;
 
-      return http.post("/auth/reset-password", 
+      return http.post(`${AUTH_API_BASE}/reset-password`, 
         {
         email:values.email,
         newPassword: password,
@@ -179,11 +294,13 @@ export default function useAuth() {
 
   const switchToHostMutation = useMutation({
     mutationFn: async (): Promise<ApiResponse<SwitchHostData>> => {
-      const token = session?.user?.accessToken;
+      const token =
+        session?.user?.accessToken ??
+        getClientStore()?.getState().user.userToken;
       if (!token) throw new Error("Authentication required");
 
       const result = await http.post<ApiResponse<SwitchHostData>>(
-        "/users/me/switch-to-host"
+        `${USER_ME_PATH}/switch-to-host`
       );
       if (!result) throw new Error("Failed to switch to host");
       
@@ -192,16 +309,23 @@ export default function useAuth() {
     onSuccess: async (response) => {
       toast.success(response.message || "Successfully switched to Host");
 
-      if (response.data) {
-        await updateSession({
-          ...session,
-          user: {
-            ...session?.user,
-            accessToken: response.data.accessToken,
-            refreshToken: response.data.refreshToken,
-            // role: 'HOST' 
-          }
-        });
+      if (response.data?.accessToken) {
+        dispatch(setToken(response.data.accessToken));
+      }
+
+      if (response.data && session) {
+        try {
+          await updateSession({
+            ...session,
+            user: {
+              ...session?.user,
+              accessToken: response.data.accessToken,
+              refreshToken: response.data.refreshToken,
+            },
+          });
+        } catch {
+          /* NextAuth session optional when using Redux token only */
+        }
       }
 
       // 3. Clear/Invalidate queries so UI fetches fresh host-specific data

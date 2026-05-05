@@ -29,6 +29,7 @@ export default function BookingHistory({ search, filters, startDate, endDate }: 
         endDate: endDate || undefined,
     });
 
+
     const bookings = data?.data?.content ?? [];
     const totalCount = data?.data?.totalElements ?? 0;
 

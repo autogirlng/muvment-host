@@ -123,7 +123,6 @@ export default function MouModal() {
 
   return (
     <BlurredDialog
-      trigger={<></>}
       open={open}
       onOpenChange={(val) => {
         // Prevent closing unless successful submission

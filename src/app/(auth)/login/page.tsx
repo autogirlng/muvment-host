@@ -38,9 +38,12 @@ export default function LoginPage() {
 
             <Formik
                 initialValues={loginFormInitialValues}
-                onSubmit={(values, { setSubmitting }) => {
-                    loginMutation.mutate(values);
-                    setSubmitting(false);
+                onSubmit={async (values, { setSubmitting }) => {
+                    try {
+                        await loginMutation.mutateAsync(values);
+                    } finally {
+                        setSubmitting(false);
+                    }
                 }}
                 validationSchema={loginFormValidationSchema}
                 enableReinitialize={true}

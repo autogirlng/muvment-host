@@ -5,7 +5,7 @@ import { useAppSelector } from "@/lib/hooks";
 import type { HostPendingBalanceResponse } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 
-const PENDING_BALANCE_URL = "/v1/host-performance/pending-balance";
+const PENDING_BALANCE_URL = "/host-performance/pending-balance";
 
 /**
  * Paginated pending balance + booking payout rows (Swagger: `page` 0-based, `size`).

@@ -2,6 +2,7 @@
 
 import { ReactNode, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 import { useAppSelector } from "@/lib/hooks";
 import { FullPageSpinner } from "@/ui";
@@ -11,8 +12,16 @@ import useUser from "@/hooks/useUser";
 export default function DashboardLayoutClient({ children }: { children: ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
-    const { isLoading, user } = useAppSelector((state) => state.user);
+    const { user, userToken } = useAppSelector((state) => state.user);
+    const { status, data: session } = useSession();
     const { getUser } = useUser();
+
+    const effectiveToken = session?.user?.accessToken ?? userToken;
+    const sessionBusy = status === "loading" && !userToken;
+    const profileBusy =
+        !!effectiveToken &&
+        !user?.data?.userId &&
+        (getUser.isPending || getUser.isFetching);
 
     useEffect(() => {
         if (user) {
@@ -28,13 +37,13 @@ export default function DashboardLayoutClient({ children }: { children: ReactNod
                 pathname !== "/dashboard" &&
                 (!user?.data.phoneVerified)
             ) {
-                router.push("/account-setup");
+                router.push("/settings/account-setup");
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user, pathname]);
 
-    if (isLoading || getUser.isLoading) {
+    if (sessionBusy || profileBusy) {
         return <FullPageSpinner />;
     }
 
