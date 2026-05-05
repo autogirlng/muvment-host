@@ -1,21 +1,51 @@
 import { useMemo } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { useSession, signOut } from "next-auth/react";
+import { signOut, getSession } from "next-auth/react";
+import { clearUser } from "@/lib/features/userSlice";
+import { getClientStore } from "@/lib/storeHolder";
 import { baseAPIURL } from "@/utils/constants";
 import { handleErrors } from "@/utils/functions";
 import { ErrorResponse } from "@/types";
 
-export const useHttp = () => {
-  const { data: session } = useSession();
-  const token = session?.user?.accessToken;
+function sentBearerAuthorization(headers: unknown): boolean {
+  if (!headers || typeof headers !== "object") return false;
+  const h = headers as Record<string, unknown> & {
+    get?: (name: string) => unknown;
+  };
+  const fromGet =
+    typeof h.get === "function" ? h.get("Authorization") : undefined;
+  const v =
+    fromGet ?? h.Authorization ?? h.authorization;
+  return typeof v === "string" && v.length > 0;
+}
 
+export const useHttp = () => {
   const http = useMemo(() => {
     const instance = axios.create({
       baseURL: baseAPIURL,
       timeout: 20000,
     });
 
-    instance.interceptors.request.use((config) => {
+    instance.interceptors.request.use(async (config) => {
+      const path = `${config.baseURL ?? ""}${config.url ?? ""}`;
+      const publicAuth =
+        path.includes("/auth/login") ||
+        path.includes("/auth/signup") ||
+        path.includes("/auth/forgot-password") ||
+        path.includes("/auth/reset-password") ||
+        path.includes("/auth/verify-account") ||
+        path.includes("/auth/resend-verification") ||
+        path.includes("/auth/request-phone-otp") ||
+        path.includes("/auth/verify-phone");
+
+      if (publicAuth) {
+        delete config.headers.Authorization;
+        return config;
+      }
+
+      const session = await getSession();
+      const reduxToken = getClientStore()?.getState().user.userToken;
+      const token = session?.user?.accessToken ?? reduxToken;
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -23,16 +53,27 @@ export const useHttp = () => {
     });
 
     return instance;
-  }, [token]);
+  }, []);
 
   const handleAuthError = (error: AxiosError<ErrorResponse>) => {
-    if (
-      error?.response?.data?.data === "NOT_PERMITTED_REAUTHENICATE" ||
-      error?.response?.status === 401
-    ) {
+    const status = error.response?.status;
+    const sentBearer = sentBearerAuthorization(error.config?.headers);
+
+    if (error?.response?.data?.data === "NOT_PERMITTED_REAUTHENICATE") {
+      getClientStore()?.dispatch(clearUser());
       signOut({ callbackUrl: "/login?session_expired=true" });
       return true;
     }
+
+    if (
+      (status === 401 || status === 403) &&
+      sentBearer
+    ) {
+      getClientStore()?.dispatch(clearUser());
+      signOut({ callbackUrl: "/login?session_expired=true" });
+      return true;
+    }
+
     return false;
   };
 
@@ -43,7 +84,7 @@ export const useHttp = () => {
         return response.data;
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (handleAuthError(error)) return;
+          if (handleAuthError(error)) throw error;
           handleErrors(error);
           // throw new Error(error.response?.data.message);
           
@@ -62,7 +103,7 @@ export const useHttp = () => {
         return response.data;
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (handleAuthError(error)) return;
+          if (handleAuthError(error)) throw error;
           handleErrors(error);
           throw new Error(error.response?.data.message ?? error.message);
         }
@@ -76,7 +117,7 @@ export const useHttp = () => {
         return response.data;
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (handleAuthError(error)) return;
+          if (handleAuthError(error)) throw error;
           handleErrors(error);
           throw new Error(error.response?.data.message);
         }
@@ -90,7 +131,7 @@ export const useHttp = () => {
         return response.data;
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (handleAuthError(error)) return;
+          if (handleAuthError(error)) throw error;
           handleErrors(error);
           throw new Error(error.response?.data.message);
         }
@@ -104,7 +145,7 @@ export const useHttp = () => {
         return response.data;
       } catch (error) {
         if (error instanceof AxiosError) {
-          if (handleAuthError(error)) return;
+          if (handleAuthError(error)) throw error;
           handleErrors(error);
           throw new Error(error.response?.data.message);
         }

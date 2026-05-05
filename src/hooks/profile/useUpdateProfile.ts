@@ -9,6 +9,7 @@ import { handleErrors } from "@/utils/functions";
 import { ErrorResponse, ProfileFormValues, User, UpdateProfilePictureResponse } from "@/types";
 import { updateUserData } from "@/lib/features/userSlice"
 import { useHttp } from "@/hooks/useHttp";
+import { USER_ME_PATH } from "@/utils/constants";
 
 export default function useUpdateProfile(
   setIsProfileEditable: Dispatch<SetStateAction<boolean>>
@@ -20,7 +21,7 @@ export default function useUpdateProfile(
 
   const updateProfileMutation = useMutation({
     mutationFn: (values: ProfileFormValues) =>
-      http.patch<User>("/users/me", { ...values }),
+      http.patch<User>(USER_ME_PATH, { ...values }),
 
     onMutate: (values) => {
       return { ...values };
@@ -39,7 +40,7 @@ export default function useUpdateProfile(
 
   const uploadImage = useMutation({
     mutationFn: (values: FormData) =>
-      http.patch<UpdateProfilePictureResponse>("/users/me/profile-picture", values, { headers: { "Content-Type": "multipart/form-data" },}),
+      http.patch<UpdateProfilePictureResponse>(`${USER_ME_PATH}/profile-picture`, values, { headers: { "Content-Type": "multipart/form-data" },}),
 
     onSuccess: (data) => {
       console.log("Update Image successful", data);

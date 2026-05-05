@@ -15,6 +15,7 @@ import {
   VerifyPhoneNumberTokenValues,
 } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
+import { AUTH_API_BASE } from "@/utils/constants";
 
 export default function usePhoneNumberVerification() {
   const http = useHttp();
@@ -30,7 +31,7 @@ export default function usePhoneNumberVerification() {
 
   const sendPhoneNumberToken = useMutation({
     mutationFn: (values: SendPhoneNumberTokenValues) =>
-      http.post("/auth/request-phone-otp", {email:values.email}),
+      http.post(`${AUTH_API_BASE}/request-phone-otp`, {email:values.email}),
 
     onMutate: (values) => {
       return { phoneNumber: values.phoneNumber, email:values.email };
@@ -61,7 +62,7 @@ export default function usePhoneNumberVerification() {
 
   const verifyPhoneNumberToken = useMutation({
     mutationFn: (values: VerifyPhoneNumberTokenValues) =>
-      http.post("/auth/verify-phone", {email:user?.data.email, otp:values.otp}),
+      http.post(`${AUTH_API_BASE}/verify-phone`, {email:user?.data.email, otp:values.otp}),
 
     onSuccess: (data) => {
       console.log("Phone Number Verified Successfully", data);

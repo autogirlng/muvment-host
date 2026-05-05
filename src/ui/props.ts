@@ -247,7 +247,8 @@ export interface ChipProps {
 };
 
 export interface BlurredDialogProps  {
-    trigger: ReactNode;
+    /** Omit for fully controlled dialogs opened only via `open` / `onOpenChange`. */
+    trigger?: ReactNode;
     title?: string | ReactNode;
     description?: string;
     content: ReactNode | string;

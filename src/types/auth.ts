@@ -42,7 +42,7 @@ export interface LoginFormValues {
 export interface loginResponse {
   status: string;
   message: string;
-  errorCode: string;
+  errorCode?: string;
   data: {
     accessToken: string;
     refreshToken: string;
@@ -50,9 +50,11 @@ export interface loginResponse {
     firstName: string;
     lastName: string;
     email: string;
-    profilePictureUrl: string;
+    profilePictureUrl?: string;
     emailVerified: boolean;
     phoneVerified: boolean;
+    roles?: unknown[];
+    organizations?: unknown[];
   },
   timestamp: string;
 }

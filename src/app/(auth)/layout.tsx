@@ -5,21 +5,13 @@ import cn from "classnames";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
 import { logo_icon_white } from "@/ui/assets";
-import { FullPageSpinner } from "@/ui/spinner";
-
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
-    const { status } = useSession();
 
     const otpRoutes = ["/verify-email", "/forgot-password/otp"];
     const isOtpScreen = otpRoutes.includes(pathname);
-
-    if (status === "loading") {
-        return <FullPageSpinner />;
-    }
 
     return (
         <main>
