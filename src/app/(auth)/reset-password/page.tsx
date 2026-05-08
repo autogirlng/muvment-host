@@ -41,8 +41,6 @@ function ResetPasswordContent() {
             <Formik
                 initialValues={setNewPasswordInitialValues}
                 onSubmit={async (values, { setSubmitting }) => {
-                    console.log(values);
-
                     resetPassword.mutate({ ...values, email: email, otp });
                     setSubmitting(false);
                 }}

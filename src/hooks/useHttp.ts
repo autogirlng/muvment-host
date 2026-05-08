@@ -86,8 +86,6 @@ export const useHttp = () => {
         if (error instanceof AxiosError) {
           if (handleAuthError(error)) throw error;
           handleErrors(error);
-          // throw new Error(error.response?.data.message);
-          
         }
         throw error;
       }
@@ -105,7 +103,6 @@ export const useHttp = () => {
         if (error instanceof AxiosError) {
           if (handleAuthError(error)) throw error;
           handleErrors(error);
-          throw new Error(error.response?.data.message ?? error.message);
         }
         throw error;
       }
@@ -119,7 +116,6 @@ export const useHttp = () => {
         if (error instanceof AxiosError) {
           if (handleAuthError(error)) throw error;
           handleErrors(error);
-          throw new Error(error.response?.data.message);
         }
         throw error;
       }
@@ -133,7 +129,6 @@ export const useHttp = () => {
         if (error instanceof AxiosError) {
           if (handleAuthError(error)) throw error;
           handleErrors(error);
-          throw new Error(error.response?.data.message);
         }
         throw error;
       }
@@ -147,7 +142,6 @@ export const useHttp = () => {
         if (error instanceof AxiosError) {
           if (handleAuthError(error)) throw error;
           handleErrors(error);
-          throw new Error(error.response?.data.message);
         }
         throw error;
       }
