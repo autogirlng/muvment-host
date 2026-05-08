@@ -1,7 +1,4 @@
 import { Dispatch, ReactNode, SetStateAction } from "react";
-import { AxiosError } from "axios";
-import { ErrorResponse } from "@/types";
-
 
 export interface OtpVerificationProps  {
     verifyOtp: () => void;
@@ -10,7 +7,8 @@ export interface OtpVerificationProps  {
     isResendOtpLoading: boolean;
     setOtp: Dispatch<SetStateAction<string>>;
     otp: string;
-    error: AxiosError<ErrorResponse> | null;
+    /** Mutation/API failure from react-query (often AxiosError). */
+    error: unknown;
     children?: ReactNode;
     numInputs?: number;
 };

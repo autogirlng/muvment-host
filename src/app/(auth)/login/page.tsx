@@ -21,8 +21,11 @@ function LoginPageContent() {
     useEffect(() => {
         const reason = searchParams.get("reason");
         const switched = searchParams.get("switched_to_host");
+        const sessionExpired = searchParams.get("session_expired");
 
-        if (reason === "hosts_only") {
+        if (sessionExpired === "true") {
+            toast.info("Your session expired. Please sign in again.");
+        } else if (reason === "hosts_only") {
             toast.info("You were logged out because this platform is exclusively for hosts.");
         } else if (switched === "true") {
             toast.success("Successfully switched to a host profile! Please log in again to continue.");

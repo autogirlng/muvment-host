@@ -6,9 +6,12 @@ import HostRolePrompt from "@/components/Mou/HostRolePrompt";
 import MouModal from "@/components/Mou/MouModal";
 
 // Dynamically import components that may use window
-const AccountActivity = dynamic(() => import("@/components/AccountActivity"), {
-  ssr: false,
-});
+const AccountActivity = dynamic(
+  () => import("@/components/AccountActivity/index"),
+  {
+    ssr: false,
+  },
+);
 const BookingsOverview = dynamic(
   () => import("@/components/Bookings/BookingsOverview"),
   { ssr: false },

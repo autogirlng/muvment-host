@@ -3,21 +3,24 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { useHttp } from "@/hooks/useHttp";
-import { 
-  ApiResponse, 
-  PageableResponse, 
-  MouItem, 
-  MouSubmitPayload, 
-  HostTripItem, 
-  HostTripsParams 
-} from "@/types"; // Adjust path as needed
+import { useAppSelector } from "@/lib/hooks";
+import {
+  ApiResponse,
+  PageableResponse,
+  MouItem,
+  MouSubmitPayload,
+  HostTripItem,
+  HostTripsParams,
+} from "@/types";
 
 export function useMou() {
   const http = useHttp();
   const queryClient = useQueryClient();
   const { data: session } = useSession();
-  
-  const token = session?.user?.accessToken;
+  const userToken = useAppSelector((s) => s.user.userToken);
+
+  /** Same source order as authenticated API calls (useHttp + HostRolePrompt). */
+  const token = session?.user?.accessToken ?? userToken ?? "";
 
   // Utility to build query strings
   const buildQueryString = (params?: Record<string, any>) => {
@@ -48,7 +51,9 @@ export function useMou() {
   const useSubmitHostMou = () => {
     return useMutation({
       mutationFn: async (payload: MouSubmitPayload): Promise<ApiResponse<MouItem>> => {
-        if (!token) throw new Error("Authentication required");
+        if (!token) {
+          throw new Error("Authentication required");
+        }
 
         // Example assuming useHttp exposes a post method
         const result = await http.post<ApiResponse<MouItem>>("/hosts/mou", payload);

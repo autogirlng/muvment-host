@@ -1,8 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AxiosError } from "axios";
 import { Spinner, OtpField } from "@/ui";
 import { OtpVerificationProps } from "./props";
+
+function otpFieldErrorMessage(error: unknown): string {
+    if (!(error instanceof AxiosError)) return "";
+    const code = error.response?.data?.data as string | undefined;
+    if (code === "INCORRECT_OTP" || code === "OTP_NOT_FOUND") {
+        return "Incorrect pin, please check and try again";
+    }
+    return "";
+}
 
 
 
@@ -54,12 +64,7 @@ const OtpVerification = ({
                 placeholder=""
                 value={otp}
                 onChange={handleChange}
-                error={
-                    error?.response?.data?.data === "INCORRECT_OTP" ||
-                        error?.response?.data?.data === "OTP_NOT_FOUND"
-                        ? "Incorrect pin, please check and try again"
-                        : ""
-                }
+                error={otpFieldErrorMessage(error)}
                 disabled={isVerifyOtpLoading || isResendOtpLoading}
             />
             {isVerifyOtpLoading || isResendOtpLoading ? (

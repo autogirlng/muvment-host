@@ -280,86 +280,65 @@ export const handleFilterQuery = ({
   return filterQuery.toString();
 };
 
+const KNOWN_API_ERROR_MESSAGES: Record<string, string> = {
+  INCORRECT_OTP: "Incorrect code. Please try again.",
+  OTP_NOT_FOUND: "Incorrect code. Please try again.",
+  EMAIL_NOT_CONFIRMED: "Please verify your email to continue.",
+  INVALID_CREDENTIALS: "Invalid email or password.",
+  USER_ALREADY_EXIST: "An account with this email already exists.",
+  PHONE_ALREADY_USED: "This phone number is already registered.",
+  USER_NOT_FOUND: "User not found.",
+};
+
+export function pickSuccessMessage(data: unknown, fallback: string): string {
+  if (data != null && typeof data === "object" && "message" in data) {
+    const m = (data as { message: unknown }).message;
+    if (typeof m === "string" && m.trim().length > 0) return m;
+  }
+  return fallback;
+}
+
+function resolveErrorToastMessage(error: AxiosError<ErrorResponse>): string {
+  if (error?.message === "Network Error") {
+    return "Network Error";
+  }
+
+  const body = error.response?.data as
+    | ErrorResponse
+    | Record<string, unknown>
+    | undefined;
+
+  let raw: string | undefined;
+
+  if (body && typeof body === "object") {
+    const msg = (body as { message?: unknown }).message;
+    if (typeof msg === "string" && msg.trim()) raw = msg;
+
+    const dataField = (body as { data?: unknown }).data;
+    if (!raw && typeof dataField === "string" && dataField.trim()) {
+      raw = dataField;
+    } else if (!raw && dataField != null && typeof dataField !== "object") {
+      raw = String(dataField);
+    }
+  }
+
+  if (!raw) {
+    return error.message?.trim() || "Something went wrong. Please try again.";
+  }
+
+  return KNOWN_API_ERROR_MESSAGES[raw] ?? raw;
+}
+
 export const handleErrors = (
   error: AxiosError<ErrorResponse>,
   page?: string
 ) => {
-  // console.log(
-  //   `${page} error`,
-  //   error,
-  //   error.response?.status,
-  //   error.response?.data
-  // );
+  console.log(page ? `[${page}] API error` : "API error", {
+    status: error.response?.status,
+    data: error.response?.data,
+    message: error.message,
+  });
 
-  // const ERR_CODE = error.response?.data?.ERR_CODE;
-
-  if (error?.message === "Network Error") {
-    console.log(error);
-    return toast.error("Network Error");
-  }
-
-  
-
-  // else if (error.response?.status === 500) {
-  //   return toast.error(error.response?.data?.message);
-  // }
-
-  // else if (ERR_CODE === "USER_ALREADY_EXIST") {
-  //   return toast.error("Email already registered");
-  // }
-
-  //   else if (ERR_CODE === "PHONE_ALREADY_USED") {
-  //   return toast.error("Phone number already registered");
-  // }
-
-  //   else if (ERR_CODE === "INVALID_CREDENTIALS") {
-  //   return toast.error("Invalid login credentials");
-  // }
-
-  //  else if(ERR_CODE === "USER_NOT_FOUND") {
-  //   return toast.error("User not found");
-  // }
-
-  //  else if(ERR_CODE === "EMAIL_NOT_CONFIRMED") {
-  //   toast.error("Email not verified");
-  //   const parsedData = JSON.parse(error.config?.data);
-  //   console.log(parsedData);
-
-  //   window.location.href = `/verify-email?email=${encodeURIComponent(parsedData?.email ?? "")}`;
-  //   return;
-  // }
-
-  //   else if (ERR_CODE === "EMAIL_ALREADY_CONFIRMED") {
-  //   return toast.error("Email already confirmed");
-  // }
-
-  //   else if(ERR_CODE === "PHONE_NUMBER_NOT_FOUND") {
-  //   return toast.error("Phone Number not found");
-  // }
-
-  //  else if (ERR_CODE === "HOST_NOT_OWNER_OF_VEHICLE") {
-  //   return toast.error("Host not owner of vehicle");
-  // }
-
-  //   else if (ERR_CODE === "INCORRECT_OTP") {
-  //   return toast.error("Incorrect OTP");
-  // }
-
-  //   else if (
-  //   ERR_CODE === "NO_WITHDRAWAL_ACCOUNT_FOUND" ||
-  //   ERR_CODE === "RENTAL_AVALIABLITY_NOT_FOUND" ||
-  //   ERR_CODE === "WALLET_NOT_FOUND "
-  // ) {
-  //   return;
-  // }
-
-  //   else if (ERR_CODE) {
-  //   return toast.error(ERR_CODE);
-  // }
-
-  else {
-    return toast.error(error.response?.data.data)
-    // return toast.error(error.response?.data.message);
-  }
-
+  const msg = resolveErrorToastMessage(error);
+  return toast.error(msg);
 };
