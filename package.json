@@ -6,7 +6,8 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "clean": "node -e \"try { require('fs').rmSync('.next',{recursive:true,force:true}) } catch (e) { console.warn(e.message) }\""
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

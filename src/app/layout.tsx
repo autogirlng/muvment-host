@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { ReactNode } from "react";
 import { ToastContainer } from "react-toastify";
-import { Inter } from "next/font/google";
 import StoreProvider from "./StoreProvider";
 import ReactQueryClientProvider from "./ReactQueryClientProvider";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -10,8 +9,6 @@ import NextAuthSessionProvider from "./NextAuthSessionProvider";
 
 import "react-toastify/dist/ReactToastify.css";
 import "./globals.css";
-
-const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = seoController.metadata.root();
 
@@ -22,7 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang={seoController.defaults.locale.replace("_", "-")}>
-      <body className={inter.className}>
+      <body className="min-h-screen font-sans antialiased">
         <JsonLd document={seoController.schema.rootGraph()} />
         <ToastContainer
           autoClose={5000}
