@@ -741,6 +741,13 @@ export const bookingHistoryTableHeadItems: string[] = [
   "Purpose",
 ];
 
+export const listingTableHeadItems: string[] = [
+  "Vehicle Name",
+  "License Plate",
+  "Status",
+  "Actions",
+];
+
 export const tripTableHeadItems: string[] = [
   "Trip ID",
   "Vehicle",
@@ -750,6 +757,7 @@ export const tripTableHeadItems: string[] = [
   "Booking Status",
   "Trip Status",
   "Price",
+  "Actions",
 ];
 
 export const earningHistoryTableHeadItems: string[] = [

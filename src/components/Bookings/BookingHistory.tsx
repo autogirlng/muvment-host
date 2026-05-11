@@ -5,7 +5,7 @@ import EmptyState from "@/components/EmptyState";
 import TableHead from "@/components/Table/TableHead";
 import TableCell from "@/components/Table/TableCell";
 import { bookingHistoryTableHeadItems } from "@/utils/data";
-import { useHostPerformance } from "@/hooks/performance/useHostPerformance";
+import { useHostPerformanceBookings } from "@/hooks/bookings/useHostPerformanceBookings";
 
 interface BookingHistoryProps {
     search?: string;
@@ -18,17 +18,14 @@ export default function BookingHistory({ search, filters, startDate, endDate }: 
     const [currentPage, setCurrentPage] = useState<number>(1);
     const pageLimit = 10;
 
-    const { useGetHostBookingHistory } = useHostPerformance();
-    const { data, isError, isLoading } = useGetHostBookingHistory({
+    const { useGetHostBookings } = useHostPerformanceBookings();
+    const { data, isError, isLoading } = useGetHostBookings({
         page: currentPage - 1,
         size: pageLimit,
-        bookingId: search || undefined,
         bookingStatus: filters?.bookingStatus?.[0] || undefined,
-        vehicleTypeName: filters?.vehicleTypeName?.[0] || undefined,
         startDate: startDate || undefined,
         endDate: endDate || undefined,
     });
-
 
     const bookings = data?.data?.content ?? [];
     const totalCount = data?.data?.totalElements ?? 0;
@@ -45,8 +42,8 @@ export default function BookingHistory({ search, filters, startDate, endDate }: 
                 <p>Something went wrong</p>
             ) : bookings.length === 0 ? (
                 <EmptyState
-                    title="No Booking History"
-                    message="Your booking history will appear here"
+                    title="No Bookings"
+                    message="Your bookings will appear here"
                     image="/icons/empty_booking_state.png"
                 />
             ) : (
@@ -56,12 +53,12 @@ export default function BookingHistory({ search, filters, startDate, endDate }: 
                         <tbody className="divide-y divide-grey-200">
                             {bookings.map((booking) => (
                                 <tr key={booking.bookingId}>
-                                    <TableCell content={booking.bookingRef || booking.bookingId} />
+                                    <TableCell content={booking.bookingId} />
                                     <TableCell
-                                        content={booking.guestFullName || `${booking.user?.firstName ?? ""} ${booking.user?.lastName ?? ""}`.trim()}
+                                        content={booking.guestFullName}
                                         className="!text-grey-900 !font-medium"
                                     />
-                                    <TableCell content={booking.vehicleId} />
+                                    <TableCell content={booking.vehicleName} />
                                     <TableCell content={booking.status} isBadge type="booking" />
                                     <TableCell content={`NGN ${booking.totalPrice?.toLocaleString()}`} />
                                     <TableCell

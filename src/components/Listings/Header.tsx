@@ -4,21 +4,15 @@ import { VehicleListingBadge, BlurredDialog, Popup, Icons } from "@/ui";
 import BackLink from "@/components/BackLink";
 import DeleteListing from "@/components/Listings/modals/DeleteListing";
 import DeactivateListing from "@/components/Listings/modals/DeactivateListing";
+import VehicleUnavailability from "@/components/Listings/VehicleUnavailability";
 import { ListingDetailHeaderProps } from "./props";
 
 
 export default function ListingDetailsHeader({ name, status, id }: ListingDetailHeaderProps) {
     const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
-    const [openDeactivateModal, setOpenDeactivateModal] =
-        useState<boolean>(false);
+    const [openDeactivateModal, setOpenDeactivateModal] = useState<boolean>(false);
+    const [openUnavailabilityModal, setOpenUnavailabilityModal] = useState<boolean>(false);
 
-    const handleDeleteModal = () => {
-        setOpenDeleteModal(!openDeleteModal);
-    };
-
-    const handleDeactivateModal = () => {
-        setOpenDeactivateModal(!openDeactivateModal);
-    };
     return (
         <div className="space-y-5">
             <div className="flex justify-between gap-2">
@@ -54,7 +48,7 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                                     <li>
                                         <BlurredDialog
                                             open={openDeleteModal}
-                                            onOpenChange={handleDeleteModal}
+                                            onOpenChange={setOpenDeleteModal}
                                             trigger={
                                                 <button className="!text-xs 3xl:!text-base hover:text-error-500">
                                                     Delete listing
@@ -62,7 +56,7 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                                             }
                                             content={
                                                 <DeleteListing
-                                                    handleModal={handleDeleteModal}
+                                                    handleModal={() => setOpenDeleteModal(false)}
                                                     id={id}
                                                 />
                                             }
@@ -71,7 +65,7 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                                     <li>
                                         <BlurredDialog
                                             open={openDeactivateModal}
-                                            onOpenChange={handleDeactivateModal}
+                                            onOpenChange={setOpenDeactivateModal}
                                             trigger={
                                                 <button className="!text-xs 3xl:!text-base hover:text-primary-500">
                                                     Deactivate listing
@@ -79,16 +73,24 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                                             }
                                             content={
                                                 <DeactivateListing
-                                                    handleModal={handleDeactivateModal}
+                                                    handleModal={() => setOpenDeactivateModal(false)}
                                                     id={id}
                                                 />
                                             }
                                         />
                                     </li>
                                     <li>
+                                        <button
+                                            onClick={() => setOpenUnavailabilityModal(true)}
+                                            className="!text-xs 3xl:!text-base hover:text-primary-500 text-left w-full"
+                                        >
+                                            Manage Unavailability
+                                        </button>
+                                    </li>
+                                    <li>
                                         <Link
                                             href={`/listings/view-as-customer/${id}`}
-                                            className="!text-xs 3xl:!text-base "
+                                            className="!text-xs 3xl:!text-base"
                                         >
                                             View as customer
                                         </Link>
@@ -99,12 +101,21 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                     />
                 </div>
             </div>
+
             <div className="flex flex-col md:flex-row items-center gap-6">
                 <h5 className="text-h6 sm:text-4xl 3xl:text-h2 !font-bold">
                     {name || ""}
                 </h5>
                 <VehicleListingBadge status={status} />
             </div>
+
+            <BlurredDialog
+                open={openUnavailabilityModal}
+                onOpenChange={setOpenUnavailabilityModal}
+                title="Manage Unavailability"
+                width="max-w-[540px]"
+                content={<VehicleUnavailability vehicleId={id || ""} />}
+            />
         </div>
     );
 }

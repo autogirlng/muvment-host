@@ -110,12 +110,7 @@ function ResetPasswordContent() {
                                     isSubmitting ||
                                     resetPassword.isPending ||
                                     !isValid ||
-                                    !values.password_checks?.digit ||
-                                    !values.password_checks?.length ||
-                                    !values.password_checks?.lowercase_letters ||
-                                    !values.password_checks?.no_space ||
-                                    !values.password_checks?.special_character ||
-                                    !values.password_checks?.uppercase_letters
+                                    !dirty
                                 }
                             >
                                 Set Password

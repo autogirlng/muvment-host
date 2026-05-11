@@ -12,6 +12,7 @@ import ListingDetailsUpcomingBookings from "@/components/Listings/UpcomingBookin
 import VehicleInformation from "@/components/Listings/VehicleInformation";
 import VehicleReviews from "@/components/Listings/VehicleReviews";
 import DriversDetails from "@/components/Listings/DriverDetails";
+import VehicleUnavailability from "@/components/Listings/VehicleUnavailability";
 
 const initialExtras: Extras[] = [
   {
@@ -80,6 +81,11 @@ export default function ListingsPage() {
       name: "Driver details",
       value: "tab3",
       content: <DriversDetails id={id} />,
+    },
+    {
+      name: "Unavailability",
+      value: "tab4",
+      content: <VehicleUnavailability vehicleId={id} />,
     },
   ];
 

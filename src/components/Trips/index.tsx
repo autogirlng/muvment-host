@@ -1,124 +1,155 @@
 "use client";
 
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { FullPageSpinner, Pagination, SearchInput, FilterBy } from "@/ui";
-import { debounce } from "@/utils/functions";
+import { ChangeEvent, useState } from "react";
+import { format } from "date-fns";
+import { FullPageSpinner, Pagination, SearchInput, FilterBy, BlurredDialog } from "@/ui";
 import EmptyState from "@/components/EmptyState";
-import TripCard from "@/components/Trips/TripCard";
+import TableHead from "@/components/Table/TableHead";
+import TableCell from "@/components/Table/TableCell";
+import { tripTableHeadItems } from "@/utils/data";
 import { useMou } from "@/hooks/mou/useMou";
+import { HostTripItem } from "@/types";
+import TripReceipt from "@/components/Trips/TripReceipt";
 
 const tripFilters = [
-  {
-    title: "tripStatus",
-    options: [
-      { option: "Upcoming", value: "UPCOMING" },
-      { option: "In Progress", value: "IN_PROGRESS" },
-      { option: "Coming to an End", value: "COMING_TO_AN_END" },
-      { option: "Completed", value: "COMPLETED" },
-      { option: "Delayed", value: "DELAYED" },
-      { option: "Extended", value: "EXTENDED" },
-      { option: "Cancelled", value: "CANCELLED" },
-    ],
-  },
+    {
+        title: "tripStatus",
+        options: [
+            { option: "Upcoming", value: "UPCOMING" },
+            { option: "In Progress", value: "IN_PROGRESS" },
+            { option: "Coming to an End", value: "COMING_TO_AN_END" },
+            { option: "Completed", value: "COMPLETED" },
+            { option: "Delayed", value: "DELAYED" },
+            { option: "Extended", value: "EXTENDED" },
+            { option: "Cancelled", value: "CANCELLED" },
+        ],
+    },
 ];
 
 export default function Trips() {
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [filters, setFilters] = useState<Record<string, string[]>>({});
-  const [search, setSearch] = useState<string>("");
-  const [debouncedSearch, setDebouncedSearch] = useState<string>("");
-  const pageLimit = 10;
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [filters, setFilters] = useState<Record<string, string[]>>({});
+    const [search, setSearch] = useState<string>("");
+    const [selectedTrip, setSelectedTrip] = useState<HostTripItem | null>(null);
+    const pageLimit = 10;
 
-  const { useGetHostTrips } = useMou();
-  
-  const queryParams: any = {
-    page: currentPage - 1,
-    size: pageLimit,
-  };
+    const { useGetHostTrips } = useMou();
 
-  if (filters.tripStatus && filters.tripStatus.length > 0) {
-    queryParams.tripStatus = filters.tripStatus[0];
-  }
+    const queryParams: any = {
+        page: currentPage - 1,
+        size: pageLimit,
+    };
 
-  // NOTE: Assuming useGetHostTrips API can accept a search term if needed.
-  // if (debouncedSearch) {
-  //   queryParams.search = debouncedSearch;
-  // }
+    if (filters.tripStatus?.length) {
+        queryParams.tripStatus = filters.tripStatus[0];
+    }
 
-  const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
-    setFilters(selectedFilters);
-    setCurrentPage(1);
-  };
+    const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
+        setFilters(selectedFilters);
+        setCurrentPage(1);
+    };
 
-  const handleSearch = (value: string) => setSearch(value);
 
-  const debouncedTripSearch = useCallback(
-    debounce((query: string) => {
-      setDebouncedSearch(query);
-      setCurrentPage(1);
-    }, 500),
-    []
-  );
+    const { data, isError, isLoading } = useGetHostTrips(queryParams);
 
-  useEffect(() => {
-    debouncedTripSearch(search);
-  }, [search, debouncedTripSearch]);
+    const trips = data?.data?.content ?? [];
+    const totalCount = data?.data?.totalElements ?? 0;
 
-  const { data, isError, isLoading } = useGetHostTrips(queryParams);
+    const formatDate = (dt: string) => {
+        try {
+            return format(new Date(dt), "MMM dd, yyyy");
+        } catch {
+            return "N/A";
+        }
+    };
 
-  const trips = data?.data?.content ?? [];
-  const totalCount = data?.data?.totalElements ?? 0;
-
-  return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between gap-3">
-        <SearchInput
-          placeholder="Search with Trip ID"
-          name="tripsSearch"
-          value={search}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            handleSearch(event.target.value)
-          }
-          className="w-full max-w-[310px]"
-          icon
-        />
-        <FilterBy
-          categories={tripFilters}
-          onChange={handleFilterChange}
-          singleSelect={true}
-        />
-      </div>
-
-      {isLoading ? (
-        <FullPageSpinner />
-      ) : isError ? (
-        <p className="text-red-500 p-4 bg-red-50 rounded-lg border border-red-100">Failed to load trips. Please try again.</p>
-      ) : (
-        <>
-          {trips.length > 0 ? (
-            <div className="space-y-4">
-              {trips.map((trip) => (
-                <TripCard key={trip.id} content={trip} />
-              ))}
+    return (
+        <div className="space-y-8">
+            <div className="flex items-center justify-between gap-3">
+                <SearchInput
+                    placeholder="Search with Trip ID"
+                    name="tripsSearch"
+                    value={search}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        setSearch(event.target.value)
+                    }
+                    className="w-full max-w-[310px]"
+                    icon
+                />
+                <FilterBy
+                    categories={tripFilters}
+                    onChange={handleFilterChange}
+                    singleSelect={true}
+                />
             </div>
-          ) : (
-            <EmptyState
-              title="No Trips Found"
-              message="Your trips will appear here."
-              image="/icons/empty_booking_state.png"
-            />
-          )}
-        </>
-      )}
 
-      {totalCount > 0 && (
-        <Pagination
-          currentPage={currentPage}
-          totalCount={totalCount}
-          pageLimit={pageLimit}
-          onPageChange={(page) => setCurrentPage(page)}
-        />
-      )}
-    </div>
-  );
+            {isLoading ? (
+                <FullPageSpinner />
+            ) : isError ? (
+                <p className="text-red-500 p-4 bg-red-50 rounded-lg border border-red-100">
+                    Failed to load trips. Please try again.
+                </p>
+            ) : trips.length === 0 ? (
+                <EmptyState
+                    title="No Trips Found"
+                    message="Your trips will appear here."
+                    image="/icons/empty_booking_state.png"
+                />
+            ) : (
+                <div className="overflow-auto">
+                    <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white">
+                        <TableHead tableHeadItems={tripTableHeadItems} />
+                        <tbody className="divide-y divide-grey-200">
+                            {trips.map((trip) => (
+                                <tr key={trip.id}>
+                                    <TableCell content={trip.bookingId || trip.id} />
+                                    <TableCell content={trip.vehicleName || trip.vehicleIdentifier} />
+                                    <TableCell
+                                        content={trip.driverName || "—"}
+                                        className="!text-grey-900 !font-medium"
+                                    />
+                                    <TableCell content={trip.startDateTime ? formatDate(trip.startDateTime) : "N/A"} />
+                                    <TableCell content={trip.endDateTime ? formatDate(trip.endDateTime) : "N/A"} />
+                                    <TableCell content={trip.bookingStatus} isBadge type="booking" />
+                                    <TableCell content={trip.tripStatus} isBadge type="booking" />
+                                    <TableCell content={`NGN ${(trip.totalPrice ?? 0).toLocaleString()}`} />
+                                    <td className="px-4 py-3">
+                                        <button
+                                            onClick={() => setSelectedTrip(trip)}
+                                            className="flex items-center gap-1.5 text-xs font-medium text-primary-500 hover:text-primary-700 transition-colors"
+                                            title="Print Receipt"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                                <path d="M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z"/>
+                                            </svg>
+                                            Receipt
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
+            {totalCount > 0 && (
+                <Pagination
+                    currentPage={currentPage}
+                    totalCount={totalCount}
+                    pageLimit={pageLimit}
+                    onPageChange={(page) => setCurrentPage(page)}
+                />
+            )}
+
+            <BlurredDialog
+                open={!!selectedTrip}
+                onOpenChange={(open) => { if (!open) setSelectedTrip(null); }}
+                title="Trip Receipt"
+                width="max-w-[520px]"
+                content={
+                    selectedTrip ? <TripReceipt trip={selectedTrip} /> : null
+                }
+            />
+        </div>
+    );
 }

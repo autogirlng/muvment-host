@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { VehicleInformation } from "@/types";
+import { VehicleInformation, VehicleInformationResponse } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import {useHttp} from "@/hooks/useHttp";
 
@@ -17,18 +17,22 @@ export default function useVehicleOnboarding() {
 
   const { user } = useAppSelector((state) => state.user);
 
+  useEffect(() => {
+    if (vehicleId) {
+      sessionStorage.setItem("vehicleId", vehicleId);
+    }
+  }, [vehicleId]);
+
   const { data, isError, isLoading, isSuccess } = useQuery({
-    queryKey: ["getVehicleById"],
+    queryKey: ["getVehicleById", vehicleId],
     queryFn: () =>
-      http.get<VehicleInformation>(`/api/vehicle-onboarding/${vehicleId}`),
+      http.get<VehicleInformationResponse>(`/vehicles/${vehicleId}`),
     enabled: !!user?.data.userId && !!vehicleId,
     retry: false,
   });
   useEffect(() => {
-    if (isSuccess) {
-      console.log("Get Vehicle Information By Id", data);
-      // @ts-ignore
-      dispatch(updateVehicleInformation(data));
+    if (isSuccess && data?.data) {
+      dispatch(updateVehicleInformation(data.data as unknown as VehicleInformation));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess]);

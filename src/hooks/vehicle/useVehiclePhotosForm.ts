@@ -62,9 +62,9 @@ const [vehicleId, setVehicleId] = useState<string>("")
 
   const saveStep3 = useMutation({
     mutationFn: async (values: FormData) => {
-      const vehiclePhotos = await uploadToCloudinary(values, "photos")
-      return http.patch(`/vehicles/photos?id=${vehicleId}`, {photos:vehiclePhotos})
-    }, 
+      const vehiclePhotos = (await uploadToCloudinary(values, "photos")).filter(Boolean)
+      return http.patch(`/vehicles/photos?vehicleId=${vehicleId}`, {photos:vehiclePhotos})
+    },
 
     onSuccess: (data) => {
       console.log("Vehicle Onboarding Step 3 Saved", data);
@@ -81,8 +81,8 @@ const [vehicleId, setVehicleId] = useState<string>("")
 
   const submitStep3 = useMutation({
     mutationFn: async (values: FormData) => {
-    const vehiclePhotos = await uploadToCloudinary(values, "photos")
-      return http.patch(`/vehicles/photos?id=${vehicleId}`, {photos:vehiclePhotos})
+      const vehiclePhotos = (await uploadToCloudinary(values, "photos")).filter(Boolean)
+      return http.patch(`/vehicles/photos?vehicleId=${vehicleId}`, {photos:vehiclePhotos})
     },
 
     onSuccess: (data) => {
