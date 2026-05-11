@@ -1,22 +1,25 @@
 "use client";
+
 import Link from "next/link";
 import { ChangeEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { listingFilters } from "@/utils/data";
+import { listingFilters, listingTableHeadItems } from "@/utils/data";
 import { debounce } from "@/utils/functions";
-import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy } from "@/ui";
+import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy, VehicleListingBadge } from "@/ui";
 import EmptyState from "@/components/EmptyState";
+import TableHead from "@/components/Table/TableHead";
+import TableCell from "@/components/Table/TableCell";
 import useListings from "@/hooks/listings/useListings";
-import ListingCard from "@/components/Listings/ListingCard";
+import { VehicleStatus } from "@/types";
 
 function ListingsPageContent() {
   const [search, setSearch] = useState<string>("");
   const [debouncedSearch, setDebouncedSearch] = useState<string>("");
   const searchParams = useSearchParams();
-  const initialPage = Number(searchParams.get("page")) || 0
+  const initialPage = Number(searchParams.get("page")) || 0;
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
-  const router = useRouter()
+  const router = useRouter();
   const pageLimit = 10;
 
   const { listings, totalCount, isError, isLoading } = useListings({
@@ -25,15 +28,15 @@ function ListingsPageContent() {
     filters,
     search: debouncedSearch,
   });
+
   const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
     setFilters(selectedFilters);
-    if (selectedFilters.status && selectedFilters.status.length >= 1) {
-      setCurrentPage(0)
+    if (selectedFilters.status?.length >= 1) {
+      setCurrentPage(0);
       const params = new URLSearchParams(searchParams);
       params.set("page", "0");
       router.push(`?${params.toString()}`, { scroll: false });
     }
-
   };
 
   const handleSearch = (value: string) => {
@@ -45,7 +48,7 @@ function ListingsPageContent() {
   };
 
   const debouncedListingSearch = useCallback(
-    debounce((query) => {
+    debounce((query: string) => {
       setDebouncedSearch(query);
     }, 500),
     []
@@ -57,13 +60,10 @@ function ListingsPageContent() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    const params = new URLSearchParams(searchParams)
-    params.set("page", page.toString())
-    router.push(`?${params.toString()}`, { scroll: false })
-
-  }
-
-
+    const params = new URLSearchParams(searchParams);
+    params.set("page", page.toString());
+    router.push(`?${params.toString()}`, { scroll: false });
+  };
 
   return (
     <main className="space-y-6 py-[56px]">
@@ -97,42 +97,74 @@ function ListingsPageContent() {
           />
         </div>
       </div>
+
       {isLoading ? (
         <FullPageSpinner />
       ) : isError ? (
-        <p>something went wrong</p>
+        <p>Something went wrong</p>
+      ) : listings?.length === 0 ? (
+        <EmptyState
+          title={debouncedSearch ? "" : "No Listing"}
+          message={
+            debouncedSearch ? (
+              `No results for "${debouncedSearch}"`
+            ) : (
+              <Link href="/vehicle-onboarding" className="text-primary-500">
+                add your first vehicle
+              </Link>
+            )
+          }
+          image={
+            debouncedSearch
+              ? "/icons/empty_search.png"
+              : "/icons/empty_booking_state.png"
+          }
+        />
       ) : (
         <>
           {debouncedSearch && (
             <h5 className="text-h6 md:text-h5 3xl:text-h4 text-grey-800">
-              Showing results for “{debouncedSearch}”
+              Showing results for "{debouncedSearch}"
             </h5>
           )}
-          {listings?.length > 0 ? (
-            listings?.map((listing, index) => (
-              <ListingCard key={index} content={listing} />
-            ))
-          ) : (
-            <EmptyState
-              title={debouncedSearch ? "" : "No Listing"}
-              message={
-                debouncedSearch ? (
-                  `No results for “${debouncedSearch}”`
-                ) : (
-                  <Link href="/vehicle-onboarding" className="text-primary-500">
-                    add your first vehicle
-                  </Link>
-                )
-              }
-              image={
-                debouncedSearch
-                  ? "/icons/empty_search.png"
-                  : "/icons/empty_booking_state.png"
-              }
-            />
-          )}
+          <div className="overflow-auto">
+            <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white">
+              <TableHead tableHeadItems={listingTableHeadItems} />
+              <tbody className="divide-y divide-grey-200">
+                {listings.map((listing) => (
+                  <tr key={listing.id}>
+                    <TableCell
+                      content={
+                        listing.status === VehicleStatus.DRAFT
+                          ? "Unfinished Listing"
+                          : listing.name
+                      }
+                      className="!text-grey-900 !font-medium"
+                    />
+                    <TableCell content={listing.licensePlateNumber || "—"} />
+                    <td className="px-4 py-3">
+                      <VehicleListingBadge status={listing.status} />
+                    </td>
+                    <td className="px-4 py-3">
+                      <Link
+                        href={
+                          listing.status === VehicleStatus.DRAFT
+                            ? `/vehicle-onboarding?id=${listing.id}`
+                            : `/listings/${listing.id}`
+                        }
+                        className="text-xs font-semibold text-primary-500 hover:underline"
+                      >
+                        {listing.status === VehicleStatus.DRAFT ? "Complete Listing" : "View Details"}
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
+
       <Pagination
         className="pagination-bar"
         currentPage={currentPage}
@@ -140,7 +172,6 @@ function ListingsPageContent() {
         pageLimit={pageLimit}
         onPageChange={handlePageChange}
       />
-
     </main>
   );
 }

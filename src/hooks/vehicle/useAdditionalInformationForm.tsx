@@ -35,19 +35,19 @@ export default function useAdditionalInformationForm({
     const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
 
     const initialValues: AdditionalVehicleInformationValues = {
-        licensePlateNumber: "",
-        stateOfRegistration: "",
-        description: "",
-        featureIds: [],
-        vehicleColorId: "",
-        numberOfSeats: 0,
+        licensePlateNumber: vehicle?.licensePlateNumber || "",
+        stateOfRegistration: vehicle?.stateOfRegistration || "",
+        description: vehicle?.description || "",
+        featureIds: vehicle?.features?.map((f) => f.id) || [],
+        vehicleColorId: vehicle?.vehicleColorId || "",
+        numberOfSeats: vehicle?.numberOfSeats || 0,
     };
 
 
     const saveStep2 = useMutation({
         mutationFn: (values: AdditionalVehicleInformationValues) =>
             http.patch<VehicleInformation>(
-                `/vehicles/details/${vehicleId}`,
+                `/vehicles/details?id=${vehicleId}`,
                 {
                     ...values,
                     numberOfSeats: values.numberOfSeats,

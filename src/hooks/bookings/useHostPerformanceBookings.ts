@@ -1,0 +1,80 @@
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
+import { useHttp } from "@/hooks/useHttp";
+
+export interface HostBookingItem {
+  bookingId: string;
+  vehicleId: string;
+  vehicleIdentifier: string;
+  vehicleName: string;
+  status: string;
+  totalPrice: number;
+  primaryPhoneNumber: string;
+  secondaryPhoneNumber: string;
+  guestFullName: string;
+  guestEmail: string;
+  recipientFullName: string;
+  recipientEmail: string;
+  recipientPhoneNumber: string;
+  recipientSecondaryPhoneNumber: string;
+  extraDetails: string;
+  purposeOfRide: string;
+  bookedAt: string;
+  hostPaymentStatus: string;
+}
+
+export interface HostBookingsPage {
+  content: HostBookingItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  last: boolean;
+  first: boolean;
+}
+
+export interface HostBookingsResponse {
+  status: string;
+  message: string;
+  errorCode: string;
+  data: HostBookingsPage;
+  timestamp: string;
+}
+
+export interface HostPerformanceBookingsParams {
+  page?: number;
+  size?: number;
+  startDate?: string;
+  endDate?: string;
+  bookingStatus?: string;
+}
+
+export function useHostPerformanceBookings() {
+  const http = useHttp();
+
+  const buildQueryString = (params?: Record<string, any>): string => {
+    if (!params) return "";
+    const filtered = Object.entries(params).filter(
+      ([, v]) => v !== undefined && v !== null && v !== ""
+    );
+    if (filtered.length === 0) return "";
+    return `?${new URLSearchParams(filtered.map(([k, v]) => [k, String(v)]))}`;
+  };
+
+  const useGetHostBookings = (params?: HostPerformanceBookingsParams) =>
+    useQuery({
+      queryKey: ["host-performance-bookings", params],
+      queryFn: async (): Promise<HostBookingsResponse> => {
+        const qs = buildQueryString(params);
+        const result = await http.get<HostBookingsResponse>(
+          `/host-performance/bookings${qs}`
+        );
+        if (!result) throw new Error("Failed to fetch bookings");
+        return result;
+      },
+      retry: false,
+    });
+
+  return { useGetHostBookings };
+}

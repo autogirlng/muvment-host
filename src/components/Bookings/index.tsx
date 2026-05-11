@@ -1,12 +1,9 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
-import { AppTabs, SearchInput, FilterBy } from "@/ui";
-import UpcomingBookings from "@/components/Bookings/UpcomingBookings";
+import { SearchInput, FilterBy } from "@/ui";
 import BookingHistory from "@/components/Bookings/BookingHistory";
 import { bookingHistoryFilters } from "@/utils/data";
 import { debounce } from "@/utils/functions";
-
-
 
 export default function Bookings() {
     const [search, setSearch] = useState<string>("");
@@ -24,10 +21,8 @@ export default function Bookings() {
         setEndDate(dateRange?.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : "");
     };
 
-    const handleSearch = (value: string) => setSearch(value);
-
     const debouncedBookingSearch = useCallback(
-        debounce((query) => {
+        debounce((query: string) => {
             setDebouncedSearch(query);
         }, 500),
         []
@@ -37,26 +32,6 @@ export default function Bookings() {
         debouncedBookingSearch(search);
     }, [search, debouncedBookingSearch]);
 
-    const tabs = [
-        {
-            name: "Upcoming",
-            value: "tab1",
-            content: <UpcomingBookings />,
-        },
-        {
-            name: "History",
-            value: "tab2",
-            content: (
-                <BookingHistory
-                    search={debouncedSearch}
-                    filters={filters}
-                    startDate={startDate}
-                    endDate={endDate}
-                />
-            ),
-        },
-    ];
-
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between gap-3">
@@ -65,7 +40,7 @@ export default function Bookings() {
                     name="bookingsSearch"
                     value={search}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        handleSearch(event.target.value)
+                        setSearch(event.target.value)
                     }
                     className="w-full max-w-[310px]"
                     icon
@@ -76,11 +51,11 @@ export default function Bookings() {
                     dateEnabled
                 />
             </div>
-            <AppTabs
-                label="bookings tab"
-                tabs={tabs}
-                tabClass="flex-none"
-                contentClass="bg-transparent !mt-10 !p-0"
+            <BookingHistory
+                search={debouncedSearch}
+                filters={filters}
+                startDate={startDate}
+                endDate={endDate}
             />
         </div>
     );

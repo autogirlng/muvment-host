@@ -10,7 +10,7 @@ export default function useGetCustomerView({ id }: { id: string }) {
   const { data, isError, isLoading, isSuccess } = useQuery({
     queryKey: ["getCustomerView", id],
     queryFn: async () =>
-      http.get<VehicleInformation | null>(`/api/vehicle-onboarding/${id}`),
+      http.get<VehicleInformation | null>(`/vehicles/${id}`),
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });

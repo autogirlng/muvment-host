@@ -36,19 +36,26 @@ export default function useAvailabilityAndPricingForm({
   );
 
   const initialValues: AvailabilityAndPricingValues = {
-   
-
-  maxTripDurationUnit: "DAYS",
-  maxTripDurationValue: 1,
-  advanceNoticeUnit: "DAYS",
-  advanceNoticeValue: 1,
-  willProvideDriver: "",
-  willProvideFuel: "",
-  supportedBookingTypeIds: [],
-  outOfBoundsAreaIds: [],
-  outskirtFee: 0,
-  extremeFee: 0,
-
+    maxTripDurationUnit: vehicle?.maxTripDurationUnit || "DAYS",
+    maxTripDurationValue: vehicle?.maxTripDurationValue || 1,
+    advanceNoticeUnit: vehicle?.advanceNoticeUnit || "DAYS",
+    advanceNoticeValue: vehicle?.advanceNoticeValue || 1,
+    willProvideDriver:
+      vehicle?.willProvideDriver === undefined || vehicle?.willProvideDriver === null
+        ? ""
+        : vehicle?.willProvideDriver
+        ? "yes"
+        : "no",
+    willProvideFuel:
+      vehicle?.willProvideFuel === undefined || vehicle?.willProvideFuel === null
+        ? ""
+        : vehicle?.willProvideFuel
+        ? "yes"
+        : "no",
+    supportedBookingTypeIds: vehicle?.supportedBookingTypes?.map((t) => t.id) || [],
+    outOfBoundsAreaIds: vehicle?.outOfBoundsAreaIds || [],
+    outskirtFee: vehicle?.outskirtFee || 0,
+    extremeFee: vehicle?.extremeFee || 0,
   };
  const [vehicleId, setVehicleId] = useState<string>("")
     useEffect(()=>{
@@ -73,7 +80,7 @@ export default function useAvailabilityAndPricingForm({
   const saveStep4 = useMutation({
     mutationFn: (values: any) =>
       http.patch<VehicleInformation>(
-        `/v1/vehicles/configuration?id=${vehicleId}`,
+        `/vehicles/configuration?id=${vehicleId}`,
         values
       ),
 

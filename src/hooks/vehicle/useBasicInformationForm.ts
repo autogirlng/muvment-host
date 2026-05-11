@@ -28,7 +28,13 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
     const dispatch = useAppDispatch();
 
     const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
+    const [vehicleId, setVehicleId] = useState<string>("");
     const [searchAddressQuery, setSearchAddressQuery] = useState("");
+
+    useEffect(() => {
+        const id = sessionStorage.getItem("vehicleId") ?? "";
+        setVehicleId(id);
+    }, []);
     const [vehicleOptions, setVehicleOptions] = useState<VehicleInfoState>({
         vehicleTypes: [],
         vehicleMakes: [],
@@ -81,11 +87,11 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
         name: vehicle?.name || "",
         city: vehicle?.city || "",
         address: vehicle?.address || "",
-        latitude:0, 
-        longitude:0, 
-        vehicleMakeId:"", 
-        vehicleModelId:"", 
-        vehicleTypeId:"", 
+        latitude: vehicle?.latitude || 0,
+        longitude: vehicle?.longitude || 0,
+        vehicleMakeId: vehicle?.vehicleMakeId || "",
+        vehicleModelId: vehicle?.vehicleModelId || "",
+        vehicleTypeId: vehicle?.vehicleTypeId || "",
         yearOfRelease: vehicle?.yearOfRelease || 0,
         hasInsurance:
         vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
@@ -151,23 +157,24 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
         }
     }, [searchAddressQuery, debouncedFetchPlaces]);
 
+    const buildPayload = (values: BasicVehicleInformationValues) => ({
+        ...values,
+        hasTracker: values.hasTracker === "yes",
+        hasInsurance: values.hasInsurance === "yes",
+        isVehicleUpgraded: values.isVehicleUpgraded === "yes",
+    });
+
     const saveStep1 = useMutation({
         mutationFn: (values: BasicVehicleInformationValues) =>
-            http.post<VehicleInformation>("/vehicles", {
-                ...values,
-                hasTracker: values.hasTracker === "yes",
-                hasInsurance: values.hasInsurance === "yes",
-                isVehicleUpgraded:values.isVehicleUpgraded === "yes"
-                // ...(vehicle?.id && { id: vehicle.id }),
-            }),
+            vehicleId
+                ? http.patch<VehicleInformationResponse>(`/vehicles?id=${vehicleId}`, buildPayload(values))
+                : http.post<VehicleInformationResponse>("/vehicles", buildPayload(values)),
 
         onSuccess: (data) => {
-            console.log("Vehicle Onboarding Step 1 Saved", data);
-            dispatch(
-                // @ts-ignore
-                updateVehicleInformation({ ...vehicle, ...data })
-            );
-            // router.push("/listings");
+            const id = data?.data?.id;
+            if (id) sessionStorage.setItem("vehicleId", id);
+            dispatch(updateVehicleInformation(data?.data as unknown as VehicleInformation));
+            router.push("/listings");
         },
 
         onError: (error: AxiosError<ErrorResponse>) =>
@@ -176,22 +183,14 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
 
     const submitStep1 = useMutation({
         mutationFn: (values: BasicVehicleInformationValues) =>
-            http.post<VehicleInformationResponse>("/vehicles", {
-                ...values,
-               hasTracker: values.hasTracker === "yes",
-                hasInsurance: values.hasInsurance === "yes",
-                isVehicleUpgraded:values.isVehicleUpgraded === "yes"
-                // ...(vehicle?.id && { id: vehicle.id }),
-            }),
+            vehicleId
+                ? http.patch<VehicleInformationResponse>(`/vehicles?id=${vehicleId}`, buildPayload(values))
+                : http.post<VehicleInformationResponse>("/vehicles", buildPayload(values)),
 
         onSuccess: (data) => {
-            console.log("Vehicle Onboarding Step 1 Submitted", data);
-            // dispatch(
-            //     // @ts-ignore
-            //     updateVehicleInformation({ ...vehicle, ...data })
-            // );
-            
-            sessionStorage.setItem("vehicleId", `${data?.data.id}` )
+            const id = data?.data?.id;
+            if (id) sessionStorage.setItem("vehicleId", id);
+            dispatch(updateVehicleInformation(data?.data as unknown as VehicleInformation));
             setCurrentStep(currentStep + 1);
         },
 
