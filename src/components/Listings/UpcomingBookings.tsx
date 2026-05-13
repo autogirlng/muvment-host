@@ -63,7 +63,7 @@ const BookingCard = ({
         )}
 
         <div className="flex justify-between items-center gap-3">
-            <BookingData title="Guest Name" value={guestName} />
+            {/* <BookingData title="Guest Name" value={guestName} /> */}
             <BookingData title="Duration" value={duration} />
             <BookingData title="Booking Status" value={status} />
         </div>

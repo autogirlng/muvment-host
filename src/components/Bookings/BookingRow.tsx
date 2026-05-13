@@ -24,12 +24,12 @@ const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
         declineBooking,
     } = useBookingActions({ id: items.bookingId });
     return (
-        <tr>
-            <TableCell content={items?.vehicleName} />
-            <TableCell content={items?.customerName} className="text-grey-900" />
-            <TableCell content={items?.bookingId} />
-            <TableCell content={items?.bookingCategory} />
-            <TableCell content={formatDurationLabel(items?.duration)} />
+        <tr className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
+            <TableCell title="Vehicle" content={items?.vehicleName} />
+            {/* <TableCell title="Guest Name" content={items?.customerName} className="text-grey-900" /> */}
+            <TableCell title="Booking ID" content={items?.bookingId} />
+            <TableCell title="Booking Type" content={items?.bookingCategory} />
+            <TableCell title="Duration" content={formatDurationLabel(items?.duration)} />
             {/* <TableCell
                 content={
                     items?.bookingType
@@ -41,9 +41,9 @@ const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
                     items?.endDate ? format(new Date(items?.endDate), "MMM d ,yyyy") : ""
                 }
             /> */}
-            <TableCell content={items?.bookingStatus} isBadge type="booking" />
-            <TableCell content={`NGN ${items?.price}`} />
-            <td>
+            <TableCell title="Status" content={items?.bookingStatus} isBadge type="booking" />
+            {/* <TableCell title="Price" content={`NGN ${items?.price}`} /> */}
+            <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit text-sm text-grey-700">
                 <Popup
                     trigger={
                         <button

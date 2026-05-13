@@ -386,14 +386,20 @@ export function useHostPerformance() {
     return useQuery({
       queryKey: ["host-performance", "completed-trip", params],
       queryFn: async (): Promise<ApiResponse<CompletedTrip[]>> => {
-        const queryString = buildQueryString(params);
-        const result = await http.get<ApiResponse<CompletedTrip[]>>(
-          `/host-performance/completed-trip${queryString}`,
-        );
-        if (!result) throw new Error("Failed to fetch completed trips");
-        return result;
+        // const queryString = buildQueryString(params);
+        // const result = await http.get<ApiResponse<CompletedTrip[]>>(
+        //   `/host-performance/completed-trip${queryString}`,
+        // );
+        // if (!result) throw new Error("Failed to fetch completed trips");
+        // return result;
+        return {
+          status: "SUCCESSFUL",
+          message: "Mocked",
+          data: [],
+          timestamp: new Date().toISOString()
+        } as ApiResponse<CompletedTrip[]>;
       },
-      enabled: true,
+      enabled: false, // Disabled to prevent 404
     });
   };
 

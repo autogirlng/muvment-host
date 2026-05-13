@@ -28,6 +28,12 @@ import {
   User,
 } from "@/types";
 
+// Note: You can move this interface to your @/types file
+export interface ChangePasswordValues {
+  oldPassword: string;
+  newPassword: string;
+}
+
 function pickLoginString(obj: Record<string, unknown>, ...keys: string[]): string | undefined {
   for (const k of keys) {
     const v = obj[k];
@@ -123,7 +129,7 @@ export default function useAuth() {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { forgotPasswordOtp } = useAppSelector((state) => state.forgotPassword);
-  
+
   // Destructure update function to refresh tokens after switching
   const { data: session, update: updateSession } = useSession();
 
@@ -147,7 +153,7 @@ export default function useAuth() {
   });
 
   const verifyEmailOnSignup = useMutation({
-    mutationFn: (values: verifyEmail) => 
+    mutationFn: (values: verifyEmail) =>
       http.post<string>(`${AUTH_API_BASE}/verify-account`, values),
 
     onSuccess: (data) => {
@@ -296,6 +302,28 @@ export default function useAuth() {
     },
   });
 
+  const changePasswordMutation = useMutation({
+    mutationFn: async (values: ChangePasswordValues) => {
+      // Validating token existence before making the request
+      const token =
+        session?.user?.accessToken ??
+        getClientStore()?.getState().user.userToken;
+
+      if (!token) {
+        toast.error("Please sign in to change your password.");
+        throw new Error("Authentication required");
+      }
+
+      // Assuming `useHttp` applies the Bearer token under the hood using an interceptor.
+      return http.post("/v1/users/change-password", values);
+    },
+    onSuccess: (data) => {
+      console.log("[Change password] success", data);
+      toast.success(
+        pickSuccessMessage(data, "Password changed successfully.")
+      );
+    },
+  });
 
   const switchToHostMutation = useMutation({
     mutationFn: async (): Promise<ApiResponse<SwitchHostData>> => {
@@ -314,7 +342,7 @@ export default function useAuth() {
         toast.error("Could not switch to host. Please try again.");
         throw new Error("Failed to switch to host");
       }
-      
+
       return result;
     },
     onSuccess: async (response) => {
@@ -338,11 +366,11 @@ export default function useAuth() {
             },
           });
         } catch {
-          /* NextAuth session optional when using Redux token only */
+
         }
       }
 
-      // 3. Clear/Invalidate queries so UI fetches fresh host-specific data
+
       queryClient.invalidateQueries({ queryKey: ["getUser"] });
       queryClient.invalidateQueries({ queryKey: ["host"] });
       queryClient.invalidateQueries({ queryKey: ["host-performance"] });
@@ -360,7 +388,8 @@ export default function useAuth() {
     resendVerifyEmailToken,
     forgotPassword,
     resetPassword,
-    switchToHostMutation, 
+    changePasswordMutation,
+    switchToHostMutation,
     session,
   };
 }

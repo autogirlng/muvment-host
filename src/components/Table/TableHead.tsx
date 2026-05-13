@@ -1,5 +1,5 @@
 const TableHead = ({ tableHeadItems }: { tableHeadItems: string[] }) => (
-    <thead>
+    <thead className="hidden lg:table-header-group">
         <tr>
             {tableHeadItems.map((item: string) => (
                 <th

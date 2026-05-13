@@ -465,7 +465,7 @@ export const vehicleModelsOptions: OptionType[] = [
   { value: "Patriot", option: "Patriot" },
   { value: "Phantom", option: "Phantom" },
   { value: "Pilot", option: "Pilot" },
-  {value:"Prado",option:"Prado"},
+  { value: "Prado", option: "Prado" },
   { value: "Portofino", option: "Portofino" },
   { value: "Q5", option: "Q5" },
   { value: "Q7", option: "Q7" },
@@ -677,14 +677,14 @@ export const photoUploadTips = [
 
 export const bookingOverviewTableHeadItems: string[] = [
   "Vehicle",
-  "Guest Name",
+  // "Guest Name",
   "Booking ID",
   "Booking Type",
   "Duration",
   // "Start Date",
   // "End Date",
   "Status",
-  "Price",
+  // "Price",
   "Actions",
 ];
 
@@ -733,10 +733,10 @@ export const hostEarningHistoryTableHeadItems: string[] = [
 
 export const bookingHistoryTableHeadItems: string[] = [
   "Booking ID",
-  "Guest Name",
+  // "Guest Name",
   "Vehicle",
   "Status",
-  "Total Price",
+  // "Total Price",
   "Booked At",
   "Purpose",
 ];
@@ -756,7 +756,7 @@ export const tripTableHeadItems: string[] = [
   "End Date",
   "Booking Status",
   "Trip Status",
-  "Price",
+  // "Price",
   "Actions",
 ];
 
@@ -884,28 +884,28 @@ export const earningFilters: {
   title: string;
   options: OptionType[];
 }[] = [
-  {
-    title: "vehicle",
-    options: [
-      { option: "Hyundai Tuscon 2018", value: "hyundai_tuscon_2018" },
-      { option: "Toyota Camry 2017", value: "toyota_camry_2017" },
-    ],
-  },
-  {
-    title: "location",
-    options: [
-      { option: "Region 1", value: "region_1" },
-      { option: "Region 2", value: "region_2" },
-    ],
-  },
-];
+    {
+      title: "vehicle",
+      options: [
+        { option: "Hyundai Tuscon 2018", value: "hyundai_tuscon_2018" },
+        { option: "Toyota Camry 2017", value: "toyota_camry_2017" },
+      ],
+    },
+    {
+      title: "location",
+      options: [
+        { option: "Region 1", value: "region_1" },
+        { option: "Region 2", value: "region_2" },
+      ],
+    },
+  ];
 
 // =================== mock data ===================//
 export const topRatedVehicle: TopRatedVehicleType = {
   make: "Hyundai",
   model: "Tuscon",
   year: "2018",
-  color:"Black",
+  color: "Black",
   colour: "Black",
   seatingCapacity: "4",
   totalRides: "440",
