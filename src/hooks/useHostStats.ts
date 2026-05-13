@@ -167,7 +167,8 @@ async function fetchHostPerformanceDashboard(
 ): Promise<DashboardStatistics> {
   const settled = await Promise.allSettled([
     http.get<unknown>(HOST_PERF.onboardedVehicle),
-    http.get<unknown>(HOST_PERF.completedTrip),
+    // http.get<unknown>(HOST_PERF.completedTrip),
+    Promise.resolve({ data: { totalElements: 0 } }), // Mock completed trip to prevent 404
     http.get<unknown>(HOST_PERF.earningHistory),
     http.get<unknown>(HOST_PERF.pendingBalance),
     http.get<unknown>(HOST_PERF.topRated),

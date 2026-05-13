@@ -9,8 +9,9 @@ import TableCell from "@/components/Table/TableCell";
 import { FullPageSpinner } from "@/ui";
 
 export default function MouDetails() {
-  const { useGetHostMou } = useMou();
+  const { useGetHostMou, useDownloadHostMou } = useMou();
   const { data, isLoading, isError } = useGetHostMou();
+  const downloadMutation = useDownloadHostMou();
 
   const mouList = data?.data ?? [];
 
@@ -19,7 +20,8 @@ export default function MouDetails() {
     "Address",
     "Reason",
     "Status",
-    "Time of Submission"
+    "Time of Submission",
+    // "Action"
   ];
 
   if (isLoading) return <FullPageSpinner />;
@@ -35,23 +37,33 @@ export default function MouDetails() {
           image="/icons/empty_booking_state.png"
         />
       ) : (
-        <div className="overflow-auto bg-white rounded-xl border border-grey-200">
-          <table className="w-full min-w-full divide-y divide-grey-200">
+        <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0 lg:border border-grey-200">
+          <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200">
             <TableHead tableHeadItems={tableHeaders} />
-            <tbody className="divide-y divide-grey-200">
+            <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
               {mouList.map((mou) => (
-                <tr key={mou.id} className="hover:bg-grey-50 transition-colors">
-                  <TableCell content={mou.id} />
-                  <TableCell content={mou.address} />
-                  <TableCell content={mou.reason || "—"} />
-                  <TableCell content={mou.status} isBadge type="booking" />
+                <tr key={mou.id} className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
+                  <TableCell title="MOU ID" content={mou.id} />
+                  <TableCell title="Address" content={mou.address} />
+                  <TableCell title="Reason" content={mou.reason || "—"} />
+                  <TableCell title="Status" content={mou.status} isBadge type="booking" />
                   <TableCell
+                    title="Time of Submission"
                     content={
                       mou.submittedAt
                         ? format(new Date(mou.submittedAt), "MMM dd, yyyy HH:mm")
                         : "N/A"
                     }
                   />
+                  {/* <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit text-sm text-grey-500">
+                    <button
+                      className="text-primary-600 hover:text-primary-700 font-medium"
+                      onClick={() => downloadMutation.mutate(mou.id)}
+                      disabled={downloadMutation.isPending}
+                    >
+                      {downloadMutation.isPending ? "Downloading..." : "Download"}
+                    </button>
+                  </td> */}
                 </tr>
               ))}
             </tbody>
