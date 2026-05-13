@@ -12,6 +12,7 @@ import {
   HostTripItem,
   HostTripsParams,
 } from "@/types";
+import { baseAPIURL } from "@/utils/constants";
 
 export function useMou() {
   const http = useHttp();
@@ -19,10 +20,8 @@ export function useMou() {
   const { data: session } = useSession();
   const userToken = useAppSelector((s) => s.user.userToken);
 
-  /** Same source order as authenticated API calls (useHttp + HostRolePrompt). */
   const token = session?.user?.accessToken ?? userToken ?? "";
 
-  // Utility to build query strings
   const buildQueryString = (params?: Record<string, any>) => {
     if (!params) return "";
     const filteredParams = Object.entries(params).filter(
@@ -37,13 +36,11 @@ export function useMou() {
     return useQuery({
       queryKey: ["host", "mou", token],
       queryFn: async (): Promise<ApiResponse<MouItem[]>> => {
-        // If your useHttp hook doesn't auto-inject the token, you can pass it in the config here:
-        // const config = { headers: { Authorization: `Bearer ${token}` } };
         const result = await http.get<ApiResponse<MouItem[]>>("/hosts/mou");
         if (!result) throw new Error("Failed to fetch MOU submissions");
         return result;
       },
-      enabled: !!token, 
+      enabled: !!token,
     });
   };
 
@@ -51,17 +48,12 @@ export function useMou() {
   const useSubmitHostMou = () => {
     return useMutation({
       mutationFn: async (payload: MouSubmitPayload): Promise<ApiResponse<MouItem>> => {
-        if (!token) {
-          throw new Error("Authentication required");
-        }
-
-        // Example assuming useHttp exposes a post method
+        if (!token) throw new Error("Authentication required");
         const result = await http.post<ApiResponse<MouItem>>("/hosts/mou", payload);
         if (!result) throw new Error("Failed to submit MOU");
         return result;
       },
       onSuccess: () => {
-        // Automatically refresh the MOU list after a successful submission
         queryClient.invalidateQueries({ queryKey: ["host", "mou"] });
       },
     });
@@ -83,9 +75,47 @@ export function useMou() {
     });
   };
 
+  // ============== 4. GET /v1/hosts/mou/{hostMouId}/download ==============
+  const useDownloadHostMou = () => {
+    return useMutation({
+      mutationFn: async (hostMouId: string) => {
+        if (!token) throw new Error("Authentication required");
+        /** 
+         * Using standard fetch to bypass the useHttp interceptor 
+         * because a 403 on this specific endpoint shouldn't force a global logout.
+         */
+        const response = await fetch(`${baseAPIURL}/hosts/mou/${hostMouId}/download`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(response.status === 403 ? "You do not have permission to download this MOU" : "Failed to download MOU");
+        }
+
+        const blob = await response.blob();
+
+        // Convert the blob to a downloadable URL
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `MOU_${hostMouId}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+
+        // Clean up
+        link.remove();
+        window.URL.revokeObjectURL(url);
+      },
+    });
+  };
+
   return {
     useGetHostMou,
     useSubmitHostMou,
     useGetHostTrips,
+    useDownloadHostMou,
   };
 }

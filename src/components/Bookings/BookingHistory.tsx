@@ -47,28 +47,30 @@ export default function BookingHistory({ search, filters, startDate, endDate }: 
                     image="/icons/empty_booking_state.png"
                 />
             ) : (
-                <div className="overflow-auto">
-                    <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white md:mt-7">
+                <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
+                    <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-transparent lg:bg-white md:mt-7">
                         <TableHead tableHeadItems={bookingHistoryTableHeadItems} />
-                        <tbody className="divide-y divide-grey-200">
+                        <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
                             {bookings.map((booking) => (
-                                <tr key={booking.bookingId}>
-                                    <TableCell content={booking.bookingId} />
-                                    <TableCell
+                                <tr key={booking.bookingId} className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
+                                    <TableCell title="Booking ID" content={booking.bookingId} />
+                                    {/* <TableCell
+                                        title="Guest Name"
                                         content={booking.guestFullName}
                                         className="!text-grey-900 !font-medium"
-                                    />
-                                    <TableCell content={booking.vehicleName} />
-                                    <TableCell content={booking.status} isBadge type="booking" />
-                                    <TableCell content={`NGN ${booking.totalPrice?.toLocaleString()}`} />
+                                    /> */}
+                                    <TableCell title="Vehicle" content={booking.vehicleName} />
+                                    <TableCell title="Status" content={booking.status} isBadge type="booking" />
+                                    {/* <TableCell title="Total Price" content={`NGN ${booking.totalPrice?.toLocaleString()}`} /> */}
                                     <TableCell
+                                        title="Booked At"
                                         content={
                                             booking.bookedAt
                                                 ? format(new Date(booking.bookedAt), "MMM dd, yyyy")
                                                 : "N/A"
                                         }
                                     />
-                                    <TableCell content={booking.purposeOfRide || "—"} />
+                                    <TableCell title="Purpose" content={booking.purposeOfRide || "—"} />
                                 </tr>
                             ))}
                         </tbody>

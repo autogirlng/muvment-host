@@ -142,13 +142,13 @@ export default function BookingDetailPage() {
         </div>
 
         {/* guest info */}
-        <BookingInfoCards
+        {/* <BookingInfoCards
           title="GUEST INFORMATION"
           chipTitle="Contact Information"
           chipData={contactInformation as MappedInformation[]}
           nameTitle="Guest Name"
           nameValue={bookingDetail?.data.booker.fullName || ""}
-        />
+        /> */}
 
         {/* vehicle info */}
         <BookingInfoCards
