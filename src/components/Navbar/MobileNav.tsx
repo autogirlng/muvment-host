@@ -16,13 +16,18 @@ export function MobileNav({ userToken, user }: MobileNavProps) {
   return (
     <header className="block md:hidden px-8 py-3 bg-grey-50">
       <div className="flex items-center justify-between">
-        <Image
-          className=""
-          src={mobile_nav_logo}
-          alt=""
-          width={100}
-          height={15}
-        />
+        
+        {/* Wrap the Image with the Link component */}
+        <Link href="/">
+          <Image
+            className="cursor-pointer"
+            src={mobile_nav_logo}
+            alt="Mobile Logo"
+            width={100}
+            height={15}
+          />
+        </Link>
+
         <button
           className="bg-white border border-grey-300 rounded-[33px] p-1 pr-2 flex items-center gap-2"
           onClick={() => setOpenNav(!openNav)}

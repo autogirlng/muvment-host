@@ -64,29 +64,29 @@ export default function PendingBalanceSummary({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 md:gap-6">
         <PayoutStatCard
-          label="Pending to pay you"
+          label="Pending payments"
           value={totalAmountToPay}
           isLoading={isLoading}
           isError={isError}
         />
         <PayoutStatCard
-          label="Paid to host"
+          label="Concluded payments"
           value={totalPaidToHost}
           isLoading={isLoading}
           isError={isError}
         />
         <PayoutStatCard
-          label="Total you have earned"
+          label="Total earning"
           value={totalAmountHostHaveMade}
           isLoading={isLoading}
           isError={isError}
         />
-        <PayoutStatCard
+        {/* <PayoutStatCard
           label="Total earnings"
           value={totalEarningsHistory}
           isLoading={earningHistoryLoading}
           isError={earningHistoryError}
-        />
+        /> */}
       </div>
     </section>
   );
