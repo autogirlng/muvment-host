@@ -28,10 +28,10 @@ export default function PendingBalanceBookingRow({
       />
       <TableCell content={item.vehicleName ?? "-"} className="text-grey-900" />
       <TableCell content={dateDisplay} className="text-grey-900" />
-      <TableCell
+      {/* <TableCell
         content={`₦${formatNgnAmount(Number(item.basePrice) || 0)}`}
         className="text-grey-900 tabular-nums"
-      />
+      /> */}
       <TableCell
         content={`₦${formatNgnAmount(Number(item.toPayToHost) || 0)}`}
         className="text-grey-900 !font-semibold tabular-nums"

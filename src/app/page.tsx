@@ -1,8 +1,5 @@
 "use client";
-import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
-import { User } from "@/types";
-import { useHttp } from "@/hooks/useHttp";
+import useUser from "@/hooks/useUser";
 import { DesktopNav, MobileNav } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import {
@@ -20,21 +17,13 @@ import { ElectricalVehicleHero } from "@/components/LandingPage/ElectricVehicleH
 
 
 export default function HomePage() {
-  const http = useHttp();
-  const { data: session } = useSession();
+  const { getUser, session } = useUser();
   const userToken = session?.user?.accessToken || "";
-
-  const { data } = useQuery({
-    queryKey: ["getUser"],
-    queryFn: () => http.get<User>(`/api/user`),
-    enabled: !!userToken,
-    retry: false,
-  });
 
   return (
     <main className="overflow-x-hidden">
-      <DesktopNav user={data ?? null} userToken={userToken} />
-      <MobileNav user={data ?? null} userToken={userToken} />
+      <DesktopNav user={getUser.data ?? null} userToken={userToken} />
+      <MobileNav user={getUser.data ?? null} userToken={userToken} />
       <Hero />
       <ElectricalVehicleHero />
       <Benefits />

@@ -12,17 +12,27 @@ export default function useHostEarningHistory({
   currentPage = 1,
   pageLimit = 10,
   enabled = true,
+  year,
+  month,
 }: {
-  currentPage: number;
-  pageLimit: number;
+  currentPage?: number;
+  pageLimit?: number;
   enabled?: boolean;
+  year?: string | number;
+  month?: string | number;
 }) {
   const http = useHttp();
   const { user } = useAppSelector((state) => state.user);
 
   const { data, isError, error, isLoading, isFetching } = useQuery({
-    queryKey: ["hostEarningHistory", user?.data.userId],
-    queryFn: () => http.get<HostEarningHistoryResponse>(EARNING_HISTORY_URL),
+    queryKey: ["hostEarningHistory", user?.data.userId, year, month],
+    queryFn: () => {
+      const params = new URLSearchParams();
+      if (year) params.append("year", String(year));
+      if (month) params.append("month", String(month));
+      const queryString = params.toString() ? `?${params.toString()}` : "";
+      return http.get<HostEarningHistoryResponse>(`${EARNING_HISTORY_URL}${queryString}`);
+    },
     enabled: !!user?.data.userId && enabled,
     retry: false,
   });
