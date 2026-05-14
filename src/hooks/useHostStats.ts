@@ -130,6 +130,15 @@ function extractPendingBalance(payload: unknown): number {
   return 0;
 }
 
+function extractTotalAmountHostHaveMade(payload: unknown): number {
+  const body = getInnerData(payload);
+  if (body && typeof body === "object" && !Array.isArray(body)) {
+    const o = body as Record<string, unknown>;
+    return pickNum(o, "totalAmountHostHaveMade", "total_amount_host_have_made") || 0;
+  }
+  return 0;
+}
+
 function normalizeTopRated(payload: unknown): TopRatedVehicleType | null {
   let body: unknown = payload;
   if (payload && typeof payload === "object" && "data" in payload) {
@@ -198,6 +207,10 @@ async function fetchHostPerformanceDashboard(
     settled[3].status === "fulfilled"
       ? extractPendingBalance(settled[3].value)
       : 0;
+  const totalAmountHostHaveMade =
+    settled[3].status === "fulfilled"
+      ? extractTotalAmountHostHaveMade(settled[3].value)
+      : 0;
   const topRated =
     settled[4].status === "fulfilled"
       ? normalizeTopRated(settled[4].value)
@@ -208,6 +221,7 @@ async function fetchHostPerformanceDashboard(
     totalCompletedRides: completed,
     totalEarnings: earnings,
     walletBalance: wallet,
+    totalAmountHostHaveMade: totalAmountHostHaveMade,
     topRatedVehicle: topRated,
   };
 

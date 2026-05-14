@@ -8,17 +8,15 @@ import DashboardSectionTitle from "@/components/DashBoard/SectionTitle";
 import WalletBalance from "@/components/Wallet/WalletBalance";
 import PendingBalanceSummary from "@/components/Wallet/PendingBalanceSummary";
 import PendingBalanceBookingsTable from "@/components/Wallet/PendingBalanceBookingsTable";
-import HostEarningTable from "@/components/Wallet/HostEarningTable";
-import WalletHistoryToggle, {
-    type WalletHistoryTab,
-} from "@/components/Wallet/WalletHistoryToggle";
 
 const PAGE_LIMIT = 10;
 
 export default function WalletPage() {
-    const [tableTab, setTableTab] = useState<WalletHistoryTab>("payouts");
     const [payoutPage, setPayoutPage] = useState(1);
-    const [earningPage, setEarningPage] = useState(1);
+    
+    // Filters for earning history
+    const [filterYear, setFilterYear] = useState<number | "">("");
+    const [filterMonth, setFilterMonth] = useState<number | "">("");
 
     const {
         items: payoutItems,
@@ -33,33 +31,36 @@ export default function WalletPage() {
         pageLimit: PAGE_LIMIT,
     });
 
+    // Earning history now used solely for filtering total earnings over a period
     const {
-        items: earningItems,
-        totalCount: earningTotal,
         totalEarnings,
         isError: earningError,
         isLoading: earningLoading,
         isFetching: earningFetching,
     } = useHostEarningHistory({
-        currentPage: earningPage,
-        pageLimit: PAGE_LIMIT,
+        currentPage: 1,
+        pageLimit: 1,
         enabled: true,
+        year: filterYear || undefined,
+        month: filterMonth || undefined,
     });
 
-    const sectionTitle =
-        tableTab === "payouts" ? "Booking payouts" : "Earning history";
-
-    const showPayoutTable = tableTab === "payouts";
-    const tableLoading = showPayoutTable ? payoutLoading : earningLoading || earningFetching;
-    const tableError = showPayoutTable ? payoutError : earningError;
-    const tableItems = showPayoutTable ? payoutItems : earningItems;
-    const tableTotal = showPayoutTable ? payoutTotal : earningTotal;
-    const tablePage = showPayoutTable ? payoutPage : earningPage;
-    const setTablePage = showPayoutTable ? setPayoutPage : setEarningPage;
-
-    const handleTabChange = (tab: WalletHistoryTab) => {
-        setTableTab(tab);
-    };
+    const currentYear = new Date().getFullYear();
+    const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
+    const months = [
+        { value: 1, label: "January" },
+        { value: 2, label: "February" },
+        { value: 3, label: "March" },
+        { value: 4, label: "April" },
+        { value: 5, label: "May" },
+        { value: 6, label: "June" },
+        { value: 7, label: "July" },
+        { value: 8, label: "August" },
+        { value: 9, label: "September" },
+        { value: 10, label: "October" },
+        { value: 11, label: "November" },
+        { value: 12, label: "December" },
+    ];
 
     return (
         <main className="py-11 space-y-11">
@@ -76,36 +77,69 @@ export default function WalletPage() {
                     earningHistoryError={earningError}
                 />
             </div>
-            <div className="space-y-6">
+            
+            {/* Earning Filter Section */}
+            <div className="rounded-3xl border border-grey-200 bg-white p-6 md:p-8 space-y-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <DashboardSectionTitle title={sectionTitle} />
-                    <WalletHistoryToggle value={tableTab} onChange={handleTabChange} />
+                    <div>
+                        <h3 className="text-lg font-bold text-grey-800">Check Earnings by Period</h3>
+                        <p className="text-sm text-grey-500 mt-1">Select a year and month to see your total earnings.</p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <select 
+                            className="p-2 border border-grey-200 rounded-lg text-sm bg-white"
+                            value={filterYear}
+                            onChange={(e) => setFilterYear(e.target.value ? Number(e.target.value) : "")}
+                        >
+                            <option value="">All Years</option>
+                            {years.map(y => <option key={y} value={y}>{y}</option>)}
+                        </select>
+                        <select 
+                            className="p-2 border border-grey-200 rounded-lg text-sm bg-white"
+                            value={filterMonth}
+                            onChange={(e) => setFilterMonth(e.target.value ? Number(e.target.value) : "")}
+                        >
+                            <option value="">All Months</option>
+                            {months.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+                        </select>
+                    </div>
                 </div>
-                {tableLoading ? (
+                
+                <div className="bg-primary-50 rounded-xl p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <span className="text-grey-700 font-medium">Earnings for selected period:</span>
+                    {(earningLoading || earningFetching) ? (
+                        <div className="w-24 h-8 bg-primary-100 animate-pulse rounded"></div>
+                    ) : (
+                        <span className="text-2xl font-bold text-primary-900 tabular-nums">
+                            ₦{totalEarnings?.toLocaleString() || "0"}
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            <div className="space-y-6">
+                <DashboardSectionTitle title="Booking payouts" />
+                
+                {payoutLoading ? (
                     <FullPageSpinner />
-                ) : tableError ? (
+                ) : payoutError ? (
                     <p>something went wrong</p>
-                ) : tableItems.length === 0 ? (
+                ) : payoutItems.length === 0 ? (
                     <EmptyState
-                        title={
-                            showPayoutTable
-                                ? "No payout bookings"
-                                : "No earning history"
-                        }
+                        title="No payout bookings"
                         image="/icons/empty_trnx_state.png"
                         imageSize="w-[182px] 3xl:w-[265px]"
                     />
-                ) : showPayoutTable ? (
-                    <PendingBalanceBookingsTable items={payoutItems} />
                 ) : (
-                    <HostEarningTable items={earningItems} />
+                    <PendingBalanceBookingsTable items={payoutItems} />
                 )}
+                
                 <Pagination
                     className="pagination-bar"
-                    currentPage={tablePage}
-                    totalCount={tableTotal}
+                    currentPage={payoutPage}
+                    totalCount={payoutTotal}
                     pageLimit={PAGE_LIMIT}
-                    onPageChange={(page) => setTablePage(page)}
+                    onPageChange={(page) => setPayoutPage(page)}
                 />
             </div>
         </main>

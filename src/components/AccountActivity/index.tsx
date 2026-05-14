@@ -20,7 +20,7 @@ export default function AccountActivity() {
                     <ActivityCard
                         primary
                         title="Total Earnings"
-                        value={`${dashboardStats?.totalEarnings || "-"}`}
+                        value={`${dashboardStats?.totalAmountHostHaveMade || "-"}`}
                         modalTitle={"Show Graph"}
                         modalName="graph"
                         modalIcon={Icons.ic_chart}

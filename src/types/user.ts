@@ -5,6 +5,7 @@ export interface DashboardStatistics {
   totalOnboardedVehicles: number;
   totalCompletedRides: number;
   walletBalance: number;
+  totalAmountHostHaveMade?: number;
   topRatedVehicle: null | TopRatedVehicleType;
 }
 
