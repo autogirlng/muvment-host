@@ -113,7 +113,7 @@ export default function Trips() {
                                     <TableCell content={trip.bookingStatus} isBadge type="booking" />
                                     <TableCell content={trip.tripStatus} isBadge type="booking" />
                                     {/* <TableCell content={`NGN ${(trip.totalPrice ?? 0).toLocaleString()}`} /> */}
-                                    <td className="px-4 py-3">
+                                    {/* <td className="px-4 py-3">
                                         <button
                                             onClick={() => setSelectedTrip(trip)}
                                             className="flex items-center gap-1.5 text-xs font-medium text-primary-500 hover:text-primary-700 transition-colors"
@@ -124,7 +124,7 @@ export default function Trips() {
                                             </svg>
                                             Receipt
                                         </button>
-                                    </td>
+                                    </td> */}
                                 </tr>
                             ))}
                         </tbody>
@@ -141,7 +141,7 @@ export default function Trips() {
                 />
             )}
 
-            <BlurredDialog
+            {/* <BlurredDialog
                 open={!!selectedTrip}
                 onOpenChange={(open) => { if (!open) setSelectedTrip(null); }}
                 title="Trip Receipt"
@@ -149,7 +149,7 @@ export default function Trips() {
                 content={
                     selectedTrip ? <TripReceipt trip={selectedTrip} /> : null
                 }
-            />
+            /> */}
         </div>
     );
 }

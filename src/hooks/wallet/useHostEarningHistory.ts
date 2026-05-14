@@ -9,14 +9,10 @@ import { useHttp } from "@/hooks/useHttp";
 const EARNING_HISTORY_URL = "/host-performance/earning-history";
 
 export default function useHostEarningHistory({
-  currentPage = 1,
-  pageLimit = 10,
   enabled = true,
   year,
   month,
 }: {
-  currentPage?: number;
-  pageLimit?: number;
   enabled?: boolean;
   year?: string | number;
   month?: string | number;
@@ -38,24 +34,11 @@ export default function useHostEarningHistory({
   });
 
   const totalEarnings = data?.data?.totalEarnings ?? 0;
-  const allItems = data?.data?.hostEarningItems ?? [];
-
-  const { paginatedItems, totalCount } = useMemo(() => {
-    const sorted = [...allItems].sort(
-      (a, b) => new Date(b.paidAt).getTime() - new Date(a.paidAt).getTime()
-    );
-    const totalCount = sorted.length;
-    const start = (currentPage - 1) * pageLimit;
-    return {
-      paginatedItems: sorted.slice(start, start + pageLimit),
-      totalCount,
-    };
-  }, [allItems, currentPage, pageLimit]);
+  const items = data?.data?.hostEarningItems ?? [];
 
   return {
-    items: paginatedItems,
+    items,
     totalEarnings,
-    totalCount,
     isError,
     error,
     isLoading,
