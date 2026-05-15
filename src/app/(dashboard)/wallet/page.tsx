@@ -38,8 +38,6 @@ export default function WalletPage() {
         isLoading: earningLoading,
         isFetching: earningFetching,
     } = useHostEarningHistory({
-        currentPage: 1,
-        pageLimit: 1,
         enabled: true,
         year: filterYear || undefined,
         month: filterMonth || undefined,
