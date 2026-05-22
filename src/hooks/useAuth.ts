@@ -212,10 +212,6 @@ export default function useAuth() {
       }
 
       queryClient.clear();
-      startTransition(() => {
-        router.push("/dashboard");
-        router.refresh();
-      });
     },
 
     onMutate: (values) => {
@@ -224,6 +220,7 @@ export default function useAuth() {
 
     onSuccess: () => {
       toast.success("Signed in successfully");
+      router.push("/");
     },
 
     onError: (error: unknown, _values, context) => {
@@ -304,7 +301,6 @@ export default function useAuth() {
 
   const changePasswordMutation = useMutation({
     mutationFn: async (values: ChangePasswordValues) => {
-      // Validating token existence before making the request
       const token =
         session?.user?.accessToken ??
         getClientStore()?.getState().user.userToken;
@@ -314,7 +310,6 @@ export default function useAuth() {
         throw new Error("Authentication required");
       }
 
-      // Assuming `useHttp` applies the Bearer token under the hood using an interceptor.
       return http.post("/v1/users/change-password", values);
     },
     onSuccess: (data) => {
@@ -366,17 +361,13 @@ export default function useAuth() {
             },
           });
         } catch {
-
+          /* NextAuth session optional when using Redux token only */
         }
       }
-
 
       queryClient.invalidateQueries({ queryKey: ["getUser"] });
       queryClient.invalidateQueries({ queryKey: ["host"] });
       queryClient.invalidateQueries({ queryKey: ["host-performance"] });
-
-      // 4. (Optional) Redirect to the host dashboard
-      // router.push("/host/dashboard"); 
     },
   });
 

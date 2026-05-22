@@ -24,7 +24,7 @@ export default function HomePage() {
     <main className="overflow-x-hidden">
       <DesktopNav user={getUser.data ?? null} userToken={userToken} />
       <MobileNav user={getUser.data ?? null} userToken={userToken} />
-      <Hero />
+      <Hero isLoggedIn={!!userToken} />
       <ElectricalVehicleHero />
       <Benefits />
       <JoinUs />
