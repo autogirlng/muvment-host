@@ -53,8 +53,6 @@ export const specialCharRegex = /[@$!#%*?_&]/;
 
 export const spacesRegex = /^\S*$/;
 
-// export const standardServiceFeeInPercentage = 0.2;
-
 type PasswordCheckKey = keyof NonNullable<SignupFormValues["password_checks"]>;
 export const passwordChecks: { label: string; check: PasswordCheckKey }[] = [
   { label: "8 characters long", check: "length" },

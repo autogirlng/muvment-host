@@ -130,21 +130,6 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return `${firstPart}${middlePart}${lastPart}`;
 };
 
-// export const calculateServiceFee = (
-//   price: number,
-//   standardFee: number
-// ): number => {
-//   return price * standardFee;
-// };
-
-// export const calculateRateGuestsWillSee = (
-//   price: number,
-//   serviceFee: number
-// ): number => {
-//   return price + serviceFee;
-// };
-
-// ============================= Notification Icons, Color and Bg Color starts ============================= //
 export const getNotificationIcon = (type: string) => {
   switch (type) {
     case NotificationType.BOOKING_REQUEST:
@@ -231,9 +216,6 @@ export const getNotificationBgColor = (type: string) => {
       return "bg-grey-90";
   }
 };
-// ============================= Notification Icons, Color and Bg Color ends ============================= //
-
-// Debounce function
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
   delay: number
@@ -333,11 +315,7 @@ export const handleErrors = (
   error: AxiosError<ErrorResponse>,
   page?: string
 ) => {
-  console.log(page ? `[${page}] API error` : "API error", {
-    status: error.response?.status,
-    data: error.response?.data,
-    message: error.message,
-  });
+  void page;
 
   const msg = resolveErrorToastMessage(error);
   return toast.error(msg);

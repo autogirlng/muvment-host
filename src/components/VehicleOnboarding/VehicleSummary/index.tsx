@@ -34,7 +34,6 @@ export default function VehicleSummary({
             <ViewAsCustomer vehicleInfo={vehicleInfo} />
 
             <div>
-                {/* checkbox */}
                 <p className="text-xs md:text-xl 3xl:text-h6 !font-normal flex items-center gap-3">
                     <SingleCheckBox
                         id="agreeToTerms"

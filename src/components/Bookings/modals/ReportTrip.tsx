@@ -44,7 +44,6 @@ const PopupContent = ({
         <Formik
             initialValues={{ message: "" }}
             onSubmit={async (values, { setSubmitting }) => {
-                console.log(values);
 
                 handleAction(values);
                 setSubmitting(false);

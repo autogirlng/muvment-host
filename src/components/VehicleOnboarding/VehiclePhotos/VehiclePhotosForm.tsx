@@ -45,8 +45,6 @@ const VehiclePhotosForm = ({
             validationSchema={vehiclePhotosSchema}
             onSubmit={(values, { setSubmitting }) => {
                 const formData = appendFormData(values);
-                console.log("values", values);
-                console.log("Form data:", formData);
 
                 submitStep3.mutate(formData);
                 setSubmitting(false);
@@ -114,7 +112,6 @@ const VehiclePhotosForm = ({
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={async () => {
                             const formData = appendFormData(values);
-                            console.log(formData);
                             saveStep3.mutate(formData);
                         }}
                         isSaveDraftloading={saveStep3.isPending}

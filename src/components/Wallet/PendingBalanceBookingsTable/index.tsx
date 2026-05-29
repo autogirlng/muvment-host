@@ -8,10 +8,10 @@ type Props = { items: HostPendingBalanceBooking[] };
 
 export default function PendingBalanceBookingsTable({ items }: Props) {
   return items.length > 0 ? (
-    <div className="overflow-auto">
-      <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white md:mt-7">
+    <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
+      <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
         <TableHead tableHeadItems={hostPendingBalanceTableHeadItems} />
-        <tbody className="divide-y divide-grey-200 ">
+        <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
           {items.map((item) => (
             <PendingBalanceBookingRow
               key={item.bookingId}

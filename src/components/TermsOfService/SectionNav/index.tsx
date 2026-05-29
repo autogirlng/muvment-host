@@ -56,7 +56,6 @@ export const SectionNav = ({ sections }: SectionNavProps) => {
 
     return (
         <>
-            {/* Mobile Navigation */}
             <div className="lg:hidden sticky top-16 z-30 bg-white shadow-sm">
                 <div className="overflow-x-auto py-3 hide-scrollbar">
                     <div className="flex space-x-4 px-4 min-w-max">
@@ -75,11 +74,8 @@ export const SectionNav = ({ sections }: SectionNavProps) => {
                     </div>
                 </div>
             </div>
-
-            {/* Desktop Navigation */}
             <div className="hidden lg:block sticky top-20">
                 {" "}
-                {/* Added sticky and top positioning */}
                 <div
                     ref={desktopNavRef}
                     className="flex flex-col space-y-1 p-4 border-[2px] border-grey-50 bg-white rounded-2xl overflow-y-auto" // Added overflow-y-auto

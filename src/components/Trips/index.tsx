@@ -2,14 +2,13 @@
 
 import { ChangeEvent, useState } from "react";
 import { format } from "date-fns";
-import { FullPageSpinner, Pagination, SearchInput, FilterBy, BlurredDialog } from "@/ui";
+import { FullPageSpinner, Pagination, SearchInput, FilterBy } from "@/ui";
 import EmptyState from "@/components/EmptyState";
 import TableHead from "@/components/Table/TableHead";
 import TableCell from "@/components/Table/TableCell";
 import { tripTableHeadItems } from "@/utils/data";
 import { useMou } from "@/hooks/mou/useMou";
-import { HostTripItem } from "@/types";
-import TripReceipt from "@/components/Trips/TripReceipt";
+import { HostTripsParams } from "@/types";
 
 const tripFilters = [
     {
@@ -30,18 +29,17 @@ export default function Trips() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [filters, setFilters] = useState<Record<string, string[]>>({});
     const [search, setSearch] = useState<string>("");
-    const [selectedTrip, setSelectedTrip] = useState<HostTripItem | null>(null);
     const pageLimit = 10;
 
     const { useGetHostTrips } = useMou();
 
-    const queryParams: any = {
+    const queryParams: HostTripsParams = {
         page: currentPage - 1,
         size: pageLimit,
     };
 
     if (filters.tripStatus?.length) {
-        queryParams.tripStatus = filters.tripStatus[0];
+        queryParams.tripStatus = filters.tripStatus[0] as HostTripsParams["tripStatus"];
     }
 
     const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
@@ -96,22 +94,26 @@ export default function Trips() {
                     image="/icons/empty_booking_state.png"
                 />
             ) : (
-                <div className="overflow-auto">
-                    <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white">
+                <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
+                    <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
                         <TableHead tableHeadItems={tripTableHeadItems} />
-                        <tbody className="divide-y divide-grey-200">
+                        <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
                             {trips.map((trip) => (
-                                <tr key={trip.id}>
-                                    <TableCell content={trip.bookingId || trip.id} />
-                                    <TableCell content={trip.vehicleName || trip.vehicleIdentifier} />
+                                <tr
+                                    key={trip.id}
+                                    className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all"
+                                >
+                                    <TableCell title="Trip ID" content={trip.bookingId || trip.id} />
+                                    <TableCell title="Vehicle" content={trip.vehicleName || trip.vehicleIdentifier} />
                                     <TableCell
+                                        title="Driver"
                                         content={trip.driverName || "—"}
                                         className="!text-grey-900 !font-medium"
                                     />
-                                    <TableCell content={trip.startDateTime ? formatDate(trip.startDateTime) : "N/A"} />
-                                    <TableCell content={trip.endDateTime ? formatDate(trip.endDateTime) : "N/A"} />
-                                    <TableCell content={trip.bookingStatus} isBadge type="booking" />
-                                    <TableCell content={trip.tripStatus} isBadge type="booking" />
+                                    <TableCell title="Start Date" content={trip.startDateTime ? formatDate(trip.startDateTime) : "N/A"} />
+                                    <TableCell title="End Date" content={trip.endDateTime ? formatDate(trip.endDateTime) : "N/A"} />
+                                    <TableCell title="Booking Status" content={trip.bookingStatus} isBadge type="booking" />
+                                    <TableCell title="Trip Status" content={trip.tripStatus} isBadge type="booking" />
                                     {/* <TableCell content={`NGN ${(trip.totalPrice ?? 0).toLocaleString()}`} /> */}
                                     {/* <td className="px-4 py-3">
                                         <button

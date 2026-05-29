@@ -66,7 +66,6 @@ function Footer() {
                                 initialValues={{ email: "" }}
                                 validationSchema={newLetterValidationSchema}
                                 onSubmit={async (values, { setSubmitting }) => {
-                                    console.log("Form values:", values);
                                     await addSubscriber({ email: values.email });
                                     setSubmitting(false);
                                 }}

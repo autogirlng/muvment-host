@@ -65,7 +65,6 @@ export default function useGetBookingById({ id }: { id?: string }) {
     }
     return [{}];
   }, [data]);
-console.log(data)
   return {
     bookingDetail: data,
     isError,

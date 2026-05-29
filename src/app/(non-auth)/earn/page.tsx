@@ -54,7 +54,6 @@ function Earn() {
         error.response?.data?.message ||
         "Something went wrong. Please try again.";
       toast.error(errorMessage);
-      console.error("Submission error:", error);
     }
   };
 

@@ -149,8 +149,11 @@ export interface HostEarningItem {
 }
 
 export interface HostEarningHistoryData {
+  totalPending?: number;
+  totalPaid?: number;
   totalEarnings: number;
-  hostEarningItems: HostEarningItem[];
+  hostEarningItems?: HostEarningItem[];
+  bookings?: HostPendingBalanceBookingsPage;
 }
 
 export interface HostEarningHistoryResponse extends BaseResponse {

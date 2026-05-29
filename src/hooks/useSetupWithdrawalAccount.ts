@@ -54,7 +54,6 @@ export default function useSetupWithdrawalAccount() {
       ),
 
     onSuccess: (data) => {
-      console.log("Bank Account Verified Successfully", data);
       dispatch(setAccountDetails(data?.data as WithdrawalAccountValues));
       setLoading(false);
     },
@@ -71,7 +70,6 @@ export default function useSetupWithdrawalAccount() {
     onSuccess: (data) => {
       router.push(`/settings/withdrawal-account/otp`);
       setLoading(false);
-      console.log("Bank Account Otp Sent Successfully", data);
     },
 
     onError: (error: AxiosError<ErrorResponse>) => {
@@ -92,7 +90,6 @@ export default function useSetupWithdrawalAccount() {
   };
     },
     onSuccess: (data, _values, context) => {
-      console.log("Bank Account Otp Verified", data);
       // dispatch(setWithdrawalAccountSetupOtp(context.otp));
       // addBankAccount.mutate(accountDetails);
        setLoading(false);
@@ -122,7 +119,6 @@ export default function useSetupWithdrawalAccount() {
       }),
 
     onSuccess: (data) => {
-      console.log("Withdrawal Account Added Successfully", data);
       toast.success("Withdrawal Account Added Successfully");
       dispatch(updateUserData({ }));
       dispatch(setWithdrawalAccountSetupOtp(""));

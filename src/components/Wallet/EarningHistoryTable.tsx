@@ -1,67 +1,50 @@
-import { format } from "date-fns";
-import { earningHistoryTableHeadItems } from "@/utils/data";
 import TableHead from "@/components/Table/TableHead";
 import TableCell from "@/components/Table/TableCell";
-import EmptyState from "@/components/EmptyState";
-
-interface PaidBy {
-    fullName: string;
-    email: string;
-}
-
-interface HostEarningItem {
-    amountPaid: number;
-    paidAt: string;
-    paidBy: PaidBy;
-}
+import { formatNgnAmount } from "@/utils/formatters";
 
 type Props = {
-    items: HostEarningItem[];
-    totalEarnings?: number;
+    totalPending: number;
+    totalPaid: number;
+    totalEarnings: number;
 };
 
-export default function EarningHistoryTable({ items, totalEarnings }: Props) {
-    return items.length > 0 ? (
-        <div className="space-y-4">
-            {totalEarnings !== undefined && (
-                <div className="flex items-center gap-2">
-                    <span className="text-sm text-grey-500">Total Earnings:</span>
-                    <span className="text-lg font-semibold text-grey-900">
-                        NGN {totalEarnings.toLocaleString()}
-                    </span>
-                </div>
-            )}
-            <div className="overflow-auto">
-                <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white md:mt-7">
-                    <TableHead tableHeadItems={earningHistoryTableHeadItems} />
-                    <tbody className="divide-y divide-grey-200">
-                        {items.map((item, index) => (
-                            <tr key={index}>
-                                <TableCell
-                                    content={item.paidBy.fullName}
-                                    className="!text-grey-900 !font-medium"
-                                />
-                                <TableCell content={item.paidBy.email} />
-                                <TableCell content={`NGN ${item.amountPaid.toLocaleString()}`} />
-                                <TableCell
-                                    content={
-                                        item.paidAt
-                                            ? format(new Date(item.paidAt), "MMM dd, yyyy")
-                                            : "N/A"
-                                    }
-                                />
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
+const tableHeadItems = ["Metric", "Amount"];
+
+export default function EarningHistoryTable({
+    totalPending,
+    totalPaid,
+    totalEarnings,
+}: Props) {
+    const rows = [
+        { metric: "Total pending", amount: totalPending },
+        { metric: "Total paid", amount: totalPaid },
+        { metric: "Total earnings", amount: totalEarnings },
+    ];
+
+    return (
+        <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
+            <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
+                <TableHead tableHeadItems={tableHeadItems} />
+                <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
+                    {rows.map((row) => (
+                        <tr
+                            key={row.metric}
+                            className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all"
+                        >
+                            <TableCell
+                                title="Metric"
+                                content={row.metric}
+                                className="!text-grey-900 !font-medium"
+                            />
+                            <TableCell
+                                title="Amount"
+                                content={`₦${formatNgnAmount(row.amount)}`}
+                                className="!text-grey-900 !font-semibold tabular-nums"
+                            />
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
         </div>
-    ) : (
-        <EmptyState
-            title="No Transaction History"
-            message="Your transaction history will appear here"
-            image="/icons/empty_trnx_state.png"
-            imageSize="w-[182px] 3xl:w-[265px]"
-        />
     );
 }

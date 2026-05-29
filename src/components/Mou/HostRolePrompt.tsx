@@ -50,8 +50,8 @@ export default function HostRolePrompt() {
         if (role === "CUSTOMER") {
           setOpen(true);
         }
-      } catch (err) {
-        console.error("Failed to verify user role:", err);
+      } catch {
+        return;
       }
     };
 

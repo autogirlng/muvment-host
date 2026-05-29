@@ -21,7 +21,6 @@ export function AccountSetupTasks() {
             setBankAccountSetupCompleted(response?.status !== "SUCCESSFUL")
 
         } catch (err) {
-            console.log(err)
             // @ts-ignore
             setBankAccountSetupCompleted(response?.data.status !== "SUCCESSFUL");
         }

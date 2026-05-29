@@ -104,7 +104,6 @@ export default function SignupPage() {
                                 }}
                                 inputOnBlur={handleBlur}
                                 selectOnBlur={handleBlur}
-                                // inputClassname
                                 selectClassname="!w-[130px]"
                                 inputError={
                                     errors.phoneNumber && touched.phoneNumber

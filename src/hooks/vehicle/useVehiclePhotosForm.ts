@@ -57,7 +57,6 @@ const [vehicleId, setVehicleId] = useState<string>("")
   );
 
   useEffect(() => {
-    console.log(photoViews);
   }, [photoViews]);
 
   const saveStep3 = useMutation({
@@ -67,7 +66,6 @@ const [vehicleId, setVehicleId] = useState<string>("")
     },
 
     onSuccess: (data) => {
-      console.log("Vehicle Onboarding Step 3 Saved", data);
       dispatch(
         // @ts-ignore
         updateVehicleInformation({ ...vehicle, VehicleImage: data })
@@ -86,7 +84,6 @@ const [vehicleId, setVehicleId] = useState<string>("")
     },
 
     onSuccess: (data) => {
-      console.log("Vehicle Onboarding Step 3 Submitted", data);
       dispatch(
         // @ts-ignore
         updateVehicleInformation({ ...vehicle, VehicleImage: data })

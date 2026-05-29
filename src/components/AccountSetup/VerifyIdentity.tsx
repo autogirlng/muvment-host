@@ -11,7 +11,6 @@ export default function VerifyIdentity() {
         <Formik
             initialValues={verifyIdentityValues}
             onSubmit={async (values, { setSubmitting }) => {
-                console.log(values);
             }}
             validationSchema={verifyIdentitySchema}
             enableReinitialize={true}

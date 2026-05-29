@@ -6,7 +6,7 @@
     "dev": "next dev --turbo",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "clean": "node -e \"try { require('fs').rmSync('.next',{recursive:true,force:true}) } catch (e) { console.warn(e.message) }\""
   },
   "dependencies": {

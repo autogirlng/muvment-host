@@ -85,11 +85,9 @@ export default function useAvailabilityAndPricingForm({
       ),
 
     onSuccess: (data) => {
-      console.log("Vehicle Onboarding Step 4 Saved", data);
       dispatch(
         updateVehicleInformation({ ...vehicle, ...data } as VehicleInformation)
       );
-      // router.push("/listings");
     },
 
     onError: (error: AxiosError<ErrorResponse>) =>
@@ -97,18 +95,14 @@ export default function useAvailabilityAndPricingForm({
   });
   const submitStep4 = useMutation({
     mutationFn: (values: any) => {
-      console.log(     {
-          ...values, 
-        })
-      return  http.patch<VehicleInformation>(
+      return http.patch<VehicleInformation>(
         `/vehicles/configuration?id=${vehicleId}`,
         {
-          ...values, 
+          ...values,
         }
       )
     },
     onSuccess: (data) => {
-      console.log("Vehicle Onboarding Step 4 Submitted", data);
       dispatch(
         updateVehicleInformation(
           // @ts-ignore

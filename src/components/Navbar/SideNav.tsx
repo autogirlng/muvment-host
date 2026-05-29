@@ -1,5 +1,5 @@
 import Image from "next/image";
-import Link from "next/link"; // 1. Import Link
+import Link from "next/link";
 import { dashboardNavItems } from "@/utils/data";
 import { logo } from "@/ui/assets";
 import { SideNavItem } from "@/components/Navbar";
@@ -9,12 +9,11 @@ export function SideNav() {
         <div className="bg-white pt-8 pb-6 hidden md:block fixed left-0 top-0 md:w-[252px] 2xl:w-[272px] h-screen border-r border-grey-300 shadow-[12px_4px_100px_0_#00000012]">
             <div className="space-y-3 px-2 w-full">
                 <div className="ml-4 pb-5">
-                    {/* 2. Wrap the Image with the Link component */}
                     <Link href="/">
-                        <Image 
-                            className="cursor-pointer" // Optional: adds a pointer cursor on hover
-                            src={logo} 
-                            alt="Company Logo" // Recommended: descriptive alt text for accessibility
+                        <Image
+                            className="cursor-pointer"
+                            src={logo}
+                            alt="Company Logo"
                             width={114} 
                             height={40} 
                         />

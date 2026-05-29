@@ -31,7 +31,6 @@ export default function SetupWithdrawalAccount() {
                 if (!accountDetails.accountNumber || !accountDetails.bankCode) {
                     resetAccountDetails();
                     validateBankAccount.mutate(values);
-                    console.log(loading);
                     setSubmitting(false);
 
                     return;

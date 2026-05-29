@@ -134,8 +134,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
             );
            
             setGooglePlaces(response.data.places || []);
-        } catch (err) {
-            console.error(err);
+        } catch {
             setSearchAddressError("Error fetching places. Please try again later.");
             setGooglePlaces([]);
         } finally {

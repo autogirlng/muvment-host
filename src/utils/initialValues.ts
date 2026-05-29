@@ -1,7 +1,4 @@
 import {
-  AdditionalVehicleInformationValues,
-  AvailabilityAndPricingValues,
-  BasicVehicleInformationValues,
   ChangePasswordValues,
   LoginFormValues,
   ResetPasswordEmailValues,
@@ -90,23 +87,6 @@ export const withdrawalAccountValues: WithdrawalAccountValues = {
   accountNumber: "",
 };
 
-// export const basicVehicleInformationValues: BasicVehicleInformationValues = {
-//   address: "",
-//   yearOfRelease: 200,
-//   hasTracker: "no",
-//   hasInsurance: "no",
-// };
-
-// export const additionalVehicleInformationValues: AdditionalVehicleInformationValues =
-//   {
-//     licensePlateNumber: "",
-//     stateOfRegistration: "",
-//     vehicleDescription: "",
-//     features: [],
-//     vehicleColor: "",
-//     numberOfSeats: "",
-//   };
-
 export const vehiclePhotosValues: VehiclePhotos = {
   frontView: "",
   backView: "",
@@ -115,25 +95,6 @@ export const vehiclePhotosValues: VehiclePhotos = {
   interior: "",
   other: "",
 };
-
-// export const availabilityAndPricingValues: AvailabilityAndPricingValues = {
-//   advanceNoticeInDays: "",
-//   minTripDurationInDays: "",
-//   maxTripDurationInDays: "",
-//   // selfDrive: "",
-//   driverProvided: "",
-//   fuelProvided: "",
-//   dailyRate: "",
-//   extraHourRate: "",
-//   airportPickup: "",
-//   threeDaysDiscount: "",
-//   sevenDaysDiscount: "",
-//   thirtyDaysDiscount: "",
-//   outskirtsLocation: [],
-//   outskirtsPrice: "",
-// };
-
-
 
 export const withdrawalValues: WithdrawalValues = {
   amount: "",

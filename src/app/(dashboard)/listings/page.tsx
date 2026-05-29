@@ -124,16 +124,20 @@ function ListingsPageContent() {
         <>
           {debouncedSearch && (
             <h5 className="text-h6 md:text-h5 3xl:text-h4 text-grey-800">
-              Showing results for "{debouncedSearch}"
+              Showing results for &quot;{debouncedSearch}&quot;
             </h5>
           )}
-          <div className="overflow-auto">
-            <table className="w-full min-w-full divide-y divide-grey-200 border-t border-grey-200 bg-white">
+          <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
+            <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
               <TableHead tableHeadItems={listingTableHeadItems} />
-              <tbody className="divide-y divide-grey-200">
+              <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
                 {listings.map((listing) => (
-                  <tr key={listing.id}>
+                  <tr
+                    key={listing.id}
+                    className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all"
+                  >
                     <TableCell
+                      title="Vehicle Name"
                       content={
                         listing.status === VehicleStatus.DRAFT
                           ? "Unfinished Listing"
@@ -141,21 +145,33 @@ function ListingsPageContent() {
                       }
                       className="!text-grey-900 !font-medium"
                     />
-                    <TableCell content={listing.licensePlateNumber || "—"} />
-                    <td className="px-4 py-3">
-                      <VehicleListingBadge status={listing.status} />
+                    <TableCell title="License Plate" content={listing.licensePlateNumber || "—"} />
+                    <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit border-b lg:border-none border-grey-100">
+                      <div className="flex items-center justify-between gap-5 lg:block">
+                        <span className="font-semibold text-grey-500 lg:hidden w-1/2 break-words text-left text-sm">
+                          Status
+                        </span>
+                        <div className="w-1/2 lg:w-auto flex justify-end lg:justify-start">
+                          <VehicleListingBadge status={listing.status} />
+                        </div>
+                      </div>
                     </td>
-                    <td className="px-4 py-3">
-                      <Link
-                        href={
-                          listing.status === VehicleStatus.DRAFT
-                            ? `/vehicle-onboarding?id=${listing.id}`
-                            : `/listings/${listing.id}`
-                        }
-                        className="text-xs font-semibold text-primary-500 hover:underline"
-                      >
-                        {listing.status === VehicleStatus.DRAFT ? "Complete Listing" : "View Details"}
-                      </Link>
+                    <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit text-sm text-grey-700">
+                      <div className="flex items-center justify-between gap-5 lg:block">
+                        <span className="font-semibold text-grey-500 lg:hidden w-1/2 break-words text-left">
+                          Actions
+                        </span>
+                        <Link
+                          href={
+                            listing.status === VehicleStatus.DRAFT
+                              ? `/vehicle-onboarding?id=${listing.id}`
+                              : `/listings/${listing.id}`
+                          }
+                          className="w-1/2 lg:w-auto text-right lg:text-left text-xs font-semibold text-primary-500 hover:underline"
+                        >
+                          {listing.status === VehicleStatus.DRAFT ? "Complete Listing" : "View Details"}
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}

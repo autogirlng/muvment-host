@@ -28,7 +28,6 @@ export default function useUpdateProfile(
     },
 
     onSuccess: (data, _values, context) => {
-      console.log("Update Profile successful", data);
       dispatch(updateUserData({ ...user, ...context }));
       setIsProfileEditable(false);
       toast.success("Profile Updated");
@@ -43,7 +42,6 @@ export default function useUpdateProfile(
       http.patch<UpdateProfilePictureResponse>(`${USER_ME_PATH}/profile-picture`, values, { headers: { "Content-Type": "multipart/form-data" },}),
 
     onSuccess: (data) => {
-      console.log("Update Image successful", data);
      if(user){
         dispatch(updateUserData({ ...user, data:{...user.data, profilePictureUrl:data?.data} }));
      }
