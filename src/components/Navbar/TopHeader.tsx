@@ -57,14 +57,20 @@ export function TopHeader() {
                 {getHeaderTitle()}
             </h6>
             <div className="flex items-center gap-3">
+                <Link href="/settings" aria-label="Settings">
+                    <IconWrapper icon={Icons.ic_setting} />
+                </Link>
                 <Popup
                     open={true}
                     isOpen={notificationPopupIsOpen}
                     handleIsOpen={(open: boolean) => setNotificationPopupIsOpen(open)}
                     className="!w-[400px] 3xl:!w-[480px]"
                     trigger={
-                        <button className="flex items-center gap-1 text-grey-600">
+                        <button className="relative flex items-center gap-1 text-grey-600">
                             <IconWrapper icon={Icons.ic_notification} />
+                            {totalCount > 0 && (
+                                <span className="absolute right-0 top-0 h-2.5 w-2.5 rounded-full border-2 border-white bg-primary-500" />
+                            )}
                         </button>
                     }
                     content={

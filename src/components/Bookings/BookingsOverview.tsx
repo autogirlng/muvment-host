@@ -20,7 +20,7 @@ export default function BookingsOverview({ }: Props) {
     };
 
     return (
-        <div className="space-y-8">
+        <section className="space-y-4 sm:space-y-5 lg:space-y-6">
             <div className="flex items-center justify-between gap-3">
                 <SectionTitle icon={Icons.ic_ticket} title="Bookings" />
                 <div className="block md:hidden">
@@ -85,6 +85,6 @@ export default function BookingsOverview({ }: Props) {
                     emptyStateMessage="Your Bookings Will Appear Here"
                 />
             )}
-        </div>
+        </section>
     );
 }

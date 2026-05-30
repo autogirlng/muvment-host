@@ -7,6 +7,7 @@ import { listingFilters, listingTableHeadItems } from "@/utils/data";
 import { debounce } from "@/utils/functions";
 import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy, VehicleListingBadge } from "@/ui";
 import EmptyState from "@/components/EmptyState";
+import ListingsHero from "@/components/Listings/ListingsHero";
 import TableHead from "@/components/Table/TableHead";
 import TableCell from "@/components/Table/TableCell";
 import useListings from "@/hooks/listings/useListings";
@@ -66,7 +67,8 @@ function ListingsPageContent() {
   };
 
   return (
-    <main className="space-y-6 py-[56px]">
+    <main className="space-y-5 pb-4 sm:space-y-6 sm:pb-6 lg:space-y-8 lg:pb-8">
+      <ListingsHero />
       <div className="flex justify-between items-center gap-3">
         <SearchInput
           placeholder="Search"

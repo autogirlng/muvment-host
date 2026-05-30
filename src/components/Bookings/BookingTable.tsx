@@ -24,7 +24,9 @@ export default function BookingTable({
     <EmptyState
       title="No Data Yet"
       message={emptyStateMessage}
-      image="/icons/empty_booking_state.png"
+      image="/images/dashboard/bookings-empty-state.png"
+      containerClassName="rounded-2xl bg-grey-75 py-12 sm:py-16 lg:py-20"
+      imageSize="w-[120px] sm:w-[150px] lg:w-[182px]"
     />
   );
 }

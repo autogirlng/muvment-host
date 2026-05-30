@@ -8,7 +8,7 @@ const Bookings = dynamic(() => import("@/components/Bookings"), {
 
 export default function BookingsPage() {
   return (
-    <main className="py-[56px]">
+    <main className="space-y-5 pb-4 sm:space-y-6 sm:pb-6 lg:space-y-8 lg:pb-8">
       <Bookings />
     </main>
   );

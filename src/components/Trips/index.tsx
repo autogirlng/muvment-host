@@ -6,10 +6,11 @@ import { FullPageSpinner, Pagination, SearchInput, FilterBy, BlurredDialog } fro
 import EmptyState from "@/components/EmptyState";
 import TableHead from "@/components/Table/TableHead";
 import TableCell from "@/components/Table/TableCell";
+import TripReceipt from "@/components/Trips/TripReceipt";
+import TripsHero from "@/components/Trips/TripsHero";
 import { tripTableHeadItems } from "@/utils/data";
 import { useMou } from "@/hooks/mou/useMou";
 import { HostTripItem } from "@/types";
-import TripReceipt from "@/components/Trips/TripReceipt";
 
 const tripFilters = [
     {
@@ -64,7 +65,8 @@ export default function Trips() {
     };
 
     return (
-        <div className="space-y-8">
+        <div className="space-y-5 sm:space-y-6 lg:space-y-8">
+            <TripsHero />
             <div className="flex items-center justify-between gap-3">
                 <SearchInput
                     placeholder="Search with Trip ID"

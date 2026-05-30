@@ -52,7 +52,7 @@ const BookingMobileRow = ({ items }: { items: BookingSegmentContent }) => {
         declineBooking,
     } = useBookingActions({ id: items.bookingId });
     return (
-        <div className="space-y-3 pt-5 pb-3 border-b border-grey-300">
+        <div className="space-y-3 border-b border-grey-100 pb-4 last:border-0 last:pb-0">
             <Popup
                 trigger={<MoreButton className="!mx-0 !ml-auto" />}
                 content={

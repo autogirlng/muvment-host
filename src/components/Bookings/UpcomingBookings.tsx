@@ -22,9 +22,9 @@ export default function UpcomingBookings() {
         <p>something went wrong</p>
       ) : upcomingBookings.length === 0 ? (
         <EmptyState
-            title="No Upcoming Bookings"
-            message="Your upcoming bookings will appear here"
-            image="/icons/empty_booking_state.png"
+          title="No Upcoming Bookings"
+          message="Your upcoming bookings will appear here"
+          image="/icons/empty_booking_state.png"
         />
       ) : (
         // <BookingAnalyticsTable

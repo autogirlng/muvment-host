@@ -5,4 +5,5 @@ export interface EmptyStateProps {
     image: string;
     imageSize?: string;
     noBg?: boolean;
+    containerClassName?: string;
 };

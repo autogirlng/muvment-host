@@ -9,12 +9,15 @@ export default function EmptyState({
     image,
     imageSize,
     noBg,
+    containerClassName,
 }: EmptyStateProps) {
     return (
         <div
             className={cn(
-                " px-5 space-y-6 2xl:space-y-10 flex flex-col items-center justify-center",
-                noBg ? "py-16" : "py-[88px] bg-grey-75 rounded-[40px]"
+                "flex flex-col items-center justify-center space-y-4 px-5 sm:space-y-6 2xl:space-y-10",
+                containerClassName,
+                !containerClassName &&
+                    (noBg ? "py-16" : "rounded-[40px] bg-grey-75 py-[88px]"),
             )}
         >
             <Image
@@ -24,10 +27,12 @@ export default function EmptyState({
                 height={151}
                 className={cn("w-[100px] 3xl:w-[182px]", imageSize)}
             />
-            <div className="space-y-3 2xl:space-y-6 text-center text-grey-500">
-                <h3 className="text-xl 2xl:text-h4 4xl:text-h3 font-medium">{title}</h3>
+            <div className="space-y-2 text-center text-grey-500 sm:space-y-3 2xl:space-y-6">
+                <h3 className="text-lg font-semibold text-grey-700 sm:text-xl 2xl:text-h4 4xl:text-h3">
+                    {title}
+                </h3>
                 {message && (
-                    <p className="text-base 2xl:text-xl 4xl:text-h6 font-medium">
+                    <p className="text-sm font-medium sm:text-base 2xl:text-xl 4xl:text-h6">
                         {message}
                     </p>
                 )}
