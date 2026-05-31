@@ -1,5 +1,6 @@
 "use client";
 
+import { startTransition } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -21,11 +22,13 @@ import {
   verifyEmailValues,
   verifyEmail,
   loginResponse,
+  // Make sure these two types are exported from your types file
   ApiResponse,
   SwitchHostData,
   User,
 } from "@/types";
 
+// Note: You can move this interface to your @/types file
 export interface ChangePasswordValues {
   oldPassword: string;
   newPassword: string;
@@ -61,6 +64,7 @@ function coerceLoginDataPayload(obj: Record<string, unknown>): loginResponse["da
   };
 }
 
+/** Axios body may be the envelope or one level wrapped; supports camelCase and snake_case tokens. */
 function normalizeLoginEnvelope(raw: unknown): loginResponse | null {
   if (raw == null || typeof raw !== "object") return null;
   const r = raw as Record<string, unknown>;
@@ -126,6 +130,7 @@ export default function useAuth() {
   const router = useRouter();
   const { forgotPasswordOtp } = useAppSelector((state) => state.forgotPassword);
 
+  // Destructure update function to refresh tokens after switching
   const { data: session, update: updateSession } = useSession();
 
   const signupMutation = useMutation({
@@ -137,6 +142,7 @@ export default function useAuth() {
     },
 
     onSuccess: (data, _values, context) => {
+      console.log("[Signup] success", data);
       toast.success(
         pickSuccessMessage(data, "Account created. Check your email to verify.")
       );
@@ -151,6 +157,7 @@ export default function useAuth() {
       http.post<string>(`${AUTH_API_BASE}/verify-account`, values),
 
     onSuccess: (data) => {
+      console.log("[Verify email signup] success", data);
       toast.success(pickSuccessMessage(data, "Account verified successfully"));
       router.push("/login");
     },
@@ -161,6 +168,7 @@ export default function useAuth() {
       http.post(`${AUTH_API_BASE}/resend-verification-otp`, values),
 
     onSuccess: (data) => {
+      console.log("[Resend verification OTP] success", data);
       toast.success(pickSuccessMessage(data, "Verification code sent"));
     },
   });
@@ -176,6 +184,7 @@ export default function useAuth() {
       const data = normalizeLoginEnvelope(raw);
       const payload = data?.data;
       if (!data || !payload?.accessToken) {
+        console.log("[Login] unexpected API response shape", raw);
         toast.error(
           pickSuccessMessage(raw, "Login failed. Please try again.")
         );
@@ -198,6 +207,7 @@ export default function useAuth() {
         refreshToken: payload.refreshToken ?? "",
       });
       if (nextAuthResult?.error) {
+        console.warn("[Login] NextAuth session sync:", nextAuthResult.error);
         toast.error(nextAuthResult.error);
       }
 
@@ -237,6 +247,7 @@ export default function useAuth() {
     },
 
     onSuccess: (data, _values, context) => {
+      console.log("[Forgot password] success", data);
       toast.success(
         pickSuccessMessage(
           data,
@@ -258,6 +269,7 @@ export default function useAuth() {
     },
 
     onSuccess: (data, _values, context) => {
+      console.log("[Verify reset OTP] success", data);
       toast.success(
         pickSuccessMessage(data, "Code verified. Set your new password.")
       );
@@ -281,6 +293,7 @@ export default function useAuth() {
 
     onSuccess: (data) => {
       dispatch(setForgotPasswordOtp(""));
+      console.log("[Reset password] success", data);
       toast.success(pickSuccessMessage(data, "New password set successfully"));
       router.push("/login");
     },
@@ -300,6 +313,7 @@ export default function useAuth() {
       return http.post("/v1/users/change-password", values);
     },
     onSuccess: (data) => {
+      console.log("[Change password] success", data);
       toast.success(
         pickSuccessMessage(data, "Password changed successfully.")
       );
@@ -327,6 +341,7 @@ export default function useAuth() {
       return result;
     },
     onSuccess: async (response) => {
+      console.log("[Switch to host] success", response);
       toast.success(
         pickSuccessMessage(response, response.message || "Successfully switched to Host")
       );
@@ -346,7 +361,7 @@ export default function useAuth() {
             },
           });
         } catch {
-          /* session update is optional */
+          /* NextAuth session optional when using Redux token only */
         }
       }
 
@@ -367,5 +382,4 @@ export default function useAuth() {
     changePasswordMutation,
     switchToHostMutation,
     session,
-  };
-}
+en,
