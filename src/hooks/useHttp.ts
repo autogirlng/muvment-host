@@ -121,7 +121,7 @@ export const useHttp = () => {
       }
     },
 
-      patch: async <T>(url: string, data?: any,  config?: AxiosRequestConfig<any>) => {
+    patch: async <T>(url: string, data?: any, config?: AxiosRequestConfig<any>) => {
       try {
         const response = await http.patch<T>(url, data, config);
         return response.data;

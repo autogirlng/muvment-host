@@ -280,11 +280,23 @@ export function pickSuccessMessage(data: unknown, fallback: string): string {
   return fallback;
 }
 
-function resolveErrorToastMessage(error: AxiosError<ErrorResponse>): string {
-  if (error?.message === "Network Error") {
-    return "Network Error";
-  }
+const CLIENT_NETWORK_TOAST_COOLDOWN_MS = 4000;
+let lastClientNetworkToastAt = 0;
 
+/** No HTTP response: offline, DNS failure, blocked request, or timeout before response. */
+export function isClientNetworkFailure(
+  error: AxiosError<ErrorResponse>,
+): boolean {
+  if (error.response) return false;
+  const code = error.code;
+  return (
+    code === "ERR_NETWORK" ||
+    code === "ECONNABORTED" ||
+    error.message === "Network Error"
+  );
+}
+
+function resolveErrorToastMessage(error: AxiosError<ErrorResponse>): string {
   const body = error.response?.data as
     | ErrorResponse
     | Record<string, unknown>
@@ -315,7 +327,22 @@ export const handleErrors = (
   error: AxiosError<ErrorResponse>,
   page?: string
 ) => {
-  void page;
+  if (isClientNetworkFailure(error)) {
+    const now = Date.now();
+    if (now - lastClientNetworkToastAt >= CLIENT_NETWORK_TOAST_COOLDOWN_MS) {
+      lastClientNetworkToastAt = now;
+      toast.error(
+        "You appear to be offline or the server is unreachable. Check your connection and try again."
+      );
+    }
+    return;
+  }
+
+  console.log(page ? `[${page}] API error` : "API error", {
+    status: error.response?.status,
+    data: error.response?.data,
+    message: error.message,
+  });
 
   const msg = resolveErrorToastMessage(error);
   return toast.error(msg);
