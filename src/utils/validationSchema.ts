@@ -1,11 +1,6 @@
 import { array, object, ref, string, mixed, number, boolean } from "yup";
 import {
   emailRegEx,
-  lowercaseRegex,
-  numberRegex,
-  spacesRegex,
-  specialCharRegex,
-  uppercaseRegex,
 } from "@/utils/constants";
 import { validatePhoneNumber } from "./functions";
 
@@ -30,23 +25,6 @@ export const signupFormValidationSchema = object().shape({
     .required("Please enter your email")
     .matches(emailRegEx, "Please enter a valid email address"),
   password: string().required("Please enter your password"),
-  // password: string()
-  //   .required("Please enter your password")
-  //   .matches(
-  //     uppercaseRegex,
-  //     "Password must contain at least one uppercase letter"
-  //   )
-  //   .matches(
-  //     lowercaseRegex,
-  //     "Password must contain at least one lowercase letter"
-  //   )
-  //   .matches(numberRegex, "Password must contain at least one number")
-  //   .matches(
-  //     specialCharRegex,
-  //     "Password must contain at least one special character"
-  //   )
-  //   .matches(spacesRegex, "Password must not contain spaces")
-  //   .min(8, "Password must be at least 8 characters long"),
 });
 
 export const loginFormValidationSchema = object().shape({
@@ -65,23 +43,6 @@ export const resetPasswordEmailValidationSchema = object().shape({
 
 export const setNewPasswordValidationSchema = object().shape({
   password: string().required("Please enter your password"),
-  // password: string()
-  //   .required("Please enter your password")
-  //   .matches(
-  //     uppercaseRegex,
-  //     "Password must contain at least one uppercase letter"
-  //   )
-  //   .matches(
-  //     lowercaseRegex,
-  //     "Password must contain at least one lowercase letter"
-  //   )
-  //   .matches(numberRegex, "Password must contain at least one number")
-  //   .matches(
-  //     specialCharRegex,
-  //     "Password must contain at least one special character"
-  //   )
-  //   .matches(spacesRegex, "Password must not contain spaces")
-  //   .min(8, "Password must be at least 8 characters long"),
   confirmPassword: string()
     .required("Please confirm your password")
     .oneOf([ref("password")], "The passwords doesn’t match."),

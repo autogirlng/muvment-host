@@ -49,7 +49,6 @@ export default function useReviews({
       }),
 
     onSuccess: (data) => {
-      console.log("You have replied to a review", data);
       reviewDetailData?.Reply?.push(
         // @ts-ignore
         { ...data, user: user as User }

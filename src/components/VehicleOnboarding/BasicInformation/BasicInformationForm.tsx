@@ -37,7 +37,6 @@ const BasicVehicleInformationForm = ({
             initialValues={initialValues}
             validationSchema={basicVehicleInformationSchema}
             onSubmit={(values, { setSubmitting }) => {
-                console.log("Form values:", values);
 
                 const vehicleInitialDraftValues = {
                     ...values,

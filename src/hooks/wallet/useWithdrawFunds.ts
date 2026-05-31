@@ -27,7 +27,6 @@ export default function useWithdrawFunds() {
     mutationFn: () => http.get("/payment/send-otp"),
 
     onSuccess: (data) => {
-      console.log("send withdrawal token Successful", data);
       toast.success("Otp has been sent to your mail");
       setOpenVerifyOtp(true);
       setOpenWithdrawalModal(false);
@@ -47,7 +46,6 @@ export default function useWithdrawFunds() {
     },
 
     onSuccess: (data, _values, context) => {
-      console.log("verify withdrawal token Successful", data);
       withdrawFunds.mutate(context.token);
     },
 
@@ -63,7 +61,6 @@ export default function useWithdrawFunds() {
     },
 
     onSuccess: (data) => {
-      console.log("withdrawal Successfully", data);
       toast.success("Withdrawal Request Submitted successfully");
 
       queryClient.invalidateQueries({

@@ -17,7 +17,6 @@ export default function useGetListingById({ id }: { id: string }) {
     retry: false,
   });
   const vehicleData = data?.data
-console.log(vehicleData)
   const vehicleDetails = useMemo(() => {
     if (data) {
       return [

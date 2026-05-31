@@ -106,7 +106,6 @@ const AssignDriverForm = ({
                                     }}
                                     inputOnBlur={handleBlur}
                                     selectOnBlur={handleBlur}
-                                    // inputClassname
                                     selectClassname="!w-[170px]"
                                     inputError={
                                         errors.phoneNumber && touched.phoneNumber

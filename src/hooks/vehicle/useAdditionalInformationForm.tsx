@@ -55,7 +55,6 @@ export default function useAdditionalInformationForm({
             ),
 
         onSuccess: (data) => {
-            console.log("Vehicle Onboarding Step 2 Saved", data);
             dispatch(
                 updateVehicleInformation(
                     // @ts-ignore
@@ -71,7 +70,6 @@ export default function useAdditionalInformationForm({
 
     const submitStep2 = useMutation({
         mutationFn: (values: AdditionalVehicleInformationValues) => {
-            console.log(values)
             return http.patch<VehicleInformationResponse>(
                 `/vehicles/details?id=${vehicleId}`,
                 values
@@ -80,7 +78,6 @@ export default function useAdditionalInformationForm({
 
 
         onSuccess: (data) => {
-            console.log("Vehicle Onboarding Step 2 Submitted", data);
             dispatch(
                 updateVehicleInformation(
                     // @ts-ignore

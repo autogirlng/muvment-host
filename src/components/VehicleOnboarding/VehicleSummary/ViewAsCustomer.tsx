@@ -24,7 +24,6 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
         <>
             <div className="space-y-11">
                 <div className="space-y-6 md:space-y-8">
-                    {/* Slider */}
                     <Swiper
                         pagination={{
                             type: "fraction",
@@ -50,13 +49,9 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
                             </SwiperSlide>
                         ))}
                     </Swiper>
-
-                    {/* Name of car */}
                     <h2 className="text-h5 md:text-h3 3xl:text-4xl">
                         {vehicleInfo?.name ?? ""}
                     </h2>
-
-                    {/* Car preview */}
                     <div className="flex items-center gap-1 md:gap-7 3xl:gap-[41px]">
                         {vehicleInfo?.photos.map((image, index) => (
                             <Image
@@ -76,16 +71,12 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
                 <div className="flex flex-col md:flex-row items-start gap-10 ">
                     <div className="w-full md:w-[62%] space-y-10">
 
-                        {/* Vehicle Description */}
-
                         <div className="space-y-5">
                             <SectionTitle text="Description" className="text-black" />
                             <p className="text-xs md:text-base 3xl:text-xl max-w-[535px]">
                                 {vehicleInfo?.description}
                             </p>
                         </div>
-
-                        {/* Vehicle Features */}
                         <div className="space-y-5">
                             <SectionTitle text="Features" />
                             <div className="flex flex-wrap gap-3">
@@ -165,8 +156,6 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
 
                 </div>
             </div>
-
-            {/* Cancellation Policy Modal */}
             <BlurredDialog
                 open={openCancellationModal}
                 onOpenChange={handleOpenCancellationModal}
@@ -206,7 +195,6 @@ type CancellationPolicyModalProps = {
 const CancellationPolicyModal = ({ onClose }: CancellationPolicyModalProps) => {
     return (
         <div className="space-y-6 py-4">
-            {/* Modal Title and Introduction */}
             <div>
                 <h2 className="font-bold text-gray-900 text-lg mb-2">
                     Understand Our Cancellation & Refund Policy
@@ -287,8 +275,6 @@ const CancellationPolicyModal = ({ onClose }: CancellationPolicyModalProps) => {
                     Feel free to reach out to the Muvment team anytime—**we&apos;re** here to assist!
                 </p>
             </div>
-
-            {/* Action Button */}
             <div className="pt-4">
                 <Button
                     color="primary"

@@ -49,7 +49,6 @@ const [vehicleId, setVehicleId] = useState<string>("")
             return http.patch(`/vehicles/documents?vehicleId=${vehicleId}`, {documents:vehicleDocuments});
         },
         onSuccess: (data) => {
-            console.log("Vehicle Onboarding Step 5 Saved", data);
             dispatch(
                 updateVehicleInformation(
                     // @ts-ignore
@@ -68,7 +67,6 @@ const [vehicleId, setVehicleId] = useState<string>("")
             return http.patch(`/vehicles/documents?vehicleId=${vehicleId}`, {documents:vehicleDocuments});
         },
         onSuccess: (data) => {
-            console.log("Vehicle Onboarding Step 5 Submitted", data);
             dispatch(
                 updateVehicleInformation(
                     // @ts-ignore

@@ -64,7 +64,6 @@ const AvailabilityAndPricingForm = ({
             initialValues={initialValues}
             validationSchema={availabilityAndPricingSchema}
             onSubmit={(values, { setSubmitting }) => {
-                console.log("Form values:", values);
                 const payload = mapValuesToApiPayload(values);
 
                 submitStep4.mutate(payload);

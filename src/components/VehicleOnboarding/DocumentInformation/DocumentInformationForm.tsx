@@ -19,7 +19,6 @@ const DocumentInformationForm = ({
             initialValues={initialValues}
             validationSchema={documentVehicleInformationSchema}
             onSubmit={async (values, { setSubmitting }) => {
-                console.log("Form values:", values);
                 const formData = new FormData();
                 for (const key in values) {
                     // @ts-ignore

@@ -56,7 +56,6 @@ const AdditionalInformationForm = ({
             initialValues={initialValues}
             validationSchema={addtionalVehicleInformationSchema}
             onSubmit={(values, { setSubmitting }) => {
-                console.log("Form values:", values);
 
                 submitStep2.mutate(values);
                 setSubmitting(false);
@@ -114,8 +113,6 @@ const AdditionalInformationForm = ({
                             tooltipDescription="Knowing the state where your vehicle is registered helps us ensure compliance with local laws and regulations."
                         />
                     </FormRow>
-
-                    {/* text area*/}
                     <TextArea
                         name="description"
                         id="description"
@@ -136,7 +133,6 @@ Bluetooth connectivity, and a sunroof.`}
                         tooltipTitle="Vehicle of description:"
                         tooltipDescription="Providing a detailed description helps customers understand the unique features and specifications of your vehicle."
                     />
-                    {/* vehicle features */}
                     <div className="space-y-3">
                         <label
                             htmlFor="features"
@@ -185,7 +181,6 @@ Bluetooth connectivity, and a sunroof.`}
                             options={vehicleOptions.vehicleColors}
                             value={values.vehicleColorId}
                             onChange={(value: string) => {
-                                console.log(value)
                                 setFieldTouched("vehicleColorId", true);
                                 setFieldValue("vehicleColorId", value);
                             }}

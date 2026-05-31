@@ -96,7 +96,6 @@ export default function ReviewsModal({ }: Props) {
                             message: "",
                         }}
                         onSubmit={async (values, { setSubmitting, resetForm }) => {
-                            console.log(values);
 
                             replyAReview.mutate(values, {
                                 onSuccess: () => {

@@ -38,7 +38,6 @@ export default function usePhoneNumberVerification() {
     },
 
     onSuccess: (data, _values, context) => {
-      console.log("Verify Phone Number successful", data);
       dispatch(setPhoneNumberToVerify(context?.phoneNumber));
       router.push(`/settings/verify-number/otp`);
     },
@@ -52,7 +51,6 @@ export default function usePhoneNumberVerification() {
       http.post("/api/account-setup/sendOtp", values),
 
     onSuccess: (data) => {
-      console.log("Resend Token successful", data);
       toast.success("Token sent successfully");
     },
 
@@ -65,7 +63,6 @@ export default function usePhoneNumberVerification() {
       http.post(`${AUTH_API_BASE}/verify-phone`, {email:user?.data.email, otp:values.otp}),
 
     onSuccess: (data) => {
-      console.log("Phone Number Verified Successfully", data);
       toast.success("Phone Number Verified Successfully");
       if(user){
         dispatch(updateUserData({ ...user, data:{...user?.data, phoneVerified:true} }));

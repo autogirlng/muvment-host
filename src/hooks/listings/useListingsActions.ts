@@ -26,7 +26,6 @@ export default function useListingsActions(
       http.put<VehicleInformation>(`/api/listings/deactivate/${id}`),
 
     onSuccess: (data) => {
-      console.log("Deactivate Listing successful", data);
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
       });
@@ -45,7 +44,6 @@ export default function useListingsActions(
     mutationFn: () => http.put(`/api/listings/draft/${id}`),
 
     onSuccess: (data) => {
-      console.log("Move Listing to Draft successful", data);
 
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
@@ -65,7 +63,6 @@ export default function useListingsActions(
     mutationFn: () => http.delete(`/api/listings/${id}`),
 
     onSuccess: (data) => {
-      console.log("Delete Listing successful", data);
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
       });
@@ -86,7 +83,6 @@ export default function useListingsActions(
       http.put(`/api/listings/status/${id}`, { status: VehicleStatus.BOOKED }),
 
     onSuccess: (data) => {
-      console.log("Update Listing status to booked successful", data);
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
       });
@@ -104,7 +100,6 @@ export default function useListingsActions(
       http.put(`/api/listings/status/${id}`, { status: VehicleStatus.IN_TRIP }),
 
     onSuccess: (data) => {
-      console.log("Update Listing status to available successful", data);
 
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
@@ -125,7 +120,6 @@ export default function useListingsActions(
       }),
 
     onSuccess: (data) => {
-      console.log("Update Listing status to maintenance successful", data);
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
       });
@@ -145,7 +139,6 @@ export default function useListingsActions(
       }),
 
     onSuccess: (data) => {
-      console.log("Update Listing status successful", data);
       queryClient.invalidateQueries({
         queryKey: listingsByIdQueryKey,
       });

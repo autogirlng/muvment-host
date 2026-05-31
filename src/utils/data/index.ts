@@ -41,16 +41,6 @@ export const dashboardNavItems = [
     name: "Wallet",
     link: "/wallet",
   },
-  // {
-  //   icon: Icons.ic_support,
-  //   name: "Support",
-  //   link: "/support",
-  // },
-  // {
-  //   icon: Icons.ic_setting,
-  //   name: "Settings",
-  //   link: "/settings",
-  // },
 ];
 
 export const popupNavItems = [
@@ -64,11 +54,6 @@ export const popupNavItems = [
     name: "Settings",
     link: "/settings",
   },
-  // {
-  //   icon: Icons.ic_help_circle,
-  //   name: "About Us",
-  //   link: "/about",
-  // },
   {
     icon: Icons.ic_logout,
     name: "Log out",
@@ -91,11 +76,6 @@ export const popupNavItemsHome = [
     name: "Settings",
     link: "/settings",
   },
-  // {
-  //   icon: Icons.ic_help_circle,
-  //   name: "About Us",
-  //   link: "/about",
-  // },
   {
     icon: Icons.ic_logout,
     name: "Log out",
@@ -113,14 +93,8 @@ export const popupNavItemsforNoUser = [
     name: "Login",
     link: "/login",
   },
-  // {
-  //   icon: Icons.ic_help_circle,
-  //   name: "About Us",
-  //   link: "/",
-  // },
 ];
 
-// export const completeAccountSetupTasks: AccountSetupTask[] = [
 export const completeAccountSetupTasks: AccountSetupTask[] = [
 
   {
@@ -131,14 +105,6 @@ export const completeAccountSetupTasks: AccountSetupTask[] = [
     isCompleted: false,
     taskId: "phoneVerified",
   },
-  // {
-  //   icon: Icons.ic_lock,
-  //   title: "Setup Withdrawal Account",
-  //   link: "/account-setup/withdrawal-account",
-  //   linkText: "Get Started",
-  //   isCompleted: false,
-  //   taskId: "withdrawalAccountVerified",
-  // },
 ];
 
 const currentYear = new Date().getFullYear();
@@ -154,21 +120,10 @@ export const vehicleTypesOptions: OptionType[] = [
   { value: "Sedan", option: "Sedan" },
   { value: "SUV", option: "SUV" },
   { value: "Truck", option: "Truck" },
-  // { value: "Sports Car", option: "Sports Car" },
-  // { value: "Pickup", option: "Pickup" },
   { value: "Bus", option: "Bus" },
   { value: "Luxury", option: "Luxury Vehicle" },
-  // { value: "Hatchback", option: "Hatchback" },
-  // { value: "Coupe", option: "Coupe" },
-  // { value: "Minivan", option: "Minivan" },
   { value: "Electric vehicle", option: "Electric vehicle" },
   { value: "Hybrid vehicle", option: "Hybrid vehicle" },
-  // { value: "Car", option: "Car" },
-  // { value: "Station wagon", option: "Station wagon" },
-  // { value: "Van", option: "Van" },
-  // { value: "Off-road vehicle", option: "Off-road vehicle" },
-  // { value: "Motorcycle", option: "Motorcycle" },
-  // { value: "All-terrain vehicle", option: "All-terrain vehicle" },
 ];
 
 export const vehicleMakesOptions: OptionType[] = [
@@ -552,7 +507,6 @@ export const vehicleAvailabilityOptions: OptionType[] = [
   { value: "28", option: "4 weeks" },
 ];
 
-// add type
 export const photoViewOptions = [
   {
     label: "Front View",
@@ -803,7 +757,6 @@ export function getBookingOverviewBaseFilters(): {
   ];
 }
 
-// add type
 export const bookingFilters = [
   {
     title: "bookingType",
@@ -854,7 +807,6 @@ export const bookingHistoryFilters = [
   },
 ];
 
-// add type
 export const transactionFilters = [
   {
     title: "type",

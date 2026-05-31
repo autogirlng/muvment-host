@@ -63,7 +63,6 @@ export default function BookingDetailPage() {
     <main className="py-14 space-y-[46px]">
       <BackLink backLink="/bookings" />
       <div className="space-y-14">
-        {/* booking info */}
         <div className="flex items-start justify-between">
           <BookingInfoCards
             title="BOOKING INFORMATION"
@@ -140,8 +139,6 @@ export default function BookingDetailPage() {
             />
           </div>
         </div>
-
-        {/* guest info */}
         {/* <BookingInfoCards
           title="GUEST INFORMATION"
           chipTitle="Contact Information"
@@ -149,8 +146,6 @@ export default function BookingDetailPage() {
           nameTitle="Guest Name"
           nameValue={bookingDetail?.data.booker.fullName || ""}
         /> */}
-
-        {/* vehicle info */}
         <BookingInfoCards
           title="VEHICLE INFORMATION"
           chipTitle="Vehicle Details"

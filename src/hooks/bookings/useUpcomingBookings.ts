@@ -28,7 +28,6 @@ export default function useUpcomingBookings({
     enabled: !!user?.data.userId,
     retry: false,
   });
-  console.log(data)
 
 
   return {

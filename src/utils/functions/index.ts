@@ -15,8 +15,8 @@ import { Icons } from "@/ui";
 
 export const toScreamingSnakeCase = (str:string) => {
   return str
-    .replace(/([a-z])([A-Z])/g, '$1_$2') // insert underscore before capital letters
-    .toUpperCase(); // convert everything to uppercase
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .toUpperCase();
 }
 
 export const isLengthValid = (password: string): boolean => {
@@ -130,21 +130,6 @@ export const formatPhoneNumber = (phoneNumber: string): string => {
   return `${firstPart}${middlePart}${lastPart}`;
 };
 
-// export const calculateServiceFee = (
-//   price: number,
-//   standardFee: number
-// ): number => {
-//   return price * standardFee;
-// };
-
-// export const calculateRateGuestsWillSee = (
-//   price: number,
-//   serviceFee: number
-// ): number => {
-//   return price + serviceFee;
-// };
-
-// ============================= Notification Icons, Color and Bg Color starts ============================= //
 export const getNotificationIcon = (type: string) => {
   switch (type) {
     case NotificationType.BOOKING_REQUEST:
@@ -231,9 +216,7 @@ export const getNotificationBgColor = (type: string) => {
       return "bg-grey-90";
   }
 };
-// ============================= Notification Icons, Color and Bg Color ends ============================= //
 
-// Debounce function
 export const debounce = <T extends (...args: any[]) => any>(
   func: T,
   delay: number
@@ -301,10 +284,7 @@ export function pickSuccessMessage(data: unknown, fallback: string): string {
 const CLIENT_NETWORK_TOAST_COOLDOWN_MS = 4000;
 let lastClientNetworkToastAt = 0;
 
-/** No HTTP response: offline, DNS failure, blocked request, or timeout before response. */
-export function isClientNetworkFailure(
-  error: AxiosError<ErrorResponse>,
-): boolean {
+export function isClientNetworkFailure(error: AxiosError<ErrorResponse>): boolean {
   if (error.response) return false;
   const code = error.code;
   return (
@@ -356,12 +336,7 @@ export const handleErrors = (
     return;
   }
 
-  console.log(page ? `[${page}] API error` : "API error", {
-    status: error.response?.status,
-    data: error.response?.data,
-    message: error.message,
-  });
-
+  void page;
   const msg = resolveErrorToastMessage(error);
   return toast.error(msg);
 };

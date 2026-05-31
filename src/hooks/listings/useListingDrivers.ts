@@ -24,12 +24,10 @@ export default function useListingDrivers(id: string) {
     enabled: !!user?.data.userId && !!id,
     retry: false,
   });
-  console.log(drivers)
 
   const assignNewDriver = useMutation({
     mutationFn: (values: AssignNewDriver) => http.post<AssignNewDriver>(`/drivers` , values),
     onSuccess: (data) => {
-      console.log("Assign New Driver successful", data);
 
       queryClient.setQueryData(
         ["assignDriver", user?.data.userId, id],

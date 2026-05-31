@@ -29,7 +29,6 @@ useEffect(()=>{
         `/vehicles/submit-review?id=${vehicleId}`),
 
     onSuccess: (data) => {
-      console.log("Vehicle Onboarding Submitted for Review Successful", data);
       router.push(`/vehicle-onboarding/success/${vehicleId}`);
     },
 

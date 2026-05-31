@@ -21,7 +21,6 @@ export default function useBookingActions({ id }: { id?: string }) {
         status: "CANCELLED",
       }),
     onSuccess: (data) => {
-      console.log("Decline Bookings successful", data);
       queryClient.setQueryData(["getBookingById", id], () => data);
 
       queryClient.invalidateQueries({
@@ -51,7 +50,6 @@ export default function useBookingActions({ id }: { id?: string }) {
       }),
 
     onSuccess: (data) => {
-      console.log("Report Bookings successful", data);
       queryClient.setQueryData(["getBookingById", id], () => data);
 
       queryClient.invalidateQueries({
@@ -81,7 +79,6 @@ export default function useBookingActions({ id }: { id?: string }) {
       }),
 
     onSuccess: (data) => {
-      console.log("Accept Bookings successful", data);
       queryClient.setQueryData(["getBookingById", id], () => data);
 
       queryClient.invalidateQueries({

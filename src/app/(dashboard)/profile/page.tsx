@@ -21,7 +21,6 @@ import {
 
 export default function ProfilePage() {
   let { user } = useAppSelector((state) => state.user);
-  console.log(user)
   const [isProfileEditable, setIsProfileEditable] = useState<boolean>(false);
   const { updateProfileMutation, uploadImage } = useUpdateProfile(setIsProfileEditable);
   return (
