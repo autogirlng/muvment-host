@@ -8,6 +8,7 @@ import DashboardSectionTitle from "@/components/DashBoard/SectionTitle";
 import WalletBalance from "@/components/Wallet/WalletBalance";
 import EarningHistoryTable from "@/components/Wallet/EarningHistoryTable";
 import PendingBalanceBookingsTable from "@/components/Wallet/PendingBalanceBookingsTable";
+import DisputeCard from "@/components/Wallet/DisputeCard";
 import WalletHistoryToggle, { WalletHistoryTab } from "@/components/Wallet/WalletHistoryToggle";
 import useHostEarningHistory from "@/hooks/wallet/useHostEarningHistory";
 import useHostPendingBalance from "@/hooks/wallet/useHostPendingBalance";
@@ -185,26 +186,7 @@ export default function Wallet() {
                         ) : (disputes.data?.data.content ?? []).length > 0 ? (
                             <div className="space-y-3">
                                 {(disputes.data?.data.content ?? []).map((dispute) => (
-                                    <div
-                                        key={dispute.id}
-                                        className="rounded-2xl bg-white border border-grey-200 p-4 text-sm text-grey-700 space-y-2"
-                                    >
-                                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                                            <p className="font-semibold text-grey-900">
-                                                Deduction ID: {dispute.deductionId}
-                                            </p>
-                                            <span className="w-fit rounded-full bg-grey-100 px-3 py-1 text-xs font-semibold text-grey-700">
-                                                {dispute.status.replace(/_/g, " ").toLowerCase()}
-                                            </span>
-                                        </div>
-                                        <p>{dispute.hostContext}</p>
-                                        {dispute.csTicketReference && (
-                                            <p>Ticket: {dispute.csTicketReference}</p>
-                                        )}
-                                        {dispute.resolutionNotes && (
-                                            <p>Resolution: {dispute.resolutionNotes}</p>
-                                        )}
-                                    </div>
+                                    <DisputeCard key={dispute.id} dispute={dispute} />
                                 ))}
                             </div>
                         ) : (

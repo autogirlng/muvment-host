@@ -5,6 +5,7 @@ import { Handshake, Settings, ChevronRight, Lock, MessageSquareWarning } from "l
 
 import { useMou } from "@/hooks/mou/useMou";
 import { useAppSelector } from "@/lib/hooks";
+import useHostBankDetailsStatus from "@/hooks/useHostBankDetailsStatus";
 
 // Settings: show MOU status
 function MouStatusCard() {
@@ -38,6 +39,10 @@ function MouStatusCard() {
 
 export default function SettingsPage() {
     const { user } = useAppSelector((state) => state.user);
+    const bankDetailsStatus = useHostBankDetailsStatus();
+    const shouldShowAccountSetup =
+        !user?.data?.phoneVerified ||
+        (!bankDetailsStatus.isLoading && !bankDetailsStatus.hasBankDetails);
     
     return (
         <div className="space-y-8">
@@ -62,7 +67,7 @@ export default function SettingsPage() {
                     </span>
                 </div>
             </Link>
-            {!user?.data?.phoneVerified && (
+            {shouldShowAccountSetup && (
               <Link href="/settings/account-setup">
                 <div className="bg-white border border-grey-200 rounded-2xl p-6 2xl:p-8 flex items-center justify-between gap-4 hover:border-primary-300 hover:shadow-sm transition-all cursor-pointer">
                     <div className="flex items-center gap-4">
