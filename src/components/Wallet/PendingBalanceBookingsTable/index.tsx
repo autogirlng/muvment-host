@@ -1,12 +1,16 @@
 import { hostPendingBalanceTableHeadItems } from "@/utils/data";
-import type { HostPendingBalanceBooking } from "@/types";
+import type { ReactNode } from "react";
+import type { HostBookingDeduction, HostPendingBalanceBooking } from "@/types";
 import TableHead from "@/components/Table/TableHead";
 import EmptyState from "@/components/EmptyState";
 import PendingBalanceBookingRow from "@/components/Wallet/PendingBalanceBookingsTable/PendingBalanceBookingRow";
 
-type Props = { items: HostPendingBalanceBooking[] };
+type Props = {
+  items: HostPendingBalanceBooking[];
+  actions?: (deduction: HostBookingDeduction) => ReactNode;
+};
 
-export default function PendingBalanceBookingsTable({ items }: Props) {
+export default function PendingBalanceBookingsTable({ items, actions }: Props) {
   return items.length > 0 ? (
     <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
       <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
@@ -16,6 +20,7 @@ export default function PendingBalanceBookingsTable({ items }: Props) {
             <PendingBalanceBookingRow
               key={item.bookingId}
               item={item}
+              actions={actions}
             />
           ))}
         </tbody>
