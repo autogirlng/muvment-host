@@ -39,7 +39,7 @@ export default function DisputeCard({ dispute }: { dispute: Dispute }) {
       </div>
       <div className="space-y-1">
         <p className="text-xs font-semibold uppercase text-grey-500">
-          Support Response/Resolution
+          Support Resolution
         </p>
         <p className="text-grey-800">{getSupportResponse(dispute)}</p>
       </div>
