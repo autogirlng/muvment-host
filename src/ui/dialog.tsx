@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { Icons } from "@/ui";
+import { X } from "lucide-react";
 import cn from "classnames";
 import { BlurredDialogProps, FullPageDialogProps } from "./props";
 
@@ -18,14 +18,23 @@ export const BlurredDialog = ({
             <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
         ) : null}
         <Dialog.Portal>
-            <Dialog.Overlay className="bg-[#00000061] backdrop-blur-xl data-[state=open]:animate-overlayShow fixed inset-0 z-[999]" />
+            <Dialog.Overlay className="bg-black/25 backdrop-blur-sm data-[state=open]:animate-overlayShow fixed inset-0 z-[999]" />
             <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-0 left-0 min-h-screen h-full w-full flex justify-center items-center focus:outline-none py-14 px-4 overflow-y-auto z-[999]">
                 <div
                     className={cn(
-                        "space-y-6 w-full rounded-[56px] bg-grey-50 border border-grey-400 py-9 sm:py-14 3xl:py-[107px] px-5 sm:px-9 3xl:px-[67px] m-auto",
+                        "relative space-y-6 w-full rounded-[56px] bg-grey-50 border border-grey-400 py-9 sm:py-14 3xl:py-[107px] px-5 sm:px-9 3xl:px-[67px] m-auto",
                         width
                     )}
                 >
+                    <Dialog.Close asChild>
+                        <button
+                            type="button"
+                            className="absolute top-5 right-5 sm:top-7 sm:right-7 text-grey-600 hover:text-primary-500 appearance-none inline-flex h-8 w-8 items-center justify-center focus:outline-none"
+                            aria-label="Close"
+                        >
+                            <X size={20} strokeWidth={2} />
+                        </button>
+                    </Dialog.Close>
                     <Dialog.Title className="text-grey-800 text-xl 3xl:text-h6 !font-semibold">
                         {title ? (
                             title
@@ -46,15 +55,6 @@ export const BlurredDialog = ({
                     )}
                     {content}
                 </div>
-                <Dialog.Close asChild>
-                    <button
-                        className="text-primary-500 font-semibold text-base absolute top-7 right-[35px] appearance-none inline-flex gap-2 items-center justify-center focus:outline-none"
-                        aria-label="Close"
-                    >
-                        {Icons.ic_close_circle}
-                        Close
-                    </button>
-                </Dialog.Close>
             </Dialog.Content>
         </Dialog.Portal>
     </Dialog.Root>
@@ -71,6 +71,15 @@ export const FullPageDialog = ({
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
         <Dialog.Portal>
             <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-0 left-0 min-h-screen h-full w-full md:w-[calc(100%-250px)] 2xl:w-[calc(100%-272px)] md:ml-[250px] 2xl:ml-[272px] border-l border-grey-300 bg-white py-[45px] px-[35px] focus:outline-none">
+                <Dialog.Close asChild>
+                    <button
+                        type="button"
+                        className="text-grey-600 hover:text-primary-500 text-base absolute top-[45px] right-[35px] appearance-none inline-flex h-8 w-8 items-center justify-center focus:outline-none"
+                        aria-label="Close"
+                    >
+                        <X size={20} strokeWidth={2} />
+                    </button>
+                </Dialog.Close>
                 <Dialog.Title className="text-grey-700 text-4xl font-bold">
                     {title}
                 </Dialog.Title>
@@ -80,16 +89,6 @@ export const FullPageDialog = ({
                     </Dialog.Description>
                 )}
                 <div className="mt-[67px]">{content}</div>
-
-                <Dialog.Close asChild>
-                    <button
-                        className="text-primary-500 font-semibold text-base absolute top-[45px] right-[35px] appearance-none inline-flex gap-2 items-center justify-center focus:outline-none"
-                        aria-label="Close"
-                    >
-                        {Icons.ic_close_circle}
-                        Close
-                    </button>
-                </Dialog.Close>
             </Dialog.Content>
         </Dialog.Portal>
     </Dialog.Root>
