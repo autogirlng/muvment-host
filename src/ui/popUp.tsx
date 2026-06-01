@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import cn from "classnames";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Popover from "@radix-ui/react-popover";
-import { Icons } from "./Icons";
+import { X } from "lucide-react";
 import { PopupProps } from "./props";
 
 
@@ -10,22 +10,21 @@ export const TipsPopup = ({ trigger, content }: PopupProps) => (
     <Dialog.Root modal>
         <Dialog.Trigger asChild>{trigger}</Dialog.Trigger>
         <Dialog.Portal>
-            <Dialog.Overlay className="bg-[#00000061] backdrop-blur-xl data-[state=open]:animate-overlayShow fixed inset-0" />
+            <Dialog.Overlay className="bg-black/25 backdrop-blur-sm data-[state=open]:animate-overlayShow fixed inset-0" />
             <Dialog.Content className="data-[state=open]:animate-contentShow fixed top-0 left-0 z-10 min-h-screen h-full w-full flex justify-center py-20 overflow-auto focus:outline-none">
                 <Dialog.Title className="hidden"></Dialog.Title>
-                <div className="h-fit max-w-[350px] py-7 px-[31px] rounded-[45px] bg-grey-75 ">
+                <div className="relative h-fit max-w-[350px] py-7 px-[31px] rounded-[45px] bg-grey-75 ">
+                    <Dialog.Close asChild>
+                        <button
+                            type="button"
+                            className="text-grey-600 hover:text-primary-500 absolute top-5 right-5 appearance-none inline-flex h-8 w-8 items-center justify-center focus:outline-none"
+                            aria-label="Close"
+                        >
+                            <X size={20} strokeWidth={2} />
+                        </button>
+                    </Dialog.Close>
                     {content}
                 </div>
-
-                <Dialog.Close asChild>
-                    <button
-                        className="text-primary-500 font-semibold text-base absolute top-[45px] right-[35px] appearance-none inline-flex gap-2 items-center justify-center focus:outline-none"
-                        aria-label="Close"
-                    >
-                        {Icons.ic_close_circle}
-                        Close
-                    </button>
-                </Dialog.Close>
             </Dialog.Content>
         </Dialog.Portal>
     </Dialog.Root>

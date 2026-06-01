@@ -1,50 +1,36 @@
+import type { ReactNode } from "react";
+import EmptyState from "@/components/EmptyState";
+import PendingBalanceBookingRow from "@/components/Wallet/PendingBalanceBookingsTable/PendingBalanceBookingRow";
 import TableHead from "@/components/Table/TableHead";
-import TableCell from "@/components/Table/TableCell";
-import { formatNgnAmount } from "@/utils/formatters";
+import type { HostBookingDeduction, HostPendingBalanceBooking } from "@/types";
+import { hostPendingBalanceTableHeadItems } from "@/utils/data";
 
 type Props = {
-    totalPending: number;
-    totalPaid: number;
-    totalEarnings: number;
+  items: HostPendingBalanceBooking[];
+  actions?: (deduction: HostBookingDeduction) => ReactNode;
 };
 
-const tableHeadItems = ["Metric", "Amount"];
-
-export default function EarningHistoryTable({
-    totalPending,
-    totalPaid,
-    totalEarnings,
-}: Props) {
-    const rows = [
-        { metric: "Total pending", amount: totalPending },
-        { metric: "Total paid", amount: totalPaid },
-        { metric: "Total earnings", amount: totalEarnings },
-    ];
-
-    return (
-        <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
-            <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
-                <TableHead tableHeadItems={tableHeadItems} />
-                <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
-                    {rows.map((row) => (
-                        <tr
-                            key={row.metric}
-                            className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all"
-                        >
-                            <TableCell
-                                title="Metric"
-                                content={row.metric}
-                                className="!text-grey-900 !font-medium"
-                            />
-                            <TableCell
-                                title="Amount"
-                                content={`₦${formatNgnAmount(row.amount)}`}
-                                className="!text-grey-900 !font-semibold tabular-nums"
-                            />
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
+export default function EarningHistoryTable({ items, actions }: Props) {
+  return items.length > 0 ? (
+    <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
+      <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
+        <TableHead tableHeadItems={hostPendingBalanceTableHeadItems} />
+        <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
+          {items.map((item) => (
+            <PendingBalanceBookingRow
+              key={item.bookingId}
+              item={item}
+              actions={actions}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
+  ) : (
+    <EmptyState
+      title="No earnings"
+      message="No earning history in this view yet"
+      image="/icons/empty_trnx_state.png"
+    />
+  );
 }

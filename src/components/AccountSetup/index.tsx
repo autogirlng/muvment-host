@@ -1,35 +1,18 @@
 import { useEffect, useState } from "react";
 import { useAppSelector } from "@/lib/hooks";
-import { AccountSetupTask, BankDetails } from "@/types";
+import { AccountSetupTask } from "@/types";
 import { completeAccountSetupTasks } from "@/utils/data";
 import { TaskCard } from "@/components/AccountSetup/TaskCard";
-import { useHttp } from "@/hooks/useHttp"
+import useHostBankDetailsStatus from "@/hooks/useHostBankDetailsStatus";
 import { Icons } from "@/ui";
-import { AxiosError } from "axios";
 
 
 export function AccountSetupTasks() {
     const [accountSetupTasks, setAccountSetupTasks] = useState<AccountSetupTask[]>(completeAccountSetupTasks);
     const { user } = useAppSelector((state) => state.user);
-    const [bankAccountSetupCompleted, setBankAccountSetupCompleted] = useState<boolean>(false)
-    const http = useHttp()
-
-    const fetchHostAccountDetails = async () => {
-        let response
-        try {
-            response = await http.get<BankDetails>("/hosts/me/bank-details");
-            setBankAccountSetupCompleted(response?.status !== "SUCCESSFUL")
-
-        } catch (err) {
-            // @ts-ignore
-            setBankAccountSetupCompleted(response?.data.status !== "SUCCESSFUL");
-        }
-
-
-    }
+    const bankDetailsStatus = useHostBankDetailsStatus();
 
     useEffect(() => {
-        fetchHostAccountDetails();
         if (user) {
             const updatedTasks = accountSetupTasks.map((task) => ({
                 ...task,
@@ -58,7 +41,7 @@ export function AccountSetupTasks() {
 
 
             {
-                bankAccountSetupCompleted && (
+                !bankDetailsStatus.isLoading && !bankDetailsStatus.hasBankDetails && (
                     <TaskCard
                         icon={Icons.ic_lock}
                         title="Setup Withdrawal Account"
