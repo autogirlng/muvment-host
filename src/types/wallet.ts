@@ -163,6 +163,13 @@ export interface HostEarningHistoryResponse extends BaseResponse {
 /** GET /v1/host-performance/pending-balance */
 export type HostPaymentStatus = string;
 
+export interface HostBookingDeduction {
+  id: string;
+  bookingId: string;
+  type: string;
+  amount: number;
+}
+
 export interface HostPendingBalanceBooking {
   bookingId: string;
   invoiceNumber: string;
@@ -172,6 +179,7 @@ export interface HostPendingBalanceBooking {
   geofenceSurcharge?: number;
   appliedGeofenceCount?: number;
   adminDeduction?: number;
+  deductions?: HostBookingDeduction[];
   toPayToHost: number;
   hostPaymentStatus: HostPaymentStatus;
 }

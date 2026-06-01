@@ -31,10 +31,7 @@ export default function NotificationsPage() {
 
   return (
     <main className="py-[56px] space-y-10">
-      <div className="flex justify-between items-center gap-3">
-        <h2 className="text-h3 3xl:text-4xl text-grey-700 !font-bold">
-          Notifications
-        </h2>
+      <div className="flex justify-end items-center gap-3">
         <DateRangeCalendar
           title="Select Date Range"
           selectRange={true}

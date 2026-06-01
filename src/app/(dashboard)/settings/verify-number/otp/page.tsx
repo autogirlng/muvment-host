@@ -18,7 +18,7 @@ export default function SettingsVerifyNumberOtpPage() {
 
     useEffect(() => {
         if (pushToAccountSetup) {
-            return router.push("/settings");
+            return router.push("/settings/account-setup");
         }
         if (!phoneNumberToVerify) {
             router.push("/settings/verify-number");

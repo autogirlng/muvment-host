@@ -1,13 +1,16 @@
 import { format } from "date-fns";
-import type { HostPendingBalanceBooking } from "@/types";
+import type { ReactNode } from "react";
+import type { HostBookingDeduction, HostPendingBalanceBooking } from "@/types";
 import { Icons, Popup } from "@/ui";
 import TableCell from "@/components/Table/TableCell";
 import { formatNgnAmount } from "@/utils/formatters";
 
 export default function PendingBalanceBookingRow({
   item,
+  actions,
 }: {
   item: HostPendingBalanceBooking;
+  actions?: (deduction: HostBookingDeduction) => ReactNode;
 }) {
   const dateDisplay =
     item.bookingDate &&
@@ -19,6 +22,18 @@ export default function PendingBalanceBookingRow({
     typeof item.hostPaymentStatus === "string"
       ? item.hostPaymentStatus.replace(/_/g, " ").toLowerCase()
       : "-";
+  const deductions = item.deductions ?? [];
+  const deductionSummary =
+    deductions.length > 0
+      ? deductions
+          .map(
+            (deduction) =>
+              `${deduction.type.replace(/_/g, " ").toLowerCase()}: ₦${formatNgnAmount(
+                Number(deduction.amount) || 0
+              )}`
+          )
+          .join(", ")
+      : "None";
 
   return (
     <tr className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
@@ -33,6 +48,7 @@ export default function PendingBalanceBookingRow({
         content={`₦${formatNgnAmount(Number(item.basePrice) || 0)}`}
         className="text-grey-900 tabular-nums"
       /> */}
+      <TableCell title="Deductions" content={deductionSummary} className="capitalize text-grey-900" />
       <TableCell
         title="Pending payments"
         content={`₦${formatNgnAmount(Number(item.toPayToHost) || 0)}`}
@@ -64,6 +80,24 @@ export default function PendingBalanceBookingRow({
                   {item.adminDeduction != null && item.adminDeduction !== 0 && (
                     <li>Admin deduction: ₦{formatNgnAmount(item.adminDeduction)}</li>
                   )}
+                  <li>
+                    <p className="font-semibold text-grey-700">Deductions</p>
+                    {deductions.length > 0 ? (
+                      <ul className="mt-2 space-y-2">
+                        {deductions.map((deduction) => (
+                          <li key={deduction.id} className="space-y-2">
+                            <div>
+                              {deduction.type.replace(/_/g, " ").toLowerCase()}: ₦
+                              {formatNgnAmount(Number(deduction.amount) || 0)}
+                            </div>
+                            {actions?.(deduction)}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <span>None</span>
+                    )}
+                  </li>
                 </ul>
               </>
             }
