@@ -3,8 +3,17 @@
 import { useQuery } from "@tanstack/react-query";
 import { useHttp } from "@/hooks/useHttp";
 
+export interface HostBookingsSummary {
+  totalBookings: number;
+  successfulBookings: number;
+  pendingBookings: number;
+  abandonedBookings: number;
+}
+
 export interface HostBookingItem {
   bookingId: string;
+  /** Host-facing reference, e.g. INVHST1915 — display in tables; keep bookingId for detail URLs */
+  invoiceNumber?: string;
   vehicleId: string;
   vehicleIdentifier: string;
   vehicleName: string;
@@ -32,6 +41,8 @@ export interface HostBookingsPage {
   totalPages: number;
   last: boolean;
   first: boolean;
+  /** Ask backend to include on GET /host-performance/bookings */
+  summary?: HostBookingsSummary;
 }
 
 export interface HostBookingsResponse {
@@ -48,6 +59,8 @@ export interface HostPerformanceBookingsParams {
   startDate?: string;
   endDate?: string;
   bookingStatus?: string;
+  /** Search/filter by invoice number (not bookingId) */
+  invoiceNumber?: string;
 }
 
 export function useHostPerformanceBookings() {

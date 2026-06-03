@@ -1,6 +1,8 @@
 "use client";
 import cn from "classnames";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 import BackLink from "@/components/BackLink";
 import AdditionalInformation from "@/components/VehicleOnboarding/AdditionalInformation";
 import AvailabilityAndPricing from "@/components/VehicleOnboarding/AvailabilityAndPricing";
@@ -10,6 +12,7 @@ import useVehicleOnboarding from "@/hooks/vehicle/useVehicleOnboarding";
 import DocumentInformation from "@/components/VehicleOnboarding/DocumentInformation";
 import VehiclePhotos from "@/components/VehicleOnboarding/VehiclePhotos";
 import { FullPageSpinner, Stepper } from "@/ui";
+import { useKycStatus } from "@/hooks/useKycStatus";
 
 
 const steps = [
@@ -23,6 +26,21 @@ const steps = [
 export default function VehicleOnboardingPage() {
   const { isLoading } = useVehicleOnboarding();
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const router = useRouter();
+  const kyc = useKycStatus();
+
+  useEffect(() => {
+    if (kyc.isLoading) return;
+    if (!kyc.canCreateListing) {
+      toast.error(
+        kyc.mouSubmitted && !kyc.mouApproved
+          ? "Your MOU is not yet approved. You cannot create a listing."
+          : "Please complete your KYC verification before creating a listing.",
+        { toastId: "kyc-onboarding-block" }
+      );
+      router.replace("/listings");
+    }
+  }, [kyc.isLoading, kyc.canCreateListing, kyc.mouSubmitted, kyc.mouApproved, router]);
 
   const handleCurrentStep = (step: number) => {
     setCurrentStep(step);

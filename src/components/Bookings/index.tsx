@@ -4,7 +4,7 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { format } from "date-fns";
 import { SearchInput, FilterBy } from "@/ui";
 import BookingHistory from "@/components/Bookings/BookingHistory";
-import BookingStatsPlaceholder from "@/components/Bookings/BookingStatsPlaceholder";
+import BookingPageStats from "@/components/Bookings/BookingPageStats";
 import BookingAnalyticsHeader from "@/components/Bookings/BookingAnalyticsHeader";
 import { bookingHistoryFilters } from "@/utils/data";
 import { debounce } from "@/utils/functions";
@@ -43,11 +43,11 @@ export default function Bookings() {
   return (
     <div className="space-y-5 sm:space-y-6 lg:space-y-8">
       <BookingAnalyticsHeader />
-      <BookingStatsPlaceholder />
+      <BookingPageStats />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <SearchInput
-          placeholder="Search with Booking ID"
+          placeholder="Search with Invoice Number"
           name="bookingsSearch"
           value={search}
           onChange={(event: ChangeEvent<HTMLInputElement>) =>

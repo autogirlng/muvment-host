@@ -1,14 +1,15 @@
 import { format } from "date-fns";
 import { Transaction, TransactionType } from "@/types";
-import { Popup, Icons } from "@/ui";
-import TableCell from "@/components/Table/TableCell";
+import { Popup, Icons, MoreButton } from "@/ui";
+import { TableCell, TableRow } from "@/components/Table";
+import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "@/components/Table/tableStyles";
 
 const TransactionRow = ({ items }: { items: Transaction }) => {
     return (
-        <tr>
+        <TableRow>
             <TableCell
                 content={items?.transactionId}
-                className="text-grey-900 !font-semibold w-fit"
+                className="!font-semibold text-grey-900"
             />
             <TableCell
                 content={
@@ -29,9 +30,7 @@ const TransactionRow = ({ items }: { items: Transaction }) => {
                         ? Icons.ic_credit
                         : items.type === TransactionType.DEBIT
                             ? Icons.ic_debit
-                            : // : items.type === "Payout"
-                            //   ? Icons.ic_payout
-                            ""
+                            : ""
                 }
                 className="capitalize"
             />
@@ -42,30 +41,25 @@ const TransactionRow = ({ items }: { items: Transaction }) => {
             />
             <TableCell content={`${items.currencyCode} ${items?.amount}`} />
             <TableCell content={items?.status} isBadge type="transaction" />
-            <td>
-                <Popup
-                    trigger={
-                        <button
-                            className={
-                                "block border border-grey-200 bg-white text-black rounded-lg p-2 w-fit mx-auto"
-                            }
-                        >
-                            {Icons.ic_more}
-                        </button>
-                    }
-                    content={
-                        <>
-                            <p className="!text-xs 3xl:!text-base !font-semibold">Actions</p>
-                            <ul className="space-y-2 *:py-2">
-                                <li className="!text-xs 3xl:!text-base">
-                                    Download transaction reciept
-                                </li>
-                            </ul>
-                        </>
-                    }
-                />
+            <td className={tableCellBaseClass}>
+                <span className={tableMobileTitleClass}>Actions</span>
+                <div className={tableCellValueClass}>
+                    <Popup
+                        trigger={<MoreButton className="!mx-0 lg:mx-auto" />}
+                        content={
+                            <>
+                                <p className="!text-xs !font-semibold 3xl:!text-base">Actions</p>
+                                <ul className="space-y-2 *:py-2">
+                                    <li className="!text-xs 3xl:!text-base">
+                                        Download transaction reciept
+                                    </li>
+                                </ul>
+                            </>
+                        }
+                    />
+                </div>
             </td>
-        </tr>
+        </TableRow>
     );
 };
 

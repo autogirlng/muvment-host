@@ -47,6 +47,7 @@ export interface HostTripItem {
   tripStatus: string;
   totalPrice: number;
   bookingId: string;
+  invoiceNumber?: string;
   createdAt: string;
   bookingCategory: string;
 }
@@ -56,4 +57,6 @@ export interface HostTripsParams {
   size?: number;
   site?: string;
   tripStatus?: "UPCOMING" | "IN_PROGRESS" | "COMING_TO_AN_END" | "COMPLETED" | "DELAYED" | "EXTENDED" | "CANCELLED";
+  /** Search/filter by invoice number (not bookingId) */
+  invoiceNumber?: string;
 }

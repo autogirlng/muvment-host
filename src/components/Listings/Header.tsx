@@ -102,8 +102,8 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center gap-6">
-                <h5 className="text-h6 sm:text-4xl 3xl:text-h2 !font-bold">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-6">
+                <h5 className="text-h6 sm:text-4xl 3xl:text-h2 !font-bold text-left">
                     {name || ""}
                 </h5>
                 <VehicleListingBadge status={status} />

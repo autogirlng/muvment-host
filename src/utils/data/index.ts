@@ -37,6 +37,11 @@ export const dashboardNavItems = [
     link: "/listings",
   },
   {
+    icon: Icons.ic_driver,
+    name: "Drivers",
+    link: "/drivers",
+  },
+  {
     icon: Icons.ic_wallet,
     name: "Wallet",
     link: "/wallet",
@@ -632,7 +637,7 @@ export const photoUploadTips = [
 export const bookingOverviewTableHeadItems: string[] = [
   "Vehicle",
   // "Guest Name",
-  "Booking ID",
+  "Invoice Number",
   "Booking Type",
   "Duration",
   // "Start Date",
@@ -686,7 +691,7 @@ export const hostEarningHistoryTableHeadItems: string[] = [
 ];
 
 export const bookingHistoryTableHeadItems: string[] = [
-  "Booking ID",
+  "Invoice Number",
   // "Guest Name",
   "Vehicle",
   "Status",
@@ -696,14 +701,28 @@ export const bookingHistoryTableHeadItems: string[] = [
 ];
 
 export const listingTableHeadItems: string[] = [
-  "Vehicle Name",
+  "Vehicle",
+  "Make & Model",
+  "Type",
+  "Year",
+  "City",
   "License Plate",
+  "Seats",
+  "Status",
+  "Actions",
+];
+
+export const driversTableHeadItems: string[] = [
+  "Driver",
+  "Driver ID",
+  "Phone Number",
+  "Assigned Vehicle",
   "Status",
   "Actions",
 ];
 
 export const tripTableHeadItems: string[] = [
-  "Trip ID",
+  "Invoice Number",
   "Vehicle",
   "Driver",
   "Start Date",
@@ -782,27 +801,7 @@ export const bookingHistoryFilters = [
     options: [
       { option: "Pending Payment", value: "PENDING_PAYMENT" },
       { option: "Confirmed", value: "CONFIRMED" },
-      { option: "Failed Availability", value: "FAILED_AVAILABILITY" },
-      { option: "Cancelled by User", value: "CANCELLED_BY_USER" },
-      { option: "Cancelled by Host", value: "CANCELLED_BY_HOST" },
-      { option: "Cancelled by Admin", value: "CANCELLED_BY_ADMIN" },
-      { option: "In Progress", value: "IN_PROGRESS" },
-      { option: "Completed", value: "COMPLETED" },
-      { option: "No Show", value: "NO_SHOW" },
-      { option: "Void", value: "VOID" },
-      { option: "Abandoned", value: "ABANDONED" },
-    ],
-  },
-  {
-    title: "vehicleTypeName",
-    options: [
-      { option: "Sedan", value: "Sedan" },
-      { option: "SUV", value: "SUV" },
-      { option: "Truck", value: "Truck" },
-      { option: "Bus", value: "Bus" },
-      { option: "Luxury", value: "Luxury" },
-      { option: "Electric Vehicle", value: "Electric vehicle" },
-      { option: "Hybrid Vehicle", value: "Hybrid vehicle" },
+      { option: "Cancelled", value: "CANCELLED" },
     ],
   },
 ];
