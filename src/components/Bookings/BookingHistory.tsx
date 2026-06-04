@@ -32,8 +32,8 @@ export default function BookingHistory({
     invoiceNumber: search?.trim() || undefined,
   });
 
-  const bookings = data?.data?.content ?? [];
-  const totalCount = data?.data?.totalElements ?? 0;
+  const bookings = data?.data?.content?.content ?? [];
+  const totalCount = data?.data?.content?.totalElements ?? 0;
 
   useEffect(() => {
     setCurrentPage(1);

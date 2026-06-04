@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAppSelector } from "@/lib/hooks";
-import { useMou } from "@/hooks/mou/useMou";
-import useHostBankDetailsStatus from "@/hooks/useHostBankDetailsStatus";
+import { useKycStatus } from "@/hooks/useKycStatus";
 import { useSession } from "next-auth/react";
 import { baseAPIURL } from "@/utils/constants";
 
@@ -17,18 +16,15 @@ type StoredBankDetails = {
 export function AccountSetupTasks() {
   const { user } = useAppSelector((state) => state.user);
   const { data: session } = useSession();
-  const { useGetHostMou } = useMou();
-  const mouQuery = useGetHostMou();
-  const bankStatus = useHostBankDetailsStatus();
+  const kyc = useKycStatus();
 
   const [bankDetails, setBankDetails] = useState<StoredBankDetails | null>(null);
 
   const userData = (user?.data as any) ?? (user as any);
-  const phoneVerified = Boolean(userData?.phoneVerified);
-  const emailVerified = Boolean(userData?.emailVerified);
+  const emailVerified = kyc.emailVerified;
   const email = userData?.email ?? "";
-  const mouCompleted = (mouQuery.data?.data ?? []).length > 0;
-  const bankCompleted = bankStatus.hasBankDetails;
+  const bankCompleted = kyc.bankAdded;
+  const mouPending = kyc.mouSubmitted && !kyc.mouApproved && kyc.mouStatus === "PENDING";
 
   // Fetch full bank details for display when bank is set up
   useEffect(() => {
@@ -59,7 +55,7 @@ export function AccountSetupTasks() {
       number: 1,
       label: "Phone Verification",
       description: "Verify your phone number to secure your account",
-      completed: phoneVerified,
+      completed: kyc.phoneVerified,
       actionLabel: "Verify Now",
       actionLink: "/settings/verify-number",
     },
@@ -67,8 +63,11 @@ export function AccountSetupTasks() {
       id: "mou",
       number: 2,
       label: "Sign MOU Agreement",
-      description: "Sign the Memorandum of Understanding",
-      completed: mouCompleted,
+      description: mouPending
+        ? "Submitted — awaiting admin approval"
+        : "Sign the Memorandum of Understanding",
+      completed: kyc.mouApproved,
+      pending: mouPending,
       actionLabel: "Sign Now",
       actionLink: "/settings/mou",
     },
@@ -84,7 +83,7 @@ export function AccountSetupTasks() {
   ];
 
   const allCompleted = steps.every((s) => s.completed);
-  const isLoading = mouQuery.isLoading || bankStatus.isLoading;
+  const isLoading = kyc.isLoading;
 
   return (
     <div className="space-y-6">
@@ -169,6 +168,10 @@ export function AccountSetupTasks() {
                 {step.completed ? (
                   <span className="shrink-0 rounded-full bg-success-100 px-3 py-1 text-xs font-medium text-success-600">
                     Completed
+                  </span>
+                ) : (step as any).pending ? (
+                  <span className="shrink-0 rounded-full bg-warning-75 px-3 py-1 text-xs font-medium text-warning-700">
+                    Pending approval
                   </span>
                 ) : (
                   <Link

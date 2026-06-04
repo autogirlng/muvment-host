@@ -174,6 +174,7 @@ const AdditionalInformationForm = ({
                                 id="stateOfRegistration"
                                 type="text"
                                 label="State Of Registration (current)"
+                                placeholder="State of registration"
                                 value={values.stateOfRegistration}
                                 onChange={handleChange}
                                 onBlur={handleBlur}

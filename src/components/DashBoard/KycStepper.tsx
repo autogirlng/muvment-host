@@ -1,12 +1,23 @@
 "use client";
 
 import Link from "next/link";
-import { useAppSelector } from "@/lib/hooks";
-import { useMou } from "@/hooks/mou/useMou";
-import useHostBankDetailsStatus from "@/hooks/useHostBankDetailsStatus";
+import { useKycStatus } from "@/hooks/useKycStatus";
 
 interface KycStepperProps {
   onSignMou?: () => void;
+}
+
+interface Step {
+  id: string;
+  number: number;
+  label: string;
+  description: string;
+  completed: boolean;
+  pending?: boolean;
+  pendingText?: string;
+  actionLabel?: string;
+  actionLink?: string;
+  onAction?: () => void;
 }
 
 function CheckIcon({ size = 14 }: { size?: number }) {
@@ -18,25 +29,18 @@ function CheckIcon({ size = 14 }: { size?: number }) {
 }
 
 export default function KycStepper({ onSignMou }: KycStepperProps) {
-  const { user } = useAppSelector((state) => state.user);
-  const { useGetHostMou } = useMou();
-  const mouQuery = useGetHostMou();
-  const bankStatus = useHostBankDetailsStatus();
+  const kyc = useKycStatus();
 
-  const bankCompleted = bankStatus.hasBankDetails;
-  const bankLoading = bankStatus.isLoading;
+  const mouPending = kyc.mouSubmitted && !kyc.mouApproved && kyc.mouStatus === "PENDING";
+  const mouRejected = kyc.mouStatus === "REJECTED";
 
-  const userData = (user?.data as any) ?? (user as any);
-  const phoneVerified = Boolean(userData?.phoneVerified);
-  const mouCompleted = (mouQuery.data?.data ?? []).length > 0;
-
-  const steps = [
+  const steps: Step[] = [
     {
       id: "phone",
       number: 1,
       label: "Phone Verification",
       description: "Verify your phone number to secure your account",
-      completed: phoneVerified,
+      completed: kyc.phoneVerified,
       actionLabel: "Verify Now",
       actionLink: "/settings/verify-number",
     },
@@ -44,9 +48,15 @@ export default function KycStepper({ onSignMou }: KycStepperProps) {
       id: "mou",
       number: 2,
       label: "Sign MOU Agreement",
-      description: "Sign the Memorandum of Understanding",
-      completed: mouCompleted,
-      actionLabel: "Sign Now",
+      description: mouPending
+        ? "Submitted — awaiting admin approval"
+        : mouRejected
+        ? "Your MOU was rejected — please re-sign"
+        : "Sign the Memorandum of Understanding",
+      completed: kyc.mouApproved,
+      pending: mouPending,
+      pendingText: "Pending approval",
+      actionLabel: mouRejected ? "Re-sign" : "Sign Now",
       onAction: onSignMou,
     },
     {
@@ -54,7 +64,7 @@ export default function KycStepper({ onSignMou }: KycStepperProps) {
       number: 3,
       label: "Add Bank Account",
       description: "Set up your withdrawal account for payouts",
-      completed: bankCompleted,
+      completed: kyc.bankAdded,
       actionLabel: "Add Now",
       actionLink: "/settings/withdrawal-account",
     },
@@ -64,7 +74,7 @@ export default function KycStepper({ onSignMou }: KycStepperProps) {
   const allCompleted = completedCount === steps.length;
   const progressPercent = Math.round((completedCount / steps.length) * 100);
 
-  if (mouQuery.isLoading || bankLoading) return null;
+  if (kyc.isLoading) return null;
 
   /* ─────────────────────── VERIFIED STATE ─────────────────────── */
   if (allCompleted) {
@@ -217,6 +227,10 @@ export default function KycStepper({ onSignMou }: KycStepperProps) {
               <span className="flex shrink-0 items-center gap-1.5 rounded-full bg-success-50 px-3 py-1.5 text-xs font-semibold text-success-600 ring-1 ring-success-100">
                 <CheckIcon size={10} />
                 Done
+              </span>
+            ) : step.pending ? (
+              <span className="shrink-0 rounded-full bg-warning-75 px-3 py-1.5 text-xs font-semibold text-warning-700 ring-1 ring-warning-300">
+                {step.pendingText}
               </span>
             ) : step.actionLink ? (
               <Link

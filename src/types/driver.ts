@@ -85,16 +85,14 @@ export interface EditDriverPayload {
   licenseExpiryDate?: string;
 }
 
-/** Weekly schedule shift values. NOTE: confirm full enum with backend. */
-export type DriverShift = "NONE" | "MORNING" | "AFTERNOON" | "EVENING" | "NIGHT" | "FULL_DAY";
+/** Weekly schedule shift values (confirmed with backend). */
+export type DriverShift = "NONE" | "DAY" | "NIGHT" | "ALL_DAY";
 
 export const DRIVER_SHIFT_OPTIONS: { option: string; value: DriverShift }[] = [
   { option: "None", value: "NONE" },
-  { option: "Morning", value: "MORNING" },
-  { option: "Afternoon", value: "AFTERNOON" },
-  { option: "Evening", value: "EVENING" },
+  { option: "Day", value: "DAY" },
   { option: "Night", value: "NIGHT" },
-  { option: "Full Day", value: "FULL_DAY" },
+  { option: "All Day", value: "ALL_DAY" },
 ];
 
 export interface DriverSchedule {

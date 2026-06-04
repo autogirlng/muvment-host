@@ -33,7 +33,8 @@ export interface HostBookingItem {
   hostPaymentStatus: string;
 }
 
-export interface HostBookingsPage {
+/** The paginated page of bookings (nested under data.content) */
+export interface HostBookingsContentPage {
   content: HostBookingItem[];
   page: number;
   size: number;
@@ -41,15 +42,18 @@ export interface HostBookingsPage {
   totalPages: number;
   last: boolean;
   first: boolean;
-  /** Ask backend to include on GET /host-performance/bookings */
+}
+
+export interface HostBookingsData {
   summary?: HostBookingsSummary;
+  content: HostBookingsContentPage;
 }
 
 export interface HostBookingsResponse {
   status: string;
   message: string;
   errorCode: string;
-  data: HostBookingsPage;
+  data: HostBookingsData;
   timestamp: string;
 }
 

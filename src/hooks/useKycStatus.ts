@@ -1,13 +1,12 @@
 "use client";
 
-import { useMou } from "@/hooks/mou/useMou";
-import useHostBankDetailsStatus from "@/hooks/useHostBankDetailsStatus";
 import { useAppSelector } from "@/lib/hooks";
 
 export type MouStatusValue = "APPROVED" | "PENDING" | "REJECTED" | "NONE";
 
 export interface KycStatus {
   phoneVerified: boolean;
+  emailVerified: boolean;
   mouStatus: MouStatusValue;
   mouSubmitted: boolean;
   mouApproved: boolean;
@@ -19,22 +18,25 @@ export interface KycStatus {
   isLoading: boolean;
 }
 
+/**
+ * Single source of truth from GET /users/me, which now returns
+ * phoneVerified, emailVerified, bankVerified and mouStatus.
+ */
 export function useKycStatus(): KycStatus {
-  const { user } = useAppSelector((state) => state.user);
-  const { useGetHostMou } = useMou();
-  const mouQuery = useGetHostMou();
-  const bankStatus = useHostBankDetailsStatus();
-
+  const { user, isLoading } = useAppSelector((state) => state.user);
   const userData = (user?.data as any) ?? (user as any);
-  const phoneVerified = Boolean(userData?.phoneVerified);
-  const bankAdded = bankStatus.hasBankDetails;
 
-  const mouList = mouQuery.data?.data ?? [];
-  const mouSubmitted = mouList.length > 0;
-  const latestMou = mouSubmitted ? mouList[0] : null;
-  const mouStatus: MouStatusValue = latestMou
-    ? ((latestMou.status as MouStatusValue) ?? "PENDING")
+  const phoneVerified = Boolean(userData?.phoneVerified);
+  const emailVerified = Boolean(userData?.emailVerified);
+  const bankAdded = Boolean(userData?.bankVerified);
+
+  const raw = String(userData?.mouStatus ?? "NONE").toUpperCase();
+  const mouStatus: MouStatusValue =
+    raw === "APPROVED" ? "APPROVED"
+    : raw === "PENDING" ? "PENDING"
+    : raw === "REJECTED" ? "REJECTED"
     : "NONE";
+  const mouSubmitted = mouStatus !== "NONE";
   const mouApproved = mouStatus === "APPROVED";
 
   const kycComplete = phoneVerified && bankAdded && mouSubmitted;
@@ -42,12 +44,14 @@ export function useKycStatus(): KycStatus {
 
   return {
     phoneVerified,
+    emailVerified,
     mouStatus,
     mouSubmitted,
     mouApproved,
     bankAdded,
     kycComplete,
     canCreateListing,
-    isLoading: mouQuery.isLoading || bankStatus.isLoading,
+    // Loading until the user profile is available
+    isLoading: Boolean(isLoading) || !userData?.userId,
   };
 }

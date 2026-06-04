@@ -66,17 +66,27 @@ export default function useDrivers({
     onError: (error: AxiosError<ErrorResponse>) => handleErrors(error, "Update Driver Status"),
   });
 
-  // Assign an existing driver to a vehicle.
-  // NOTE: confirm exact endpoint/payload with backend ("HOST assign a driver to the HOST car").
+  // PATCH /hosts/vehicle/{vehicleId}/assign-driver  body: { driverId }
   const assignToVehicle = useMutation({
     mutationFn: ({ driverId, vehicleId }: AssignDriverToVehiclePayload) =>
-      http.patch(`/drivers/${driverId}/assign`, { vehicleId }),
+      http.patch(`/hosts/vehicle/${vehicleId}/assign-driver`, { driverId }),
     onSuccess: () => {
       toast.success("Driver assigned to vehicle");
       setAssignDriver(null);
       invalidate();
     },
     onError: (error: AxiosError<ErrorResponse>) => handleErrors(error, "Assign Driver To Vehicle"),
+  });
+
+  // DELETE /hosts/vehicle/{vehicleId}/assign-driver — unassign the primary driver
+  const unassignFromVehicle = useMutation({
+    mutationFn: ({ vehicleId }: { vehicleId: string }) =>
+      http.delete(`/hosts/vehicle/${vehicleId}/assign-driver`),
+    onSuccess: () => {
+      toast.success("Driver unassigned from vehicle");
+      invalidate();
+    },
+    onError: (error: AxiosError<ErrorResponse>) => handleErrors(error, "Unassign Driver"),
   });
 
   return {
@@ -94,5 +104,6 @@ export default function useDrivers({
     assignDriver,
     setAssignDriver,
     assignToVehicle,
+    unassignFromVehicle,
   };
 }

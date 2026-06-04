@@ -729,8 +729,7 @@ export const tripTableHeadItems: string[] = [
   "End Date",
   "Booking Status",
   "Trip Status",
-  // "Price",
-  // "Actions",
+  "Agent",
 ];
 
 export const earningHistoryTableHeadItems: string[] = [

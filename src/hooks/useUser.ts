@@ -69,6 +69,8 @@ function normalizeUserFromMeApi(raw: unknown): User {
       userType: "HOST",
       emailVerified: coerceVerified(d.emailVerified ?? d.email_verified),
       phoneVerified: coerceVerified(d.phoneVerified ?? d.phone_verified),
+      bankVerified: coerceVerified(d.bankVerified ?? d.bank_verified),
+      mouStatus: pickStr(d, "mouStatus", "mou_status") || undefined,
       profilePictureUrl:
         pickStr(d, "profilePictureUrl", "profile_picture_url") || undefined,
       referralCode:

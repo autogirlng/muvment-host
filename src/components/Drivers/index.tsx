@@ -56,6 +56,7 @@ export default function Drivers() {
     assignDriver,
     setAssignDriver,
     assignToVehicle,
+    unassignFromVehicle,
   } = useDrivers({ page, size: PAGE_LIMIT, searchTerm: debouncedSearch });
 
   return (
@@ -117,6 +118,10 @@ export default function Drivers() {
                 key={driver.id}
                 driver={driver}
                 onAssign={() => setAssignDriver({ id: driver.id, name: driver.fullName })}
+                onUnassign={() =>
+                  driver.assignedVehicleId &&
+                  unassignFromVehicle.mutate({ vehicleId: driver.assignedVehicleId })
+                }
                 onToggleStatus={() =>
                   toggleStatus.mutate({ driverId: driver.id, isActive: !driver.active })
                 }
@@ -178,10 +183,12 @@ export default function Drivers() {
 function DriverRow({
   driver,
   onAssign,
+  onUnassign,
   onToggleStatus,
 }: {
   driver: DriverContent;
   onAssign: () => void;
+  onUnassign: () => void;
   onToggleStatus: () => void;
 }) {
   const [first, last] = driver.fullName?.split(" ") ?? ["", ""];
@@ -249,6 +256,17 @@ function DriverRow({
                     {isAssigned ? "Reassign Vehicle" : "Assign to Vehicle"}
                   </button>
                 </li>
+                {isAssigned && (
+                  <li>
+                    <button
+                      type="button"
+                      onClick={onUnassign}
+                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-error-800 transition-colors hover:bg-grey-50"
+                    >
+                      Unassign Vehicle
+                    </button>
+                  </li>
+                )}
                 <li>
                   <button
                     type="button"
