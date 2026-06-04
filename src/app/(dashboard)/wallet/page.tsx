@@ -16,6 +16,7 @@ import DisputeCard from "@/components/Wallet/DisputeCard";
 import WalletHistoryToggle, { WalletHistoryTab } from "@/components/Wallet/WalletHistoryToggle";
 import type { HostBookingDeduction } from "@/types";
 import { formatNgnAmount } from "@/utils/formatters";
+import KycGate from "@/components/KycGate";
 
 const PAGE_LIMIT = 10;
 
@@ -129,6 +130,7 @@ export default function WalletPage() {
     const tablePage = isPayoutTab ? payoutPage : earningPage;
 
     return (
+      <KycGate>
         <main className="py-11 space-y-11">
             <div className="space-y-6 md:space-y-8">
                 <PendingBalanceSummary
@@ -312,5 +314,6 @@ export default function WalletPage() {
                 }
             />
         </main>
+      </KycGate>
     );
 }

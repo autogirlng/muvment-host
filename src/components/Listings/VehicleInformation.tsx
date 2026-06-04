@@ -23,22 +23,28 @@ export default function VehicleInformation({ listingDetails }: VehicleInformatio
                     </Button>
                 </Link>
             </div>
-            <VehicleDetailsSection
-                title="License Plate Number"
-                text={listingDetails?.licensePlateNumber}
-            />
-            <VehicleDetailsSection
-                title="Location (only you can see this)"
-                text={listingDetails?.address}
-            />
-            <VehicleDetailsSection
-                title="Description"
-                text={listingDetails?.description}
-            />
-            <VehicleDetailsSection title="Vehicle Features">
-                <div className="flex flex-wrap gap-3">
-                    {listingDetails?.features?.map((feature: VehicleFeatures, index: number) => {
-                        return (
+            {!!listingDetails?.licensePlateNumber && (
+                <VehicleDetailsSection
+                    title="License Plate Number"
+                    text={listingDetails.licensePlateNumber}
+                />
+            )}
+            {!!listingDetails?.address && (
+                <VehicleDetailsSection
+                    title="Location (only you can see this)"
+                    text={listingDetails.address}
+                />
+            )}
+            {!!listingDetails?.description && (
+                <VehicleDetailsSection
+                    title="Description"
+                    text={listingDetails.description}
+                />
+            )}
+            {(listingDetails?.features?.length ?? 0) > 0 && (
+                <VehicleDetailsSection title="Vehicle Features">
+                    <div className="flex flex-wrap gap-3">
+                        {listingDetails?.features?.map((feature: VehicleFeatures, index: number) => (
                             <Chip
                                 key={index}
                                 text={addSpaceBeforeUppercase(feature.name)}
@@ -46,10 +52,10 @@ export default function VehicleInformation({ listingDetails }: VehicleInformatio
                                 radius="sm"
                                 color="light"
                             />
-                        );
-                    })}
-                </div>
-            </VehicleDetailsSection>
+                        ))}
+                    </div>
+                </VehicleDetailsSection>
+            )}
             <VehicleDetailsSection title="Tracker Enabled">
                 <FeatureStatus status={listingDetails?.hasTracker || false} />
             </VehicleDetailsSection>
@@ -57,37 +63,37 @@ export default function VehicleInformation({ listingDetails }: VehicleInformatio
                 <FeatureStatus status={listingDetails?.hasInsurance || false} />
             </VehicleDetailsSection>
 
-            <VehicleDetailsSection title="Pricing">
-                <div className="space-y-2 md:space-y-5">
-                    {/* <PricingSection
-                        text="Daily"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.pricing?. || "-")}`}
-                    /> */}
-                    <PricingSection
-                        text="Extra Hours"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.extraHourlyRate || "-")}`}
-                    />
-                    {/* <PricingSection
-                        text="Airport pickup and dropoffs"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.pricing?.airportPickupFee || "-")}`}
-                    /> */}
-                    <PricingSection
-                        text="Outskirts"
-                        value={`NGN ${formatNumberWithCommas(listingDetails?.outskirtFee || "-")}`}
-                    />
-                </div>
-            </VehicleDetailsSection>
-            <VehicleDetailsSection title="Discounts">
-                <div className="space-y-2 md:space-y-5">
-                    {listingDetails?.discounts?.map((item, index) => (
-                        <PricingSection
-                            key={index}
-                            text={``}
-                            value={`${item?.percentage || "-"}% off`}
-                        />
-                    ))}
-                </div>
-            </VehicleDetailsSection>
+            {(!!listingDetails?.extraHourlyRate || !!listingDetails?.outskirtFee) && (
+                <VehicleDetailsSection title="Pricing">
+                    <div className="space-y-2 md:space-y-5">
+                        {!!listingDetails?.extraHourlyRate && (
+                            <PricingSection
+                                text="Extra Hours"
+                                value={`NGN ${formatNumberWithCommas(listingDetails.extraHourlyRate)}`}
+                            />
+                        )}
+                        {!!listingDetails?.outskirtFee && (
+                            <PricingSection
+                                text="Outskirts"
+                                value={`NGN ${formatNumberWithCommas(listingDetails.outskirtFee)}`}
+                            />
+                        )}
+                    </div>
+                </VehicleDetailsSection>
+            )}
+            {(listingDetails?.discounts?.length ?? 0) > 0 && (
+                <VehicleDetailsSection title="Discounts">
+                    <div className="space-y-2 md:space-y-5">
+                        {listingDetails?.discounts?.map((item, index) => (
+                            <PricingSection
+                                key={index}
+                                text=""
+                                value={`${item?.percentage || "-"}% off`}
+                            />
+                        ))}
+                    </div>
+                </VehicleDetailsSection>
+            )}
         </>
     );
 }

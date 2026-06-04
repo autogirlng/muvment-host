@@ -4,7 +4,7 @@ export interface TableCellProps {
     content: string | ReactNode;
     className?: string;
     isBadge?: boolean;
-    type?: "transaction" | "booking";
+    type?: "transaction" | "booking" | "listing";
     icon?: ReactNode;
     title?: string;
-};
+}

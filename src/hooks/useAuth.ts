@@ -134,8 +134,29 @@ export default function useAuth() {
   const { data: session, update: updateSession } = useSession();
 
   const signupMutation = useMutation({
-    mutationFn: (values: SignupFormValues) =>
-      http.post(`${AUTH_API_BASE}/signup`, { ...values, userType: UserType.HOST }),
+    mutationFn: (values: SignupFormValues) => {
+      // Send only the fields the backend expects.
+      // `country` (e.g. "NG") is kept locally for phone validation but not sent.
+      // phoneNumber is sent in international form: dial code + national number with
+      // the leading 0 stripped, e.g. "08165459398" + "+234" -> "+234 8165459398".
+      const nationalNumber = (values.phoneNumber || "")
+        .replace(/\D/g, "")
+        .replace(/^0+/, "");
+      const fullPhoneNumber = `${values.countryCode} ${nationalNumber}`.trim();
+
+      const payload = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        email: values.email,
+        password: values.password,
+        phoneNumber: fullPhoneNumber,
+        countryCode: values.countryCode,
+        userType: UserType.HOST,
+        ...(values.referralCode ? { referralCode: values.referralCode } : {}),
+        ...(values.inviteToken ? { inviteToken: values.inviteToken } : {}),
+      };
+      return http.post(`${AUTH_API_BASE}/signup`, payload);
+    },
 
     onMutate: (values) => {
       return { email: values.email };

@@ -10,11 +10,12 @@ import {
     BasicVehicleInformationValues,
     ErrorResponse,
     VehicleInformation,
-    VehicleInformationResponse, 
-    VehicleInfoState, 
-    VehicleMakeTypeResponse, 
-    VehicleModelResponse, 
-    VehicleOnboardingStepsHookProps
+    VehicleInformationResponse,
+    VehicleInfoState,
+    VehicleMakeTypeResponse,
+    VehicleModelResponse,
+    VehicleOnboardingStepsHookProps,
+    ModelOption,
 } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useHttp } from "@/hooks/useHttp";
@@ -57,14 +58,15 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
                 value: make.id
             })) ?? []
     
-            const vehicleModels = vehicleModelRes?.data.map((model) => ({
+            const vehicleModels: ModelOption[] = vehicleModelRes?.data.map((model) => ({
                 option: model.name,
-                value: model.id
+                value: model.id,
+                makeId: model.makeId,
             })) ?? []
             setVehicleOptions({
                 vehicleTypes,
                 vehicleMakes,
-                vehicleModels
+                vehicleModels,
             })
     
     
@@ -111,6 +113,7 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
                 : vehicle?.isVehicleUpgraded
                     ? "yes"
                     : "no",
+        yearOfUpgrade: (vehicle as any)?.yearOfUpgrade || undefined,
     };
 
     const fetchPlaces = async (query: string) => {

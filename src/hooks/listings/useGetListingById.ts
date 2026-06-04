@@ -8,47 +8,39 @@ export default function useGetListingById({ id }: { id: string }) {
   const http = useHttp();
   const { user } = useAppSelector((state) => state.user);
 
-  const { data, isError, isLoading, isSuccess } = useQuery({
-    queryKey: ["getListingById", id],
+  const userId = user?.data?.userId ?? (user as any)?.userId ?? "";
 
-    queryFn: async () =>
-      http.get<VehicleInformationResponse>(`/vehicles/${id}`),
-    enabled: !!user?.data.userId && !!id,
-    retry: false,
+  const { data, isError, isLoading } = useQuery({
+    queryKey: ["getListingById", id, userId],
+    queryFn: async () => http.get<VehicleInformationResponse>(`/vehicles/${id}`),
+    enabled: !!userId && !!id,
+    retry: 1,
   });
-  const vehicleData = data?.data
+
+  const vehicleData = data?.data;
+
   const vehicleDetails = useMemo(() => {
-    if (data) {
-      return [
-        // { make: vehicleData. || "N/A" },
-        // { model: data?.data. || "N/A" },
-        { year: vehicleData?.yearOfRelease || "N/A" },
-        // { colour: data?.vehicleColor || "N/A" },
-        { city: vehicleData?.city || "N/A" },
-        // { vehicleType: vehicleData. || "N/A" },
-        { seatingCapacity: vehicleData?.numberOfSeats || "N/A" },
-      ];
-    }
-    return [{}];
-  }, [data]);
+    if (!vehicleData) return [];
+    return [
+      { year: vehicleData.yearOfRelease || "N/A" },
+      { city: vehicleData.city || "N/A" },
+      { seatingCapacity: vehicleData.numberOfSeats || "N/A" },
+    ];
+  }, [vehicleData]);
 
   const vehicleImages = useMemo(() => {
-    return vehicleData?.photos.map((photo)=>{
-      return photo.cloudinaryUrl
-    })
-    
-  }, [data]);
+    return vehicleData?.photos?.map((photo) => photo.cloudinaryUrl) ?? [];
+  }, [vehicleData]);
 
+  // True while auth is loading (userId not yet available) OR query is fetching
+  const isPageLoading = !userId || isLoading;
 
   return {
-    listingDetail: {
-      ...vehicleData,
-      status:vehicleData?.status
-      // statistics: {} as EarningsStatistics,
-    } as VehicleInformationStepper,
+    listingDetail: vehicleData
+      ? ({ ...vehicleData } as VehicleInformationStepper)
+      : null,
     isError,
-    isLoading,
-    isSuccess,
+    isLoading: isPageLoading,
     vehicleDetails,
     vehicleImages,
   };

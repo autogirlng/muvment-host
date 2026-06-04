@@ -24,7 +24,13 @@ function hasUsableBankDetails(data: unknown): boolean {
 export default function useHostBankDetailsStatus() {
   const { data: session } = useSession();
   const userToken = useAppSelector((state) => state.user.userToken);
+  const user = useAppSelector((state) => state.user.user);
   const token = session?.user?.accessToken ?? userToken ?? "";
+
+  // Prefer the authoritative `bankVerified` flag now returned by /users/me.
+  // Falls back to the bank-details lookup only when that flag is absent.
+  const bankVerified = (user?.data as any)?.bankVerified;
+  const hasFlag = typeof bankVerified === "boolean";
 
   const query = useQuery({
     queryKey: ["hostBankDetailsStatus", token],
@@ -52,12 +58,14 @@ export default function useHostBankDetailsStatus() {
 
       return { hasBankDetails: hasUsableBankDetails(body?.data) };
     },
-    enabled: !!token,
+    // Skip the network call entirely when the user flag already answers it.
+    enabled: !!token && !hasFlag,
     retry: false,
   });
 
   return {
     ...query,
-    hasBankDetails: query.data?.hasBankDetails ?? false,
+    isLoading: hasFlag ? false : query.isLoading,
+    hasBankDetails: hasFlag ? Boolean(bankVerified) : query.data?.hasBankDetails ?? false,
   };
 }

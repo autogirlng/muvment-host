@@ -10,6 +10,8 @@ import useVehicleOnboarding from "@/hooks/vehicle/useVehicleOnboarding";
 import DocumentInformation from "@/components/VehicleOnboarding/DocumentInformation";
 import VehiclePhotos from "@/components/VehicleOnboarding/VehiclePhotos";
 import { FullPageSpinner, Stepper } from "@/ui";
+import { useKycStatus } from "@/hooks/useKycStatus";
+import KycRequiredNotice from "@/components/KycRequiredNotice";
 
 
 const steps = [
@@ -23,13 +25,19 @@ const steps = [
 export default function VehicleOnboardingPage() {
   const { isLoading } = useVehicleOnboarding();
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const kyc = useKycStatus();
 
   const handleCurrentStep = (step: number) => {
     setCurrentStep(step);
   };
 
-  if (isLoading) {
+  if (isLoading || kyc.isLoading) {
     return <FullPageSpinner />;
+  }
+
+  // Block the onboarding flow itself (not just the button) until KYC + approved MOU
+  if (!kyc.canCreateListing) {
+    return <KycRequiredNotice />;
   }
 
   return (

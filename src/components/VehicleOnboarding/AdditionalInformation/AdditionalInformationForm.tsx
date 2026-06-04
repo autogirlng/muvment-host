@@ -7,6 +7,8 @@ import FormRow from "../FormRow";
 import useAdditionalInformationForm from "@/hooks/vehicle/useAdditionalInformationForm";
 import { VehicleFeaturesResponse, VehicleColorResponse, VehicleOnboardingStepsHookProps } from "@/types";
 
+interface CountryOption { id: string; name: string }
+interface StateOption  { id: string; name: string }
 
 const AdditionalInformationForm = ({
     steps, currentStep, setCurrentStep
@@ -14,49 +16,70 @@ const AdditionalInformationForm = ({
     const { submitStep2, saveStep2, initialValues } = useAdditionalInformationForm({ currentStep, setCurrentStep });
 
     const http = useHttp();
-    const [vehicleOptions, setVehicleOptions] = useState<{ vehicleColors: { option: string, value: string }[]; vehicleFeatures: { name: string, id: string }[] }>({ vehicleColors: [], vehicleFeatures: [] });
+    const [vehicleOptions, setVehicleOptions] = useState<{
+        vehicleColors: { option: string; value: string }[];
+        vehicleFeatures: { name: string; id: string }[];
+    }>({ vehicleColors: [], vehicleFeatures: [] });
 
+    // Country / State
+    const [countries, setCountries]               = useState<CountryOption[]>([]);
+    const [states, setStates]                     = useState<StateOption[]>([]);
+    const [selectedCountryId, setSelectedCountryId] = useState("");
+    const [statesLoading, setStatesLoading]       = useState(false);
 
     const fetchAdditionalVehicleDetails = async () => {
         const [vehicleFeaturesRes, vehicleColorsRes] = await Promise.all([
             http.get<VehicleFeaturesResponse>("/public/vehicle-features"),
-            http.get<VehicleColorResponse>("/public/vehicle-colors")
+            http.get<VehicleColorResponse>("/public/vehicle-colors"),
         ]);
 
-        const vehicleFeatures = vehicleFeaturesRes?.data.map((feature) => {
-            return {
-                name: feature.name,
-                id: feature.id
-            }
-        }) ?? []
-
-        const vehicleColors = vehicleColorsRes?.data.map((color) => {
-            return {
-                option: color.name,
-                value: color.id
-            }
-        }) ?? []
-
         setVehicleOptions({
-            vehicleFeatures,
-            vehicleColors
-        })
+            vehicleFeatures: vehicleFeaturesRes?.data.map((f) => ({ name: f.name, id: f.id })) ?? [],
+            vehicleColors:   vehicleColorsRes?.data.map((c) => ({ option: c.name, value: c.id })) ?? [],
+        });
+    };
 
-    }
+    const fetchCountries = async () => {
+        try {
+            const res = await http.get<any>("/countries");
+            const list: CountryOption[] = (res?.data ?? []).map((c: any) => ({
+                id: c.id,
+                name: c.name,
+            }));
+            setCountries(list);
+        } catch {}
+    };
+
+    const fetchStates = async (countryId: string) => {
+        setStatesLoading(true);
+        try {
+            const res = await http.get<any>(`/states/country/${countryId}`);
+            const list: StateOption[] = (res?.data ?? []).map((s: any) => ({
+                id: s.id,
+                name: s.name,
+            }));
+            setStates(list);
+        } catch {
+            setStates([]);
+        } finally {
+            setStatesLoading(false);
+        }
+    };
 
     useEffect(() => {
-        fetchAdditionalVehicleDetails()
-    }, [])
+        fetchAdditionalVehicleDetails();
+        fetchCountries();
+    }, []);
 
-
-
+    useEffect(() => {
+        if (selectedCountryId) fetchStates(selectedCountryId);
+    }, [selectedCountryId]);
 
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={addtionalVehicleInformationSchema}
             onSubmit={(values, { setSubmitting }) => {
-
                 submitStep2.mutate(values);
                 setSubmitting(false);
             }}
@@ -66,7 +89,6 @@ const AdditionalInformationForm = ({
                 touched,
                 errors,
                 isValid,
-                dirty,
                 handleBlur,
                 handleChange,
                 setFieldTouched,
@@ -91,36 +113,82 @@ const AdditionalInformationForm = ({
                             }
                             info
                             tooltipTitle="License plate number:"
-                            tooltipDescription="Your vehicle’s license plate number is required to verify its legal registration and for identification purposes."
+                            tooltipDescription="Your vehicle's license plate number is required to verify its legal registration and for identification purposes."
                         />
 
-                        <InputField
-                            name="stateOfRegistration"
-                            id="stateOfRegistration"
-                            type="text"
-                            label="State Of Registration"
-                            placeholder="Enter state of reg"
-                            value={values.stateOfRegistration}
-                            onChange={handleChange}
-                            onBlur={handleBlur}
-                            error={
-                                errors.stateOfRegistration && touched.stateOfRegistration
-                                    ? errors.stateOfRegistration
-                                    : ""
-                            }
+                        {/* Country selector (local — not submitted to API) */}
+                        <SelectInput
+                            id="country"
+                            label="Country of Registration"
+                            placeholder="Select country"
+                            variant="outlined"
+                            options={countries.map((c) => ({ option: c.name, value: c.id }))}
+                            value={selectedCountryId}
+                            onChange={(value: string) => {
+                                setSelectedCountryId(value);
+                                setStates([]);
+                                setFieldValue("stateOfRegistration", "");
+                            }}
                             info
-                            tooltipTitle="State of registration:"
-                            tooltipDescription="Knowing the state where your vehicle is registered helps us ensure compliance with local laws and regulations."
+                            tooltipTitle="Country of registration:"
+                            tooltipDescription="Select the country where your vehicle is registered."
                         />
                     </FormRow>
+
+                    {/* State selector — shown after country is chosen */}
+                    {selectedCountryId && (
+                        <FormRow>
+                            <SelectInput
+                                id="stateOfRegistration"
+                                label="State Of Registration"
+                                placeholder={statesLoading ? "Loading states…" : "Select state"}
+                                variant="outlined"
+                                options={states.map((s) => ({ option: s.name, value: s.name }))}
+                                value={values.stateOfRegistration}
+                                onChange={(value: string) => {
+                                    setFieldTouched("stateOfRegistration", true);
+                                    setFieldValue("stateOfRegistration", value);
+                                    // Persist stateId for Phase 5 geofence filter
+                                    const found = states.find((s) => s.name === value);
+                                    if (found && typeof window !== "undefined") {
+                                        sessionStorage.setItem("vehicleStateId", found.id);
+                                    }
+                                }}
+                                error={
+                                    errors.stateOfRegistration && touched.stateOfRegistration
+                                        ? errors.stateOfRegistration
+                                        : ""
+                                }
+                                info
+                                tooltipTitle="State of registration:"
+                                tooltipDescription="Select the state where your vehicle is registered."
+                            />
+                        </FormRow>
+                    )}
+
+                    {/* Fallback text field when no country selected yet (keeps existing value visible) */}
+                    {!selectedCountryId && values.stateOfRegistration && (
+                        <FormRow>
+                            <InputField
+                                name="stateOfRegistration"
+                                id="stateOfRegistration"
+                                type="text"
+                                label="State Of Registration (current)"
+                                placeholder="State of registration"
+                                value={values.stateOfRegistration}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                disabled
+                            />
+                        </FormRow>
+                    )}
+
                     <TextArea
                         name="description"
                         id="description"
                         type="text"
                         label="Vehicle Description"
-                        placeholder={`E.g 2015 Toyota Camry with good fuel efficiency, spacious interior, and
-advanced safety features. Perfect for city driving and long trips. Includes GPS,
-Bluetooth connectivity, and a sunroof.`}
+                        placeholder={`E.g 2015 Toyota Camry with good fuel efficiency, spacious interior, and\nadvanced safety features. Perfect for city driving and long trips. Includes GPS,\nBluetooth connectivity, and a sunroof.`}
                         value={values.description}
                         onChange={handleChange}
                         onBlur={handleBlur}
@@ -133,6 +201,7 @@ Bluetooth connectivity, and a sunroof.`}
                         tooltipTitle="Vehicle of description:"
                         tooltipDescription="Providing a detailed description helps customers understand the unique features and specifications of your vehicle."
                     />
+
                     <div className="space-y-3">
                         <label
                             htmlFor="features"
@@ -141,34 +210,25 @@ Bluetooth connectivity, and a sunroof.`}
                             Vehicle Features
                         </label>
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-[50px] gap-y-3 max-w-[686px]">
-                            {
-                                vehicleOptions.vehicleFeatures.map((feature) => (
-                                    <GroupCheckBox
-                                        key={feature.id}
-                                        feature={feature.id}
-                                        checkedValues={values.featureIds}
-                                        name={feature.name}
-                                        onChange={(featureId: string, isChecked: boolean) => {
-                                            if (isChecked) {
-                                                const newValues = [...values.featureIds, featureId];
-                                                setFieldValue("featureIds", newValues);
-                                            } else {
-                                                const newValues = values.featureIds.filter(
-                                                    (value) => value !== featureId
-                                                );
-                                                setFieldValue("featureIds", newValues);
-                                            }
-                                        }}
-                                    />
-                                ))
-                            }
+                            {vehicleOptions.vehicleFeatures.map((feature) => (
+                                <GroupCheckBox
+                                    key={feature.id}
+                                    feature={feature.id}
+                                    checkedValues={values.featureIds}
+                                    name={feature.name}
+                                    onChange={(featureId: string, isChecked: boolean) => {
+                                        setFieldValue(
+                                            "featureIds",
+                                            isChecked
+                                                ? [...values.featureIds, featureId]
+                                                : values.featureIds.filter((v) => v !== featureId)
+                                        );
+                                    }}
+                                />
+                            ))}
                         </div>
-                        {errors.featureIds && touched.featureIds ? (
-                            <p className="text-error-500 text-sm mt-2 text-nowrap">
-                                {errors.featureIds}
-                            </p>
-                        ) : (
-                            ""
+                        {errors.featureIds && touched.featureIds && (
+                            <p className="text-error-500 text-sm mt-2 text-nowrap">{errors.featureIds}</p>
                         )}
                     </div>
 
@@ -191,7 +251,7 @@ Bluetooth connectivity, and a sunroof.`}
                             }
                             info
                             tooltipTitle="Vehicle color:"
-                            tooltipDescription="Indicating your vehicle’s color is important for easy identification during customer pickups and possible inspections."
+                            tooltipDescription="Indicating your vehicle's color is important for easy identification during customer pickups and possible inspections."
                         />
 
                         <InputField
@@ -214,19 +274,14 @@ Bluetooth connectivity, and a sunroof.`}
                         />
                     </FormRow>
 
-
                     <StepperNavigation
                         steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
-                        handleSaveDraft={() => {
-                            saveStep2.mutate(values);
-                        }}
+                        handleSaveDraft={() => { saveStep2.mutate(values); }}
                         isSaveDraftloading={saveStep2.isPending}
                         isNextLoading={isSubmitting || submitStep2.isPending}
-                        disableNextButton={
-                            !isValid || isSubmitting || submitStep2.isPending
-                        }
+                        disableNextButton={!isValid || isSubmitting || submitStep2.isPending}
                         showSaveDraftButton
                     />
                 </Form>

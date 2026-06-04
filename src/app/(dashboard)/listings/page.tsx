@@ -5,13 +5,52 @@ import { ChangeEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { listingFilters, listingTableHeadItems } from "@/utils/data";
 import { debounce } from "@/utils/functions";
-import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy, VehicleListingBadge } from "@/ui";
+import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy } from "@/ui";
+import { BlurredDialog } from "@/ui/dialog";
 import EmptyState from "@/components/EmptyState";
 import ListingsHero from "@/components/Listings/ListingsHero";
-import TableHead from "@/components/Table/TableHead";
-import TableCell from "@/components/Table/TableCell";
+import { Table, TableBody, TableHead } from "@/components/Table";
+import ListingTableRow from "@/components/Listings/ListingTableRow";
 import useListings from "@/hooks/listings/useListings";
-import { VehicleStatus } from "@/types";
+import { useKycStatus } from "@/hooks/useKycStatus";
+
+function StatusRow({
+  label,
+  done,
+  pending,
+  pendingText,
+  link,
+  linkText,
+}: {
+  label: string;
+  done: boolean;
+  pending?: boolean;
+  pendingText?: string;
+  link?: string;
+  linkText?: string;
+}) {
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-grey-100 bg-grey-50 px-4 py-3">
+      <span className="text-sm font-medium text-grey-700">{label}</span>
+      {done ? (
+        <span className="flex items-center gap-1 rounded-full bg-success-100 px-3 py-1 text-xs font-medium text-success-600">
+          <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+            <path d="M1.5 5l2.5 2.5 4.5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Done
+        </span>
+      ) : pending ? (
+        <span className="rounded-full bg-warning-75 px-3 py-1 text-xs font-medium text-warning-700">
+          {pendingText ?? "Pending"}
+        </span>
+      ) : link ? (
+        <Link href={link} className="rounded-full bg-primary-500 px-3 py-1 text-xs font-medium text-white hover:bg-primary-600 transition-colors">
+          {linkText}
+        </Link>
+      ) : null}
+    </div>
+  );
+}
 
 function ListingsPageContent() {
   const [search, setSearch] = useState<string>("");
@@ -20,8 +59,10 @@ function ListingsPageContent() {
   const initialPage = Number(searchParams.get("page")) || 0;
   const [currentPage, setCurrentPage] = useState<number>(initialPage);
   const [filters, setFilters] = useState<Record<string, string[]>>({});
+  const [kycModalOpen, setKycModalOpen] = useState(false);
   const router = useRouter();
   const pageLimit = 10;
+  const kyc = useKycStatus();
 
   const { listings, totalCount, isError, isLoading } = useListings({
     currentPage,
@@ -80,23 +121,30 @@ function ListingsPageContent() {
           className="w-full max-w-[310px]"
           icon
         />
-        <div className="flex items-center justify-between gap-3">
-          <Link href="/vehicle-onboarding">
-            <Button
-              variant="filled"
-              color="primary"
-              className="flex items-center gap-2 !py-2 !px-3 md:!px-4 !text-sm 3xl:!text-base button_icon"
-            >
-              {Icons.ic_add_circle}
-              <span className="hidden md:block">Add New Vehicle</span>
-            </Button>
-          </Link>
-          <FilterBy
-            categories={listingFilters}
-            onChange={handleFilterChange}
-            hideOnMobile
-            singleSelect={true}
-          />
+        <div className="relative flex shrink-0 items-center justify-between gap-3">
+          <Button
+            variant="filled"
+            color="primary"
+            className="flex items-center gap-2 !py-2 !px-3 md:!px-4 !text-sm 3xl:!text-base button_icon"
+            onClick={() => {
+              if (kyc.canCreateListing) {
+                router.push("/vehicle-onboarding");
+              } else {
+                setKycModalOpen(true);
+              }
+            }}
+          >
+            {Icons.ic_add_circle}
+            <span className="hidden md:block">Add New Vehicle</span>
+          </Button>
+          <div className="relative">
+            <FilterBy
+              categories={listingFilters}
+              onChange={handleFilterChange}
+              hideOnMobile
+              singleSelect={true}
+            />
+          </div>
         </div>
       </div>
 
@@ -111,9 +159,18 @@ function ListingsPageContent() {
             debouncedSearch ? (
               `No results for "${debouncedSearch}"`
             ) : (
-              <Link href="/vehicle-onboarding" className="text-primary-500">
+              <button
+                onClick={() => {
+                  if (kyc.canCreateListing) {
+                    router.push("/vehicle-onboarding");
+                  } else {
+                    setKycModalOpen(true);
+                  }
+                }}
+                className="text-primary-500 hover:underline"
+              >
                 add your first vehicle
-              </Link>
+              </button>
             )
           }
           image={
@@ -129,57 +186,14 @@ function ListingsPageContent() {
               Showing results for &quot;{debouncedSearch}&quot;
             </h5>
           )}
-          <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
-            <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
-              <TableHead tableHeadItems={listingTableHeadItems} />
-              <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
-                {listings.map((listing) => (
-                  <tr
-                    key={listing.id}
-                    className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all"
-                  >
-                    <TableCell
-                      title="Vehicle Name"
-                      content={
-                        listing.status === VehicleStatus.DRAFT
-                          ? "Unfinished Listing"
-                          : listing.name
-                      }
-                      className="!text-grey-900 !font-medium"
-                    />
-                    <TableCell title="License Plate" content={listing.licensePlateNumber || "—"} />
-                    <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit border-b lg:border-none border-grey-100">
-                      <div className="flex items-center justify-between gap-5 lg:block">
-                        <span className="font-semibold text-grey-500 lg:hidden w-1/2 break-words text-left text-sm">
-                          Status
-                        </span>
-                        <div className="w-1/2 lg:w-auto flex justify-end lg:justify-start">
-                          <VehicleListingBadge status={listing.status} />
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit text-sm text-grey-700">
-                      <div className="flex items-center justify-between gap-5 lg:block">
-                        <span className="font-semibold text-grey-500 lg:hidden w-1/2 break-words text-left">
-                          Actions
-                        </span>
-                        <Link
-                          href={
-                            listing.status === VehicleStatus.DRAFT
-                              ? `/vehicle-onboarding?id=${listing.id}`
-                              : `/listings/${listing.id}`
-                          }
-                          className="w-1/2 lg:w-auto text-right lg:text-left text-xs font-semibold text-primary-500 hover:underline"
-                        >
-                          {listing.status === VehicleStatus.DRAFT ? "Complete Listing" : "View Details"}
-                        </Link>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table className="md:mt-7" innerClassName="lg:overflow-x-auto">
+            <TableHead tableHeadItems={listingTableHeadItems} />
+            <TableBody>
+              {listings.map((listing) => (
+                <ListingTableRow key={listing.id} listing={listing} />
+              ))}
+            </TableBody>
+          </Table>
         </>
       )}
 
@@ -189,6 +203,55 @@ function ListingsPageContent() {
         totalCount={totalCount}
         pageLimit={pageLimit}
         onPageChange={handlePageChange}
+      />
+
+      {/* KYC / MOU block modal */}
+      <BlurredDialog
+        open={kycModalOpen}
+        onOpenChange={setKycModalOpen}
+        title="Cannot Create a Listing"
+        description="You need to complete your KYC and have an approved MOU before creating a listing."
+        content={
+          <div className="space-y-4">
+            {/* Status rows */}
+            <div className="space-y-2">
+              <StatusRow
+                label="Phone Verification"
+                done={kyc.phoneVerified}
+                link="/settings/verify-number"
+                linkText="Verify now"
+              />
+              <StatusRow
+                label="Bank Account"
+                done={kyc.bankAdded}
+                link="/settings/withdrawal-account"
+                linkText="Add now"
+              />
+              <StatusRow
+                label="MOU Agreement"
+                done={kyc.mouApproved}
+                pending={kyc.mouSubmitted && !kyc.mouApproved}
+                pendingText={
+                  kyc.mouStatus === "PENDING"
+                    ? "Pending admin approval"
+                    : kyc.mouStatus === "REJECTED"
+                    ? "Rejected — contact support"
+                    : undefined
+                }
+                link={!kyc.mouSubmitted ? "/dashboard" : undefined}
+                linkText={!kyc.mouSubmitted ? "Sign MOU" : undefined}
+              />
+            </div>
+
+            <Link
+              href="/settings/account-setup"
+              className="block w-full rounded-xl bg-primary-500 py-2.5 text-center text-sm font-semibold text-white transition-colors hover:bg-primary-600"
+              onClick={() => setKycModalOpen(false)}
+            >
+              Go to Account Setup
+            </Link>
+          </div>
+        }
       />
     </main>
   );

@@ -27,6 +27,12 @@ export interface PageableResponse<T> {
 }
 
 
+export interface TripAgent {
+  name: string;
+  email: string;
+  phoneNumber: string;
+}
+
 export interface HostTripItem {
   id: string;
   startDateTime: string;
@@ -47,13 +53,19 @@ export interface HostTripItem {
   tripStatus: string;
   totalPrice: number;
   bookingId: string;
+  invoiceNumber?: string;
   createdAt: string;
   bookingCategory: string;
+  customerAgent?: TripAgent;
+  opsAgent?: TripAgent;
 }
 
 export interface HostTripsParams {
   page?: number;
   size?: number;
   site?: string;
-  tripStatus?: "UPCOMING" | "IN_PROGRESS" | "COMING_TO_AN_END" | "COMPLETED" | "DELAYED" | "EXTENDED" | "CANCELLED";
+  /** Only these are functional (computed from time constraints) */
+  tripStatus?: "UPCOMING" | "IN_PROGRESS" | "COMING_TO_AN_END" | "COMPLETED";
+  /** Search/filter by invoice number (not bookingId) */
+  invoiceNumber?: string;
 }

@@ -1,28 +1,34 @@
-import { BookingBadgeStatus, TransactionStatus } from "@/types";
-import { BookingTableBadge, TransactionBadge } from "@/ui";
+import cn from "classnames";
+import { ReactNode } from "react";
+import { BookingBadgeStatus, TransactionStatus, VehicleStatus } from "@/types";
+import { BookingTableBadge, TransactionBadge, VehicleListingBadge } from "@/ui";
 import { TableCellProps } from "./props";
+import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "./tableStyles";
 
+function renderBadge(content: string | ReactNode, type?: TableCellProps["type"]) {
+    if (type === "transaction") {
+        return <TransactionBadge status={content as TransactionStatus} />;
+    }
+    if (type === "listing") {
+        return <VehicleListingBadge status={content as VehicleStatus} />;
+    }
+    return <BookingTableBadge status={content as BookingBadgeStatus} />;
+}
 
 const TableCell = ({ content, className, isBadge, type, icon, title }: TableCellProps) => (
-    <td
-        className={`px-4 py-3 lg:px-6 lg:py-[26px] lg:whitespace-nowrap w-full lg:w-fit text-sm text-grey-700 flex justify-between items-center lg:table-cell border-b lg:border-none last:border-0 border-grey-100 ${className ?? ""}`}
-    >
-        {title && <span className="font-semibold text-grey-500 lg:hidden w-1/2 break-words text-left">{title}</span>}
+    <td className={cn(tableCellBaseClass, className)}>
+        {title && <span className={tableMobileTitleClass}>{title}</span>}
 
-        <div className="w-1/2 lg:w-auto text-right lg:text-left flex justify-end lg:justify-start break-words overflow-hidden">
+        <div className={tableCellValueClass}>
             {icon ? (
-                <div className="flex items-center gap-3">
-                    {icon}
-                    <span>{content}</span>
+                <div className="flex items-center gap-2.5">
+                    <span className="shrink-0 text-grey-500">{icon}</span>
+                    <span className="text-grey-800">{content}</span>
                 </div>
             ) : isBadge ? (
-                type === "transaction" ? (
-                    <TransactionBadge status={content as TransactionStatus} />
-                ) : (
-                    <BookingTableBadge status={content as BookingBadgeStatus} />
-                )
+                renderBadge(content, type)
             ) : (
-                content
+                <span className="text-grey-700">{content}</span>
             )}
         </div>
     </td>
