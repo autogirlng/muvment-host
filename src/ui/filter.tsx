@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import cn from "classnames";
 import { format } from "date-fns";
 import * as Popover from "@radix-ui/react-popover";
@@ -12,11 +12,9 @@ const FilterBy: React.FC<FilterByProps> = ({
     onChange,
     hideOnMobile,
     dateEnabled = false,
-    singleSelect = false
+    singleSelect = false,
 }) => {
-    const contentRef = useRef<HTMLDivElement>(null);
     const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [contentHeight, setContentHeight] = useState<number>(0);
 
     const [selectedFilters, setSelectedFilters] = useState<
         Record<string, string[]>
@@ -35,6 +33,16 @@ const FilterBy: React.FC<FilterByProps> = ({
         startDate: null,
         endDate: null,
     });
+
+    const activeFilterCount = useMemo(() => {
+        const checkboxCount = Object.values(selectedFilters).reduce(
+            (sum, arr) => sum + (arr?.length ?? 0),
+            0
+        );
+        const dateCount =
+            dateRange.startDate && dateRange.endDate ? 1 : 0;
+        return checkboxCount + dateCount;
+    }, [selectedFilters, dateRange]);
 
     const handleDateRangeChange = (
         startDate: Date | null,
@@ -63,9 +71,7 @@ const FilterBy: React.FC<FilterByProps> = ({
                 }
                 return filters;
             });
-        }
-        // For single checkbox selection
-        else {
+        } else {
             setSelectedFilters((prevFilters) => {
                 const filters = { ...prevFilters };
                 if (filters[categoryTitle]?.[0] === optionValue) {
@@ -76,29 +82,11 @@ const FilterBy: React.FC<FilterByProps> = ({
                 return filters;
             });
         }
-
     };
 
     useEffect(() => {
-        onChange(selectedFilters, dateRange); // Pass both filters and date range
+        onChange(selectedFilters, dateRange);
     }, [selectedFilters, dateRange, onChange]);
-
-    useEffect(() => {
-        if (contentRef.current && isOpen) {
-            setContentHeight(contentRef.current.scrollHeight);
-            document.body.style.minHeight = `calc(100vh + ${contentHeight}px)`;
-            document.body.style.overflow = "auto";
-        } else {
-            setContentHeight(0);
-            document.body.style.minHeight = "";
-            document.body.style.overflow = "";
-        }
-        return () => {
-            setContentHeight(0);
-            document.body.style.minHeight = "";
-            document.body.style.overflow = "";
-        };
-    }, [categories, selectedFilters, openSections, isOpen]);
 
     const addSpaceBeforeUppercase = (str: string): string => {
         return str?.replace(/([a-z])([A-Z])/g, "$1 $2");
@@ -111,120 +99,160 @@ const FilterBy: React.FC<FilterByProps> = ({
 
     return (
         <Popover.Root open={isOpen} onOpenChange={setIsOpen}>
+            <div className="relative inline-flex">
             <Popover.Trigger asChild>
                 <button
-                    className="cursor-pointer outline-none text-grey-600 flex items-center gap-2 border border-grey-300 rounded-xl p-3 hover:border-primary-500"
+                    type="button"
+                    className={cn(
+                        "inline-flex cursor-pointer items-center gap-2 rounded-xl border bg-white px-4 py-2.5 text-sm font-medium shadow-sm outline-none transition-all",
+                        activeFilterCount > 0
+                            ? "border-primary-300 text-primary-700 ring-2 ring-primary-50"
+                            : "border-grey-200 text-grey-700 hover:border-primary-300 hover:shadow-md focus-visible:ring-2 focus-visible:ring-primary-100"
+                    )}
                     aria-label="Filter"
                 >
-                    {Icons.ic_filter}
+                    <span className="text-grey-600">{Icons.ic_filter}</span>
                     <span
                         className={cn(
-                            "text-grey-500 text-sm",
-                            hideOnMobile && "hidden sm:block"
+                            "text-grey-700",
+                            hideOnMobile && "hidden sm:inline"
                         )}
                     >
                         Filter
                     </span>
-                    <span className={cn(hideOnMobile && "hidden sm:block")}>
+                    {activeFilterCount > 0 && (
+                        <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary-500 px-1.5 text-[10px] font-bold text-white">
+                            {activeFilterCount}
+                        </span>
+                    )}
+                    <span
+                        className={cn(
+                            "text-grey-400 transition-transform duration-200",
+                            isOpen && "rotate-180",
+                            hideOnMobile && "hidden sm:inline"
+                        )}
+                    >
                         {Icons.ic_chevron_down}
                     </span>
                 </button>
             </Popover.Trigger>
+            </div>
             <Popover.Portal>
                 <Popover.Content
-                    className="px-6 py-[14px] w-[360px] bg-white rounded-3xl border border-grey-300 shadow-[-2px_4px_6px_-2px_#10192808,12px_16px_37.4px_-4px_#10192814] "
-                    sideOffset={5}
+                    className="z-[200] w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-grey-200 bg-white p-0 shadow-[0_8px_30px_rgba(16,25,40,0.12)]"
                     side="bottom"
-                    avoidCollisions={false}
                     align="end"
+                    sideOffset={6}
+                    alignOffset={0}
+                    collisionPadding={12}
+                    avoidCollisions
+                    sticky="partial"
+                    onOpenAutoFocus={(e) => e.preventDefault()}
                 >
-                    <div className="space-y-3" ref={contentRef}>
-                        <div className="flex justify-between items-center">
-                            <p className="text-base font-semibold text-grey-700">Filter By</p>
+                    <div className="border-b border-grey-100 px-5 py-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-sm font-semibold text-grey-800">
+                                Filter by
+                            </p>
                             <button
+                                type="button"
                                 onClick={handleClearAll}
-                                className="text-xs flex gap-2 items-center text-primary-500 hover:underline outline-none"
+                                className="inline-flex items-center gap-1.5 text-xs font-medium text-primary-500 outline-none transition-colors hover:text-primary-600 hover:underline"
                             >
-                                Clear all{" "}
-                                <span className="!h-5 !w-5">{Icons.ic_cancel_circle}</span>
+                                Clear all
+                                <span className="!h-4 !w-4">{Icons.ic_cancel_circle}</span>
                             </button>
                         </div>
-                        <div className="space-y-6">
+                    </div>
+
+                    <div className="table-filter-scroll max-h-[min(320px,55vh)] overflow-y-auto overscroll-contain px-5 py-4">
+                        <div className="space-y-4">
                             {categories.map((category) => (
                                 <Collapsible.Root
                                     key={category.title}
                                     open={openSections[category.title]}
                                     onOpenChange={() => toggleSection(category.title)}
-                                    className="space-y-2"
                                 >
-                                    <div key={category.title} className="space-y-3 text-grey-900">
-                                        <div
-                                            className="flex justify-between items-center cursor-pointer"
-                                            onClick={() => toggleSection(category.title)}
-                                        >
-                                            <p className="text-sm capitalize">
-                                                {addSpaceBeforeUppercase(category.title)}
-                                            </p>
+                                    <button
+                                        type="button"
+                                        className="flex w-full items-center justify-between rounded-lg py-1 text-left text-sm font-medium text-grey-800 outline-none hover:text-grey-900"
+                                        onClick={() => toggleSection(category.title)}
+                                    >
+                                        <span className="capitalize">
+                                            {addSpaceBeforeUppercase(category.title)}
+                                        </span>
+                                        <span className="text-grey-400">
                                             {openSections[category.title]
                                                 ? Icons.ic_chevron_up
                                                 : Icons.ic_chevron_down}
-                                        </div>
-                                        <Collapsible.Content className="space-y-3">
-                                            {category.options.map((option) => (
-                                                <div
+                                        </span>
+                                    </button>
+                                    <Collapsible.Content className="mt-2 space-y-2.5 pl-0.5">
+                                        {category.options.map((option) => {
+                                            const checked = selectedFilters[
+                                                category.title
+                                            ]?.includes(option.value);
+                                            return (
+                                                <label
                                                     key={option.value}
-                                                    className="flex items-center space-x-3"
+                                                    htmlFor={`filter-${category.title}-${option.value}`}
+                                                    className="flex cursor-pointer items-center gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-grey-50"
                                                 >
                                                     <Checkbox.Root
+                                                        id={`filter-${category.title}-${option.value}`}
                                                         className={cn(
-                                                            "w-6 h-6 rounded",
-                                                            selectedFilters[category.title]?.includes(
+                                                            "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-colors",
+                                                            checked
+                                                                ? "border-primary-400 bg-primary-500"
+                                                                : "border-grey-300 bg-white hover:border-primary-300"
+                                                        )}
+                                                        checked={checked}
+                                                        onCheckedChange={() =>
+                                                            handleCheckboxChange(
+                                                                category.title,
                                                                 option.value
                                                             )
-                                                                ? "bg-primary-400"
-                                                                : "bg-white border-[1.5px] border-grey-300"
-                                                        )}
-                                                        checked={selectedFilters[category.title]?.includes(
-                                                            option.value
-                                                        )}
-                                                        onCheckedChange={() =>
-                                                            handleCheckboxChange(category.title, option.value)
                                                         }
                                                     >
                                                         <Checkbox.Indicator className="flex items-center justify-center text-white">
                                                             {Icons.ic_check}
                                                         </Checkbox.Indicator>
                                                     </Checkbox.Root>
-                                                    <label htmlFor={option.value} className="text-sm">
+                                                    <span className="text-sm text-grey-700">
                                                         {option.option}
-                                                    </label>
-                                                </div>
-                                            ))}
-                                        </Collapsible.Content>
-                                    </div>
+                                                    </span>
+                                                </label>
+                                            );
+                                        })}
+                                    </Collapsible.Content>
                                 </Collapsible.Root>
                             ))}
 
                             {dateEnabled && (
-                                <div className="mt-4">
+                                <div className="border-t border-grey-100 pt-4">
                                     <DateFilter
                                         onDateRangeChange={handleDateRangeChange}
                                         initialStartDate={dateRange.startDate}
                                         initialEndDate={dateRange.endDate}
                                     />
                                     {dateRange.startDate && dateRange.endDate && (
-                                        <div className="mt-2 text-xs text-grey-600 p-3 flex items-center justify-between rounded-lg bg-[#EDF8FF] ">
-                                            <p className="text-primary-500">
-                                                {format(dateRange.startDate, "MMM do yyyy")} -{" "}
+                                        <div className="mt-3 flex items-center justify-between rounded-lg bg-primary-50 px-3 py-2.5 text-xs">
+                                            <p className="font-medium text-primary-600">
+                                                {format(dateRange.startDate, "MMM do yyyy")} –{" "}
                                                 {format(dateRange.endDate, "MMM do yyyy")}
                                             </p>
                                             <button
+                                                type="button"
                                                 onClick={() =>
-                                                    setDateRange({ startDate: null, endDate: null })
+                                                    setDateRange({
+                                                        startDate: null,
+                                                        endDate: null,
+                                                    })
                                                 }
-                                                className="ml-2 text-primary-500  hover:underline outline-none"
+                                                className="text-primary-500 outline-none hover:text-primary-700"
+                                                aria-label="Clear date range"
                                             >
-                                                <span className="*:!w-5 *:!h-5">
+                                                <span className="*:!h-4 *:!w-4">
                                                     {Icons.ic_close_circle}
                                                 </span>
                                             </button>

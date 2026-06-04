@@ -15,7 +15,9 @@ export default function ListingDetailsVehicleDetails({
             </p>
             <div className="flex flex-wrap gap-3">
                 {vehicleDetails?.map((detail, index) => {
-                    const [key, value] = Object.entries(detail)[0];
+                    const entry = Object.entries(detail)[0];
+                    if (!entry) return null;
+                    const [key, value] = entry;
                     return (
                         <Chip
                             key={index}

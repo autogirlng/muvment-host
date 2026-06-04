@@ -27,6 +27,7 @@ export default function ProfilePage() {
     <main className="py-[56px] md:space-y-11 text-grey-700">
       <h5 className="text-h5 md:text-h3 3xl:text-4xl !font-bold">My Account</h5>
       <Formik
+        enableReinitialize
         initialValues={
           {
             firstName: user?.data.firstName || "",

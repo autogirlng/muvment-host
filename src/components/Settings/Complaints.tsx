@@ -5,8 +5,7 @@ import cn from "classnames";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import EmptyState from "@/components/EmptyState";
-import TableCell from "@/components/Table/TableCell";
-import TableHead from "@/components/Table/TableHead";
+import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/Table";
 import { useHostComplaints } from "@/hooks/complaints/useComplaints";
 import {
   Complaint,
@@ -40,15 +39,22 @@ function formatDate(date?: string) {
 }
 
 function ComplaintStatusBadge({ status }: { status: ComplaintStatus }) {
-  const badgeColor =
+  const styles =
     status === "RESOLVED"
-      ? "bg-success-500"
+      ? { dot: "bg-success-500", bg: "bg-success-50", text: "text-success-600" }
       : status === "IN_PROGRESS"
-        ? "bg-warning-500"
-        : "bg-grey-500";
+        ? { dot: "bg-warning-400", bg: "bg-warning-75", text: "text-warning-700" }
+        : { dot: "bg-grey-400", bg: "bg-grey-90", text: "text-grey-600" };
 
   return (
-    <span className={cn("px-3 py-[2px] text-sm font-medium text-white rounded-xl w-fit", badgeColor)}>
+    <span
+      className={cn(
+        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap",
+        styles.bg,
+        styles.text
+      )}
+    >
+      <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", styles.dot)} />
       {statusLabel[status]}
     </span>
   );
@@ -62,13 +68,13 @@ function ComplaintRow({
   fallbackCreatedAt?: string;
 }) {
   return (
-    <tr className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
-      <TableCell title="Title" content={complaint.title} className="!text-grey-900 !font-medium" />
+    <TableRow>
+      <TableCell title="Title" content={complaint.title} className="!font-medium !text-grey-900" />
       <TableCell title="Type" content={complaint.type.toLocaleLowerCase()} />
       <TableCell title="Status" content={<ComplaintStatusBadge status={complaint.status} />} />
       <TableCell title="Created" content={formatDate(complaint.createdAt ?? fallbackCreatedAt)} />
       <TableCell title="Description" content={complaint.description} />
-    </tr>
+    </TableRow>
   );
 }
 
@@ -222,20 +228,18 @@ export default function Complaints() {
           image="/icons/empty_booking_state.png"
         />
       ) : (
-        <div className="overflow-auto bg-grey-50 lg:bg-white rounded-xl lg:rounded-none p-4 lg:p-0">
-          <table className="block lg:table w-full min-w-full lg:divide-y divide-grey-200 lg:border-t border-grey-200 bg-white md:mt-7">
-            <TableHead tableHeadItems={complaintTableHeadItems} />
-            <tbody className="block lg:table-row-group lg:divide-y divide-grey-200">
-              {complaints.map((complaint) => (
-                <ComplaintRow
-                  key={complaint.id}
-                  complaint={complaint}
-                  fallbackCreatedAt={data?.timestamp}
-                />
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table className="md:mt-7">
+          <TableHead tableHeadItems={complaintTableHeadItems} />
+          <TableBody>
+            {complaints.map((complaint) => (
+              <ComplaintRow
+                key={complaint.id}
+                complaint={complaint}
+                fallbackCreatedAt={data?.timestamp}
+              />
+            ))}
+          </TableBody>
+        </Table>
       )}
 
       {totalCount > 0 && (

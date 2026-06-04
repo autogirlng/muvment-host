@@ -8,9 +8,19 @@ import { basicVehicleInformationSchema } from "@/utils/validationSchema";
 import { VehicleOnboardingStepsHookProps } from "@/types";
 import {
     citiesOptions,
-    yearOfReleaseOptions,
     yesOrNoOptions,
 } from "@/utils/data";
+
+const currentYear = new Date().getFullYear();
+const upgradeYearOptions = Array.from(
+    { length: currentYear - 2013 + 1 },
+    (_, i) => ({ value: String(2013 + i), option: String(2013 + i) })
+);
+
+const yearOfReleaseOptions = Array.from(
+    { length: currentYear - 2013 + 1 },
+    (_, i) => ({ value: String(2013 + i), option: String(2013 + i) })
+);
 
 const BasicVehicleInformationForm = ({
     steps,
@@ -185,6 +195,8 @@ const BasicVehicleInformationForm = ({
                             onChange={(value: string) => {
                                 setFieldTouched("vehicleMakeId", true);
                                 setFieldValue("vehicleMakeId", value);
+                                // Reset model when make changes
+                                setFieldValue("vehicleModelId", "");
                             }}
                             error={errors.vehicleMakeId && touched.vehicleMakeId ? errors.vehicleMakeId : ""}
                             info
@@ -197,9 +209,15 @@ const BasicVehicleInformationForm = ({
                         <SelectInput
                             id="model"
                             label="Vehicle Model"
-                            placeholder="Select vehicle model"
+                            placeholder={values.vehicleMakeId ? "Select vehicle model" : "Select a make first"}
                             variant="outlined"
-                            options={vehicleOptions.vehicleModels}
+                            options={
+                                values.vehicleMakeId
+                                    ? vehicleOptions.vehicleModels.filter(
+                                          (m) => m.makeId === values.vehicleMakeId
+                                      )
+                                    : []
+                            }
                             value={values.vehicleModelId}
                             onChange={(value: string) => {
                                 setFieldTouched("vehicleModelId", true);
@@ -289,6 +307,9 @@ const BasicVehicleInformationForm = ({
                             onChange={(value: string) => {
                                 setFieldTouched("isVehicleUpgraded", true);
                                 setFieldValue("isVehicleUpgraded", value);
+                                if (value === "no") {
+                                    setFieldValue("yearOfUpgrade", undefined);
+                                }
                             }}
                             error={
                                 errors.isVehicleUpgraded && touched.isVehicleUpgraded ? errors.isVehicleUpgraded : ""
@@ -297,6 +318,24 @@ const BasicVehicleInformationForm = ({
                             tooltipTitle="Is your vehicle upgraded"
                             tooltipDescription="Specify whether your vehicle is upgraded from a different model or year."
                         />
+
+                        {values.isVehicleUpgraded === "yes" && (
+                            <SelectInput
+                                id="yearOfUpgrade"
+                                label="Year upgraded to"
+                                placeholder="Select upgrade year"
+                                variant="outlined"
+                                options={upgradeYearOptions}
+                                value={values.yearOfUpgrade ? String(values.yearOfUpgrade) : ""}
+                                onChange={(value: string) => {
+                                    setFieldTouched("yearOfUpgrade", true);
+                                    setFieldValue("yearOfUpgrade", Number(value));
+                                }}
+                                info
+                                tooltipTitle="Year of upgrade"
+                                tooltipDescription="Select the year your vehicle was upgraded to."
+                            />
+                        )}
                     </FormRow>
                     <StepperNavigation
                         steps={steps ?? []}

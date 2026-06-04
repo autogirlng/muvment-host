@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import { FullPageSpinner, Pagination } from "@/ui";
 import EmptyState from "@/components/EmptyState";
-import TableHead from "@/components/Table/TableHead";
-import TableCell from "@/components/Table/TableCell";
+import { Table, TableBody, TableHead, TableCell, TableRow } from "@/components/Table";
 import { bookingHistoryTableHeadItems } from "@/utils/data";
 import { useHostPerformanceBookings } from "@/hooks/bookings/useHostPerformanceBookings";
 
@@ -30,10 +29,11 @@ export default function BookingHistory({
     bookingStatus: filters?.bookingStatus?.[0] || undefined,
     startDate: startDate || undefined,
     endDate: endDate || undefined,
+    invoiceNumber: search?.trim() || undefined,
   });
 
-  const bookings = data?.data?.content ?? [];
-  const totalCount = data?.data?.totalElements ?? 0;
+  const bookings = data?.data?.content?.content ?? [];
+  const totalCount = data?.data?.content?.totalElements ?? 0;
 
   useEffect(() => {
     setCurrentPage(1);
@@ -54,37 +54,35 @@ export default function BookingHistory({
           imageSize="w-[120px] sm:w-[150px] lg:w-[182px]"
         />
       ) : (
-        <div className="overflow-auto rounded-2xl border border-grey-200 bg-white">
-          <table className="block w-full min-w-full lg:table lg:divide-y lg:divide-grey-200">
-            <TableHead tableHeadItems={bookingHistoryTableHeadItems} />
-            <tbody className="block lg:table-row-group lg:divide-y lg:divide-grey-200">
-              {bookings.map((booking) => (
-                <tr
-                  key={booking.bookingId}
-                  className="mb-4 block rounded-xl border-2 border-grey-200 bg-white p-4 shadow-sm transition-all hover:border-grey-300 lg:mb-0 lg:table-row lg:rounded-none lg:border-0 lg:p-0 lg:shadow-none lg:hover:bg-grey-50"
-                >
-                  <TableCell title="Booking ID" content={booking.bookingId} />
-                  <TableCell title="Vehicle" content={booking.vehicleName} />
-                  <TableCell
-                    title="Status"
-                    content={booking.status}
-                    isBadge
-                    type="booking"
-                  />
-                  <TableCell
-                    title="Booked At"
-                    content={
-                      booking.bookedAt
-                        ? format(new Date(booking.bookedAt), "MMM dd, yyyy")
-                        : "N/A"
-                    }
-                  />
-                  <TableCell title="Purpose" content={booking.purposeOfRide || "—"} />
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Table stickyHeader>
+          <TableHead tableHeadItems={bookingHistoryTableHeadItems} sticky />
+          <TableBody>
+            {bookings.map((booking) => (
+              <TableRow key={booking.bookingId}>
+                <TableCell
+                  title="Invoice Number"
+                  content={booking.invoiceNumber || booking.bookingId || "—"}
+                />
+                <TableCell title="Vehicle" content={booking.vehicleName} />
+                <TableCell
+                  title="Status"
+                  content={booking.status}
+                  isBadge
+                  type="booking"
+                />
+                <TableCell
+                  title="Booked At"
+                  content={
+                    booking.bookedAt
+                      ? format(new Date(booking.bookedAt), "MMM dd, yyyy")
+                      : "N/A"
+                  }
+                />
+                <TableCell title="Purpose" content={booking.purposeOfRide || "—"} />
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       )}
       <Pagination
         currentPage={currentPage}

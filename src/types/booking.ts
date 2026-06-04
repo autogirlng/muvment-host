@@ -65,6 +65,10 @@ export interface BookingStatistics {
   pendingApprovals: number;
   rejectedBookings: number;
   approvedRequests: number;
+  /** Preferred summary fields (align with host-performance bookings summary) */
+  successfulBookings?: number;
+  pendingBookings?: number;
+  abandonedBookings?: number;
 }
 
 export enum BookingStatus  {
@@ -82,6 +86,7 @@ NO_SHOW="NO_SHOW"
 export interface BookingSegmentContent {
     segmentId: string,
     bookingId: string,
+    invoiceNumber?: string,
     vehicleId: string,
     vehicleName: string,
     createdAt: string,
@@ -135,21 +140,21 @@ export interface BookingSegments extends BaseResponse {
 
 
 export interface VehicleBookingsContent {
-
-        segmentId: string,
-        bookingId: string,
-        invoiceNumber: string,
-        vehicleUuid: string,
-        vehicleId: string,
-        vehicleName: string,
-        createdAt: string,
-        customerName: string,
-        bookingType: string,
-        city: string,
-        duration: string,
-        bookingStatus: BookingStatus,
-        price: number
-  
+        segmentId: string;
+        bookingId: string;
+        invoiceNumber: string;
+        vehicleUuid: string;
+        vehicleId: string;
+        vehicleName: string;
+        createdAt: string;
+        customerName: string;
+        bookingType?: string;
+        bookingTypeName?: string;
+        city: string;
+        duration: string;
+        bookingStatus: BookingStatus;
+        price: number;
+        bookingCategory?: string;
 }
 
 export interface VehicleBookings extends BaseResponse {

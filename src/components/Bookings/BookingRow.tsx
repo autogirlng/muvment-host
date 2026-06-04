@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BookingSegmentContent, BookingStatus } from "@/types";
-import { Popup, Icons } from "@/ui";
-import TableCell from "@/components/Table/TableCell";
+import { Popup, MoreButton } from "@/ui";
+import { TableCell, TableRow } from "@/components/Table";
 import DeclineTrip from "@/components/Bookings/modals/DeclineTrip";
 import AcceptTrip from "@/components/Bookings/modals/AcceptTrip";
 import useBookingActions from "@/hooks/bookings/useBookingActions";
@@ -34,11 +34,7 @@ function BookingActionsMenu({
 }: BookingActionsMenuProps) {
     return (
         <Popup
-            trigger={
-                <button className="block w-fit rounded-lg border border-grey-200 bg-white p-2 text-black">
-                    {Icons.ic_more}
-                </button>
-            }
+            trigger={<MoreButton className="!mx-0" />}
             content={
                 <>
                     <p className="!text-xs 3xl:!text-base !font-semibold">Actions</p>
@@ -109,19 +105,22 @@ const BookingRow = ({ items }: { items: BookingSegmentContent }) => {
     };
 
     return (
-        <tr className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
+        <TableRow>
             <td className="order-first mb-2 flex w-full justify-end border-0 px-0 py-0 lg:hidden">
                 <BookingActionsMenu {...actionsMenuProps} />
             </td>
             <TableCell title="Vehicle" content={items?.vehicleName} />
-            <TableCell title="Booking ID" content={items?.bookingId} />
+            <TableCell
+                title="Invoice Number"
+                content={items?.invoiceNumber || items?.bookingId || "—"}
+            />
             <TableCell title="Booking Type" content={items?.bookingCategory} />
             <TableCell title="Duration" content={formatDurationLabel(items?.duration)} />
             <TableCell title="Status" content={items?.bookingStatus} isBadge type="booking" />
-            <td className="hidden px-6 py-[26px] lg:table-cell lg:w-fit">
+            <td className="hidden px-5 py-4 lg:table-cell lg:w-fit">
                 <BookingActionsMenu {...actionsMenuProps} />
             </td>
-        </tr>
+        </TableRow>
     );
 };
 

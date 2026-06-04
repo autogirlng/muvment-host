@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { BookingSegmentContent, BookingStatus } from "@/types";
-import { Popup, Icons } from "@/ui";
-import TableCell from "@/components/Table/TableCell";
+import { Popup, MoreButton } from "@/ui";
+import { TableCell, TableRow } from "@/components/Table";
 import DeclineTrip from "@/components/Bookings/modals/DeclineTrip";
 import AcceptTrip from "@/components/Bookings/modals/AcceptTrip";
 import useBookingActions from "@/hooks/bookings/useBookingActions";
@@ -24,12 +24,15 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
   } = useBookingActions({ id: items.bookingId });
 
   return (
-    <tr className="hover:bg-grey-50">
+    <TableRow className="lg:hover:bg-grey-50/80">
       <TableCell
         content={items?.customerName}
         className="!font-semibold !text-grey-900"
       />
-      <TableCell content={items?.bookingId} className="!text-grey-600" />
+      <TableCell
+        content={items?.invoiceNumber || items?.bookingId || "—"}
+        className="!text-grey-600"
+      />
       <TableCell content={items?.bookingCategory} className="!text-grey-600" />
       <TableCell
         content={formatDurationLabel(items?.duration)}
@@ -40,13 +43,9 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
       <TableCell content="" className="!text-grey-600" />
       <TableCell content={items?.bookingStatus} isBadge type="booking" />
       <TableCell content={`NGN ${items?.price}`} className="!text-grey-600" />
-      <td className="px-6 py-[26px]">
+      <td className="px-5 py-4">
         <Popup
-          trigger={
-            <button className="mx-auto block w-fit rounded-lg border border-grey-200 bg-white p-2 text-black">
-              {Icons.ic_more}
-            </button>
-          }
+          trigger={<MoreButton />}
           content={
             <>
               <p className="!text-xs !font-semibold 3xl:!text-base">Actions</p>
@@ -94,7 +93,7 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
           }
         />
       </td>
-    </tr>
+    </TableRow>
   );
 };
 

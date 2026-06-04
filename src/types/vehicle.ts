@@ -89,10 +89,14 @@ export interface VehicleOnboardingStepsHookProps  {
     setPhotoTipIndex?: Dispatch<SetStateAction<number>>
 }
 
-export  interface VehicleInfoState {
+export interface ModelOption extends Option {
+    makeId: string;
+}
+
+export interface VehicleInfoState {
     vehicleTypes: Option[],
     vehicleMakes: Option[],
-    vehicleModels: Option[]
+    vehicleModels: ModelOption[]
 }
 
 export interface BasicVehicleInformationValues {
@@ -107,7 +111,8 @@ export interface BasicVehicleInformationValues {
   yearOfRelease: number,
   hasInsurance: string,
   hasTracker: string
-  isVehicleUpgraded:string
+  isVehicleUpgraded: string,
+  yearOfUpgrade?: number,
 }
 
 
@@ -210,44 +215,54 @@ export interface VehiclePricing {
 }
 
 export interface VehicleInformationStepper {
-    id:string,
-    vehicleIdentifier: string,
-    ownerId: string,
-    name: string,
-    city: string,
-    address: string,
-    latitude: number,
-    longitude:number,
-    vehicleTypeId: string,
-    vehicleMakeId: string,
-    vehicleModelId: string,
-    yearOfRelease: number,
-    hasInsurance: boolean,
-    hasTracker:boolean,
-    status: VehicleStatus,
-    willProvideDriver: boolean,
-    willProvideFuel: boolean,
-    photos: CloudinaryPhotoUpload[],
-    documents: any[],
-    features: VehicleFeatures[],
-    supportedBookingTypes: BookingTypeData[],
-    pricing: VehiclePricing[],
-    discounts: VehicleDiscounts[],
-    outOfBoundsAreaIds: string[]
-    licensePlateNumber: string,
-    stateOfRegistration: string,
-    vehicleColorId: string,
-    numberOfSeats: number,
-    description: string,
-    maxTripDurationUnit: string,
-    maxTripDurationValue: number,
-    advanceNoticeUnit: string,
-    advanceNoticeValue: number,
-    extraHourlyRate: number,
-    outskirtFee: number,
-    extremeFee: number,
-        
-    }
+    id: string;
+    slug?: string;
+    vehicleIdentifier: string;
+    vehicleTypeName?: string;
+    ownerId: string;
+    name: string;
+    city: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    vehicleTypeId: string;
+    vehicleMakeId: string;
+    vehicleModelId: string;
+    yearOfRelease: number;
+    hasInsurance: boolean;
+    hasTracker: boolean;
+    isVehicleUpgraded?: boolean;
+    status: VehicleStatus;
+    willProvideDriver: boolean;
+    willProvideFuel: boolean;
+    photos: CloudinaryPhotoUpload[];
+    documents: { id: string; documentType: string; cloudinaryUrl: string; cloudinaryPublicId: string }[];
+    features: VehicleFeatures[];
+    supportedBookingTypes: BookingTypeData[];
+    pricing: VehiclePricing[];
+    discounts: { id: string; discountDurationId: string; discountDurationName: string; percentage: number }[];
+    outOfBoundsAreaIds: string[];
+    outOfBoundsAreas?: { id: string; name: string }[];
+    supportedStates?: { id: string; stateId: string; stateName: string; countryName: string; surchargeFee: number }[];
+    licensePlateNumber: string;
+    stateOfRegistration: string;
+    vehicleColorId: string;
+    numberOfSeats: number;
+    description: string;
+    maxTripDurationUnit: string;
+    maxTripDurationValue: number;
+    advanceNoticeUnit: string;
+    advanceNoticeValue: number;
+    extraHourlyRate: number;
+    outskirtFee: number;
+    extremeFee: number;
+    vehicleMake?: { id: string; name: string; code: string };
+    vehicleModel?: { id: string; name: string; code: string };
+    vehicleType?: { id: string; name: string };
+    vehicleColor?: { id: string; name: string; hexCode: string };
+    createdAt?: string;
+    updatedAt?: string;
+}
 
     export interface VehicleFeatures  {
         id: string,

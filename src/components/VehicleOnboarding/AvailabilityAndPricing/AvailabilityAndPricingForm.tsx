@@ -33,10 +33,16 @@ const AvailabilityAndPricingForm = ({
     const [geoFenceAreas, setGeoFencedAreas] = useState<{ option: string, value: string }[]>()
 
     const fetchAvailabilityAndPricingInfo = async () => {
+        const stateId = typeof window !== "undefined"
+            ? sessionStorage.getItem("vehicleStateId") ?? ""
+            : "";
+        const geoFenceUrl = stateId
+            ? `/geofence-areas?stateId=${stateId}`
+            : "/geofence-areas";
 
         const [bookingTypesRes, geoFenceAreasRes] = await Promise.all([
             http.get<BookingTypeResponse>("/booking-types"),
-            http.get<GeoFenceAreaResponse>("/geofence-areas")
+            http.get<GeoFenceAreaResponse>(geoFenceUrl),
         ])
 
         const bookingTypes = bookingTypesRes?.data.map((booking) => {
@@ -119,7 +125,7 @@ const AvailabilityAndPricingForm = ({
                                     label="Minimum trip duration"
                                     placeholder="1 day"
                                     variant="outlined"
-                                    options={[{ value: "1 day", option: "1 day" }]}
+                                    options={[{ value: "1", option: "1 day" }]}
                                     value={"1"}
                                     disabled
                                     info
@@ -250,7 +256,7 @@ const AvailabilityAndPricingForm = ({
                     <div>
                         <div className="flex justify-between gap-3">
                             <p className="text-h6 3xl:text-h5 font-medium text-black flex justify-between items-center gap-1">
-                                Do You Charge Extra For Outskirt & Extreme Locations?
+                                Restricted Area AKA, NO GO AREA.
                                 <Tooltip
                                     title="Do you charge extra for outskirt locations?"
                                     description={`Do you charge extra for Outskirt & Extreme locations? Outskirts & Extreme locations

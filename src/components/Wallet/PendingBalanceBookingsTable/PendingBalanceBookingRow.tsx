@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { format } from "date-fns";
 import type { ReactNode } from "react";
 import type { HostBookingDeduction, HostPendingBalanceBooking } from "@/types";
-import { Icons, Popup } from "@/ui";
-import TableCell from "@/components/Table/TableCell";
+import { Popup, MoreButton } from "@/ui";
+import { TableCell, TableRow } from "@/components/Table";
 import { formatNgnAmount } from "@/utils/formatters";
+import { downloadPayoutReceipt } from "@/utils/functions/downloadPayoutReceipt";
+import PayoutDetailsModal, { paymentBadgeStatus } from "@/components/Wallet/PayoutDetailsModal";
 
 export default function PendingBalanceBookingRow({
   item,
@@ -12,9 +15,10 @@ export default function PendingBalanceBookingRow({
   item: HostPendingBalanceBooking;
   actions?: (deduction: HostBookingDeduction) => ReactNode;
 }) {
+  const [detailsOpen, setDetailsOpen] = useState(false);
+
   const dateDisplay =
-    item.bookingDate &&
-    !Number.isNaN(new Date(item.bookingDate).getTime())
+    item.bookingDate && !Number.isNaN(new Date(item.bookingDate).getTime())
       ? `${format(new Date(item.bookingDate), "MMM d, yyyy")} · ${format(new Date(item.bookingDate), "hh:mma")}`
       : "-";
 
@@ -22,6 +26,7 @@ export default function PendingBalanceBookingRow({
     typeof item.hostPaymentStatus === "string"
       ? item.hostPaymentStatus.replace(/_/g, " ").toLowerCase()
       : "-";
+
   const deductions = item.deductions ?? [];
   const deductionSummary =
     deductions.length > 0
@@ -35,75 +40,77 @@ export default function PendingBalanceBookingRow({
           .join(", ")
       : "None";
 
+  // Receipt download only allowed once the payout is no longer pending
+  const payoutStatus = paymentBadgeStatus(item.hostPaymentStatus);
+  const isPending = payoutStatus === "pending";
+
   return (
-    <tr className="block lg:table-row bg-white border-2 border-grey-200 lg:border-none hover:border-grey-300 lg:hover:bg-grey-50 rounded-xl lg:rounded-none mb-4 lg:mb-0 p-4 lg:p-0 shadow-sm lg:shadow-none transition-all">
-      <TableCell
-        title="Invoice"
-        content={item.invoiceNumber ?? "-"}
-        className="text-grey-900 !font-semibold"
-      />
-      <TableCell title="Vehicle" content={item.vehicleName ?? "-"} className="text-grey-900" />
-      <TableCell title="Booking date" content={dateDisplay} className="text-grey-900" />
-      {/* <TableCell
-        content={`₦${formatNgnAmount(Number(item.basePrice) || 0)}`}
-        className="text-grey-900 tabular-nums"
-      /> */}
-      <TableCell title="Deductions" content={deductionSummary} className="capitalize text-grey-900" />
-      <TableCell
-        title="Pending payments"
-        content={`₦${formatNgnAmount(Number(item.toPayToHost) || 0)}`}
-        className="text-grey-900 !font-semibold tabular-nums"
-      />
-      <TableCell title="Payment status" content={status} className="capitalize text-grey-900" />
-      <td className="px-4 py-3 lg:px-6 lg:py-[26px] block lg:table-cell w-full lg:w-fit text-sm text-grey-700">
-        <div className="flex items-center justify-between gap-5 lg:block">
-          <span className="font-semibold text-grey-500 lg:hidden w-1/2 break-words text-left">
-            Actions
-          </span>
-          <Popup
-            trigger={
-              <button
-                type="button"
-                className="block border border-grey-200 bg-white text-black rounded-lg p-2 w-fit ml-auto lg:mx-auto"
-              >
-                {Icons.ic_more}
-              </button>
-            }
-            content={
-              <>
-                <p className="!text-xs 3xl:!text-base !font-semibold">Booking</p>
-                <ul className="space-y-2 *:py-2 text-xs text-grey-600">
-                  <li>ID: {item.bookingId}</li>
-                  {item.geofenceSurcharge != null && (
-                    <li>Geofence surcharge: ₦{formatNgnAmount(item.geofenceSurcharge)}</li>
-                  )}
-                  {item.adminDeduction != null && item.adminDeduction !== 0 && (
-                    <li>Admin deduction: ₦{formatNgnAmount(item.adminDeduction)}</li>
-                  )}
+    <>
+      <TableRow>
+        <TableCell
+          title="Invoice"
+          content={item.invoiceNumber ?? "-"}
+          className="text-grey-900 !font-semibold"
+        />
+        <TableCell title="Vehicle" content={item.vehicleName ?? "-"} className="text-grey-900" />
+        <TableCell title="Booking date" content={dateDisplay} className="text-grey-900" />
+        <TableCell title="Deductions" content={deductionSummary} className="capitalize text-grey-900" />
+        <TableCell
+          title="Pending payments"
+          content={`₦${formatNgnAmount(Number(item.toPayToHost) || 0)}`}
+          className="text-grey-900 !font-semibold tabular-nums"
+        />
+        <TableCell title="Payment status" content={status} className="capitalize text-grey-900" />
+        <td className="px-4 py-3.5 lg:px-5 lg:py-4 block lg:table-cell w-full lg:w-fit text-sm text-grey-700">
+          <div className="flex items-center justify-between gap-5 lg:block">
+            <span className="font-medium text-grey-500 lg:hidden w-[42%] text-xs uppercase tracking-wide">
+              Actions
+            </span>
+            <Popup
+              align="end"
+              trigger={<MoreButton className="!mx-0 ml-auto lg:mx-auto" />}
+              content={
+                <ul className="min-w-[190px] space-y-1">
                   <li>
-                    <p className="font-semibold text-grey-700">Deductions</p>
-                    {deductions.length > 0 ? (
-                      <ul className="mt-2 space-y-2">
-                        {deductions.map((deduction) => (
-                          <li key={deduction.id} className="space-y-2">
-                            <div>
-                              {deduction.type.replace(/_/g, " ").toLowerCase()}: ₦
-                              {formatNgnAmount(Number(deduction.amount) || 0)}
-                            </div>
-                            {actions?.(deduction)}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <span>None</span>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => setDetailsOpen(true)}
+                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
+                    >
+                      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" className="shrink-0 text-primary-500">
+                        <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" strokeWidth="1.3" />
+                        <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.3" />
+                      </svg>
+                      View Payout Details
+                    </button>
                   </li>
+                  {!isPending && (
+                    <li>
+                      <button
+                        type="button"
+                        onClick={() => downloadPayoutReceipt(item)}
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
+                      >
+                        <svg width="15" height="15" viewBox="0 0 16 16" fill="none" className="shrink-0 text-primary-500">
+                          <path d="M8 1v9m0 0L5 7m3 3l3-3M2 13h12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                        Download Payout Receipt
+                      </button>
+                    </li>
+                  )}
                 </ul>
-              </>
-            }
-          />
-        </div>
-      </td>
-    </tr>
+              }
+            />
+          </div>
+        </td>
+      </TableRow>
+
+      <PayoutDetailsModal
+        item={item}
+        open={detailsOpen}
+        onOpenChange={setDetailsOpen}
+        actions={actions}
+      />
+    </>
   );
 }

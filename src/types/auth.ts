@@ -29,6 +29,7 @@ export interface SignupFormValues {
   phoneNumber: string,
   userType: "HOST",
   referralCode?: string,
+  inviteToken?: string,
   country: string;
   countryCode: string;
   password_checks?: PasswordChecks;

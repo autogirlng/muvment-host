@@ -80,40 +80,49 @@ export default function SignupPage() {
                                     }
                                 />
                             </div>
-                            <PhoneNumberAndCountryField
-                                inputName="phoneNumber"
-                                selectName="country"
-                                inputId="phoneNumber"
-                                selectId="country"
-                                label="Phone Number"
-                                inputPlaceholder="Enter phone number"
-                                selectPlaceholder="+234"
-                                inputValue={values.phoneNumber}
-                                selectValue={values.country}
-                                inputOnChange={(event) => {
-                                    const number = replaceCharactersWithString(
-                                        event.target.value
-                                    );
-                                    setFieldTouched("phoneNumber", true);
-                                    setFieldValue("phoneNumber", number);
-                                }}
-                                selectOnChange={(value: string) => {
-                                    const countryCode = `+${getCountryCallingCode(value as any)}`;
-                                    setFieldValue("country", value);
-                                    setFieldValue("countryCode", countryCode);
-                                }}
-                                inputOnBlur={handleBlur}
-                                selectOnBlur={handleBlur}
-                                selectClassname="!w-[130px]"
-                                inputError={
-                                    errors.phoneNumber && touched.phoneNumber
-                                        ? errors.phoneNumber
-                                        : ""
-                                }
-                                selectError={
-                                    errors.country && touched.country ? errors.country : ""
-                                }
-                            />
+                            <div className="space-y-1.5">
+                                <PhoneNumberAndCountryField
+                                    inputName="phoneNumber"
+                                    selectName="country"
+                                    inputId="phoneNumber"
+                                    selectId="country"
+                                    label="Phone Number"
+                                    inputPlaceholder="e.g. 08012345678"
+                                    selectPlaceholder="+234"
+                                    inputValue={values.phoneNumber}
+                                    selectValue={values.country}
+                                    inputOnChange={(event) => {
+                                        const number = replaceCharactersWithString(
+                                            event.target.value
+                                        );
+                                        setFieldTouched("phoneNumber", true);
+                                        setFieldValue("phoneNumber", number);
+                                    }}
+                                    selectOnChange={(value: string) => {
+                                        const countryCode = `+${getCountryCallingCode(value as any)}`;
+                                        setFieldValue("country", value);
+                                        setFieldValue("countryCode", countryCode);
+                                    }}
+                                    inputOnBlur={handleBlur}
+                                    selectOnBlur={handleBlur}
+                                    selectClassname="!w-[130px]"
+                                    info
+                                    tooltipTitle="How to enter your number"
+                                    tooltipDescription="Select your country, then type your full local number including the leading 0 — e.g. 08012345678. Don't add the country code; it's selected separately."
+                                    inputError={
+                                        errors.phoneNumber && touched.phoneNumber
+                                            ? errors.phoneNumber
+                                            : ""
+                                    }
+                                    selectError={
+                                        errors.country && touched.country ? errors.country : ""
+                                    }
+                                />
+                                <p className="text-xs text-grey-500">
+                                    Enter your full number with the leading 0 (e.g. 08012345678). The country
+                                    code (+234) is set by the selector — don&apos;t include it in the number.
+                                </p>
+                            </div>
 
                             <InputField
                                 name="email"

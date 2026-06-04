@@ -1,6 +1,6 @@
 import { bookingAnalyticsTableHeadItems } from "@/utils/data";
 import { BookingSegmentContent } from "@/types";
-import TableHead from "@/components/Table/TableHead";
+import { Table, TableBody, TableHead } from "@/components/Table";
 import EmptyState from "@/components/EmptyState";
 import BookingDesktopRow from "@/components/Bookings/BookingDesktopRow";
 import BookingMobileRow from "@/components/Bookings/BookingMobileRow";
@@ -15,23 +15,23 @@ export default function BookingAnalyticsTable({
   emptyStateTitle?: string;
 }) {
   return items.length > 0 ? (
-    <div className="overflow-auto rounded-2xl border border-grey-200 bg-white">
-      <table className="hidden w-full min-w-full divide-y divide-grey-200 lg:table">
-        <TableHead tableHeadItems={bookingAnalyticsTableHeadItems} />
-        <tbody className="divide-y divide-grey-200 bg-white">
+    <>
+      <Table className="hidden lg:block" stickyHeader>
+        <TableHead tableHeadItems={bookingAnalyticsTableHeadItems} sticky />
+        <TableBody>
           {items?.map((item, index) => (
             <BookingDesktopRow key={index} items={item} />
           ))}
-        </tbody>
-      </table>
-      <div className="divide-y divide-grey-200 lg:hidden">
+        </TableBody>
+      </Table>
+      <div className="divide-y divide-grey-100 rounded-2xl border border-grey-200 bg-white lg:hidden">
         {items?.map((item, index) => (
           <div key={index} className="px-4 py-4">
             <BookingMobileRow items={item} />
           </div>
         ))}
       </div>
-    </div>
+    </>
   ) : (
     <EmptyState
       title={emptyStateTitle || "No Data Yet"}

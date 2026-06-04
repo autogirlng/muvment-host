@@ -1,11 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useAppSelector } from "@/lib/hooks";
 import dynamic from "next/dynamic";
 import HostRolePrompt from "@/components/Mou/HostRolePrompt";
 import MouModal from "@/components/Mou/MouModal";
 import DashboardHero from "@/components/DashBoard/DashboardHero";
-import AccountSetupBanner from "@/components/DashBoard/AccountSetupBanner";
+import KycStepper from "@/components/DashBoard/KycStepper";
 
 const AccountActivity = dynamic(
   () => import("@/components/AccountActivity/index"),
@@ -20,6 +21,7 @@ const BookingsOverview = dynamic(
 
 export default function DashboardPage() {
   const { user } = useAppSelector((state) => state.user);
+  const [mouTrigger, setMouTrigger] = useState(0);
 
   const userData = user?.data as any;
   const role =
@@ -36,9 +38,9 @@ export default function DashboardPage() {
 
       {isHost && (
         <>
-          <MouModal />
+          <MouModal trigger={mouTrigger} />
           <DashboardHero firstName={user?.data.firstName || "Host"} />
-          {!user?.data.phoneVerified && <AccountSetupBanner progress={0} />}
+          <KycStepper onSignMou={() => setMouTrigger((t) => t + 1)} />
           <AccountActivity />
           <BookingsOverview />
         </>

@@ -23,9 +23,6 @@ export default function AccountActivity() {
             icon={<DollarIcon />}
             iconTone="purple"
             valueTone="primary"
-            modalTitle="Show Graph"
-            modalName="graph"
-            modalIcon={Icons.ic_chart}
             isLoading={isLoading}
           />
           <DashboardStatCard
@@ -38,9 +35,6 @@ export default function AccountActivity() {
           <DashboardStatCard
             title="Total Completed Rides"
             value={`${dashboardStats?.totalCompletedRides ?? "-"}`}
-            modalTitle="Show Reviews"
-            modalName="review"
-            modalIcon={Icons.ic_star_square}
             icon={Icons.ic_wheel}
             iconTone="blue"
             isLoading={isLoading}
