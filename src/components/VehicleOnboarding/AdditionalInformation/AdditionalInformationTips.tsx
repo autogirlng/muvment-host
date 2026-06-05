@@ -17,7 +17,7 @@ const AdditionalInformationTips = () => {
                     renters!
                 </li>
             </ul>
-        </div>
+        </div> 
     );
 };
 

@@ -69,7 +69,17 @@ export default function ListingDetailPage() {
   const v = listingDetail as VehicleInformationStepper;
 
   const tabs = [
-    { name: "Driver details", value: "tab1", content: <DriversDetails id={id} /> },
+    {
+      name: "Driver details",
+      value: "tab1",
+      content: (
+        <DriversDetails
+          id={id}
+          assignedDriver={v.assignedDriver}
+          vehicleName={v.name}
+        />
+      ),
+    },
     { name: "Unavailability", value: "tab2", content: <VehicleUnavailability vehicleId={id} /> },
   ];
 
@@ -78,7 +88,15 @@ export default function ListingDetailPage() {
       <div className="listing-details-scroll min-w-0 w-full max-w-full flex-1 space-y-6 overflow-x-hidden py-6 sm:py-8 lg:max-h-[calc(100dvh-5.5rem)] lg:overflow-y-auto lg:overflow-x-hidden lg:overscroll-contain lg:py-8 lg:pr-1 hide-scrollbar">
 
         {/* Header */}
-        <ListingDetailsHeader name={v.name} id={v.id} status={v.status} />
+        <ListingDetailsHeader
+          name={v.name}
+          id={v.id}
+          slug={v.slug}
+          status={v.status}
+          vehicleTypeName={v.vehicleTypeName}
+          vehicleType={v.vehicleType}
+          supportedBookingTypes={v.supportedBookingTypes}
+        />
 
         {/* Vehicle identifier */}
         {v.vehicleIdentifier && (

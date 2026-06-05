@@ -67,3 +67,9 @@ export const passwordChecks: { label: string; check: PasswordCheckKey }[] = [
 export enum UserType {
   HOST="HOST"
 }
+
+/** Sentinel value for unselected vehicle make in onboarding selects */
+export const VEHICLE_MAKE_PLACEHOLDER = "select-make";
+
+/** Sentinel value for other unselected onboarding dropdowns */
+export const VEHICLE_SELECT_PLACEHOLDER = "select-option";

@@ -160,7 +160,6 @@ export default function DriverDetailPage() {
           </div>
           <div>
             <h1 className="text-xl font-bold text-grey-900">{driver.fullName}</h1>
-            <p className="font-mono text-xs text-grey-400">{driver.driverIdentifier}</p>
             <span
               className={`mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                 driver.active ? "bg-success-50 text-success-600" : "bg-grey-90 text-grey-500"
@@ -300,7 +299,6 @@ export default function DriverDetailPage() {
               firstName: first,
               lastName: last,
               phoneNumber: driver.phoneNumber,
-              driverIdentifier: driver.driverIdentifier,
               licenseNumber: driver.licenseNumber,
               licenseExpiryDate: driver.licenseExpiryDate,
             }}
@@ -311,7 +309,6 @@ export default function DriverDetailPage() {
                   firstName: values.firstName,
                   lastName: values.lastName,
                   phoneNumber: values.phoneNumber,
-                  driverIdentifier: values.driverIdentifier,
                   licenseNumber: values.licenseNumber,
                   licenseExpiryDate: values.licenseExpiryDate,
                 },

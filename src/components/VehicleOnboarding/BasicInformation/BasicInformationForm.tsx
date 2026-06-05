@@ -10,6 +10,22 @@ import {
     citiesOptions,
     yesOrNoOptions,
 } from "@/utils/data";
+import {
+    VEHICLE_MAKE_PLACEHOLDER,
+    VEHICLE_SELECT_PLACEHOLDER,
+} from "@/utils/constants";
+
+const yesNoSelectOptions = [
+    { option: "Select an option", value: VEHICLE_SELECT_PLACEHOLDER },
+    ...yesOrNoOptions,
+];
+
+function toSelectDisplayValue(
+    value: string,
+    placeholder: string
+): string | undefined {
+    return value && value !== placeholder ? value : undefined;
+}
 
 const currentYear = new Date().getFullYear();
 const upgradeYearOptions = Array.from(
@@ -170,10 +186,13 @@ const BasicVehicleInformationForm = ({
                             placeholder="Select vehicle type"
                             variant="outlined"
                             options={vehicleOptions.vehicleTypes}
-                            value={values.vehicleTypeId}
+                            value={toSelectDisplayValue(
+                                values.vehicleTypeId,
+                                VEHICLE_SELECT_PLACEHOLDER
+                            )}
                             onChange={(value: string) => {
-                                setFieldTouched("vehicleTypeId", true);
-                                setFieldValue("vehicleTypeId", value);
+                                setFieldValue("vehicleTypeId", value, true);
+                                setFieldTouched("vehicleTypeId", true, false);
                             }}
                             error={
                                 errors.vehicleTypeId && touched.vehicleTypeId
@@ -191,12 +210,18 @@ const BasicVehicleInformationForm = ({
                             placeholder="Select vehicle make"
                             variant="outlined"
                             options={vehicleOptions.vehicleMakes}
-                            value={values.vehicleMakeId}
+                            value={toSelectDisplayValue(
+                                values.vehicleMakeId,
+                                VEHICLE_MAKE_PLACEHOLDER
+                            )}
                             onChange={(value: string) => {
-                                setFieldTouched("vehicleMakeId", true);
-                                setFieldValue("vehicleMakeId", value);
-                                // Reset model when make changes
-                                setFieldValue("vehicleModelId", "");
+                                setFieldValue("vehicleMakeId", value, true);
+                                setFieldTouched("vehicleMakeId", true, false);
+                                setFieldValue(
+                                    "vehicleModelId",
+                                    VEHICLE_SELECT_PLACEHOLDER,
+                                    false
+                                );
                             }}
                             error={errors.vehicleMakeId && touched.vehicleMakeId ? errors.vehicleMakeId : ""}
                             info
@@ -209,19 +234,28 @@ const BasicVehicleInformationForm = ({
                         <SelectInput
                             id="model"
                             label="Vehicle Model"
-                            placeholder={values.vehicleMakeId ? "Select vehicle model" : "Select a make first"}
+                            placeholder={
+                                values.vehicleMakeId &&
+                                values.vehicleMakeId !== VEHICLE_MAKE_PLACEHOLDER
+                                    ? "Select vehicle model"
+                                    : "Select a make first"
+                            }
                             variant="outlined"
                             options={
-                                values.vehicleMakeId
+                                values.vehicleMakeId &&
+                                values.vehicleMakeId !== VEHICLE_MAKE_PLACEHOLDER
                                     ? vehicleOptions.vehicleModels.filter(
                                           (m) => m.makeId === values.vehicleMakeId
                                       )
                                     : []
                             }
-                            value={values.vehicleModelId}
+                            value={toSelectDisplayValue(
+                                values.vehicleModelId,
+                                VEHICLE_SELECT_PLACEHOLDER
+                            )}
                             onChange={(value: string) => {
-                                setFieldTouched("vehicleModelId", true);
-                                setFieldValue("vehicleModelId", value);
+                                setFieldValue("vehicleModelId", value, true);
+                                setFieldTouched("vehicleModelId", true, false);
                             }}
                             error={errors.vehicleModelId && touched.vehicleModelId ? errors.vehicleModelId : ""}
                             info
@@ -235,10 +269,10 @@ const BasicVehicleInformationForm = ({
                             placeholder="Select year of release"
                             variant="outlined"
                             options={yearOfReleaseOptions}
-                            value={`${values.yearOfRelease}`}
+                            value={values.yearOfRelease ? String(values.yearOfRelease) : ""}
                             onChange={(value: string) => {
-                                setFieldTouched("yearOfRelease", true);
-                                setFieldValue("yearOfRelease", value);
+                                setFieldValue("yearOfRelease", Number(value), true);
+                                setFieldTouched("yearOfRelease", true, false);
                             }}
                             error={
                                 errors.yearOfRelease && touched.yearOfRelease
@@ -259,11 +293,11 @@ const BasicVehicleInformationForm = ({
                             label="Does your vehicle have insurance?"
                             placeholder="Select an option"
                             variant="outlined"
-                            options={yesOrNoOptions}
+                            options={yesNoSelectOptions}
                             value={values.hasInsurance}
                             onChange={(value: string) => {
-                                setFieldTouched("hasInsurance", true);
-                                setFieldValue("hasInsurance", value);
+                                setFieldValue("hasInsurance", value, true);
+                                setFieldTouched("hasInsurance", true, false);
                             }}
                             error={
                                 errors.hasInsurance && touched.hasInsurance
@@ -280,11 +314,11 @@ const BasicVehicleInformationForm = ({
                             label="Does your vehicle have a tracker?"
                             placeholder="Select an option"
                             variant="outlined"
-                            options={yesOrNoOptions}
+                            options={yesNoSelectOptions}
                             value={values.hasTracker}
                             onChange={(value: string) => {
-                                setFieldTouched("hasTracker", true);
-                                setFieldValue("hasTracker", value);
+                                setFieldValue("hasTracker", value, true);
+                                setFieldTouched("hasTracker", true, false);
                             }}
                             error={
                                 errors.hasTracker && touched.hasTracker ? errors.hasTracker : ""
@@ -302,13 +336,13 @@ const BasicVehicleInformationForm = ({
                             label="Is your vehicle upgraded?"
                             placeholder="Select an option"
                             variant="outlined"
-                            options={yesOrNoOptions}
+                            options={yesNoSelectOptions}
                             value={values.isVehicleUpgraded}
                             onChange={(value: string) => {
-                                setFieldTouched("isVehicleUpgraded", true);
-                                setFieldValue("isVehicleUpgraded", value);
+                                setFieldValue("isVehicleUpgraded", value, true);
+                                setFieldTouched("isVehicleUpgraded", true, false);
                                 if (value === "no") {
-                                    setFieldValue("yearOfUpgrade", undefined);
+                                    setFieldValue("yearOfUpgrade", undefined, false);
                                 }
                             }}
                             error={

@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { Transaction, TransactionType } from "@/types";
+import { getBookingDisplayId } from "@/utils/displayIds";
 import { Popup, Icons, MoreButton } from "@/ui";
 import { TableCell, TableRow } from "@/components/Table";
 import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "@/components/Table/tableStyles";
@@ -20,7 +21,7 @@ const TransactionRow = ({ items }: { items: Transaction }) => {
                 className="text-grey-900"
             />
             <TableCell
-                content={items?.bookingId || "-"}
+                content={getBookingDisplayId(items)}
                 className="text-primary-500"
             />
             <TableCell

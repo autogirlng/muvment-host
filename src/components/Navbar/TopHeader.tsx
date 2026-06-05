@@ -35,20 +35,40 @@ export function TopHeader() {
         setPopupIsOpen(false);
     }, [pathname]);
 
+    const formatSegmentTitle = (segment: string) =>
+        segment
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+
+    const isOpaqueRouteId = (segment: string) =>
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+            segment
+        ) || /^[0-9a-f]{24}$/i.test(segment);
+
     const getHeaderTitle = () => {
         if (pathname === "/dashboard") return "Dashboard";
         if (pathname.startsWith("/listings")) return "Listings";
+        if (pathname.startsWith("/bookings")) return "Bookings";
         if (pathname.startsWith("/trips")) return "Trips";
+        if (pathname.startsWith("/drivers")) return "Drivers";
+        if (pathname.startsWith("/wallet")) return "Wallet";
         if (pathname.startsWith("/notifications")) return "Notifications";
         if (pathname.startsWith("/settings/mou")) return "MOU Agreement";
         if (pathname.startsWith("/settings/account-setup")) return "Account Setup";
         if (pathname.startsWith("/settings")) return "Settings";
 
-        const currentSegment = pathname.split("/").filter(Boolean).at(-1) ?? "dashboard";
-        return currentSegment
-            .split("-")
-            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
+        const segments = pathname.split("/").filter(Boolean);
+        const currentSegment = segments.at(-1) ?? "dashboard";
+
+        if (isOpaqueRouteId(currentSegment)) {
+            const parentSegment = segments.at(-2);
+            return parentSegment
+                ? formatSegmentTitle(parentSegment)
+                : "Dashboard";
+        }
+
+        return formatSegmentTitle(currentSegment);
     };
 
     return (

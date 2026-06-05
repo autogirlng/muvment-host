@@ -1,21 +1,22 @@
 "use client";
+import { useMemo, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { handleErrors } from "@/utils/functions";
 import {
+    DocumentVehicleInformationFormValues,
     DocumentVehicleInformationValues,
     ErrorResponse,
-    // VehicleInformation,
 } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
-import { useRouter } from "next/navigation";
 import { useHttp } from "@/hooks/useHttp";
-import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
-import { useEffect, useState } from "react";
-
-
- 
+import {
+    buildDocumentInitialValues,
+    resolveDocumentsForPatch,
+} from "@/utils/vehicleOnboardingPrefill";
+import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
+import { CloudinaryDocumentUpload } from "@/types/upload";
 
 export default function useDocumentInformationForm({
     currentStep,
@@ -27,27 +28,26 @@ export default function useDocumentInformationForm({
     const http = useHttp();
     const dispatch = useAppDispatch();
     const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
-const [vehicleId, setVehicleId] = useState<string>("")
-    useEffect(()=>{
-    const id = sessionStorage.getItem("vehicleId") ?? ""
-    setVehicleId(id)
-    }, [])
-    const initialValues: DocumentVehicleInformationValues = {
-        authorizationLetter: "",
-        insuranceCertificate:  "",
-        maintenanceHistory: "",
-        proofOfOwnership: "",
-       inspectionReport:
-             "",
-        vehicleRegistration:  "",
+    const [vehicleId, setVehicleId] = useState<string>("");
+
+    useEffect(() => {
+        setVehicleId(getOnboardingVehicleId());
+    }, []);
+
+    const initialValues: DocumentVehicleInformationValues = useMemo(
+        () => buildDocumentInitialValues(vehicle),
+        [vehicle]
+    );
+
+    const existingDocuments = (vehicle?.documents ?? []) as CloudinaryDocumentUpload[];
+
+    const patchDocuments = async (values: DocumentVehicleInformationFormValues) => {
+        const documents = await resolveDocumentsForPatch(values, existingDocuments);
+        return http.patch(`/vehicles/documents?vehicleId=${vehicleId}`, { documents });
     };
 
     const saveStep5 = useMutation({
-        mutationFn: async (formData: FormData) => {
-        
-            const vehicleDocuments = (await uploadToCloudinary(formData, "documents")).filter(Boolean)
-            return http.patch(`/vehicles/documents?vehicleId=${vehicleId}`, {documents:vehicleDocuments});
-        },
+        mutationFn: patchDocuments,
         onSuccess: (data) => {
             dispatch(
                 updateVehicleInformation(
@@ -61,11 +61,7 @@ const [vehicleId, setVehicleId] = useState<string>("")
     });
 
     const submitStep5 = useMutation({
-        mutationFn: async (formData: FormData) => {
-
-            const vehicleDocuments = (await uploadToCloudinary(formData, "documents")).filter(Boolean)
-            return http.patch(`/vehicles/documents?vehicleId=${vehicleId}`, {documents:vehicleDocuments});
-        },
+        mutationFn: patchDocuments,
         onSuccess: (data) => {
             dispatch(
                 updateVehicleInformation(

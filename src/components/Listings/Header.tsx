@@ -6,9 +6,24 @@ import DeleteListing from "@/components/Listings/modals/DeleteListing";
 import DeactivateListing from "@/components/Listings/modals/DeactivateListing";
 import VehicleUnavailability from "@/components/Listings/VehicleUnavailability";
 import { ListingDetailHeaderProps } from "./props";
+import { getCustomerVehicleUrlFromListing } from "@/utils/customerApp";
 
 
-export default function ListingDetailsHeader({ name, status, id }: ListingDetailHeaderProps) {
+export default function ListingDetailsHeader({
+    name,
+    status,
+    id,
+    slug,
+    vehicleTypeName,
+    vehicleType,
+    supportedBookingTypes,
+}: ListingDetailHeaderProps) {
+    const customerVehicleUrl = getCustomerVehicleUrlFromListing({
+        slug,
+        vehicleTypeName,
+        vehicleType,
+        supportedBookingTypes,
+    });
     const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
     const [openDeactivateModal, setOpenDeactivateModal] = useState<boolean>(false);
     const [openUnavailabilityModal, setOpenUnavailabilityModal] = useState<boolean>(false);
@@ -87,14 +102,18 @@ export default function ListingDetailsHeader({ name, status, id }: ListingDetail
                                             Manage Unavailability
                                         </button>
                                     </li>
-                                    <li>
-                                        <Link
-                                            href={`/listings/view-as-customer/${id}`}
-                                            className="!text-xs 3xl:!text-base"
-                                        >
-                                            View as customer
-                                        </Link>
-                                    </li>
+                                    {customerVehicleUrl && (
+                                        <li>
+                                            <a
+                                                href={customerVehicleUrl}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="!text-xs 3xl:!text-base"
+                                            >
+                                                View as customer
+                                            </a>
+                                        </li>
+                                    )}
                                 </ul>
                             </>
                         }

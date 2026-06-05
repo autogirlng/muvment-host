@@ -61,7 +61,10 @@ export default function WalletPage() {
 
     const { useDisputeDeduction, useGetMyDisputes } = useHostDeductions();
     const disputeDeduction = useDisputeDeduction();
-    const disputes = useGetMyDisputes({ page: 0, size: 10 });
+    const disputes = useGetMyDisputes({ page: 0, size: 50 });
+    const disputedDeductionIds = new Set(
+        (disputes.data?.data.content ?? []).map((dispute) => dispute.deductionId)
+    );
 
     const currentYear = new Date().getFullYear();
     const years = Array.from({ length: 5 }, (_, i) => currentYear - i);
@@ -112,16 +115,26 @@ export default function WalletPage() {
         );
     };
 
-    const renderDisputeAction = (deduction: HostBookingDeduction) => (
-        <button
-            type="button"
-            className="text-primary-500 font-semibold hover:text-primary-700 disabled:text-grey-400"
-            onClick={() => openDisputeDialog(deduction)}
-            disabled={disputeDeduction.isPending}
-        >
-            Dispute deduction
-        </button>
-    );
+    const renderDisputeAction = (deduction: HostBookingDeduction) => {
+        if (disputedDeductionIds.has(deduction.id)) {
+            return (
+                <span className="text-xs font-medium text-grey-500">
+                    Dispute submitted
+                </span>
+            );
+        }
+
+        return (
+            <button
+                type="button"
+                className="text-primary-500 font-semibold hover:text-primary-700 disabled:text-grey-400"
+                onClick={() => openDisputeDialog(deduction)}
+                disabled={disputeDeduction.isPending}
+            >
+                Dispute deduction
+            </button>
+        );
+    };
 
     const isPayoutTab = historyTab === "payouts";
     const tableLoading = isPayoutTab ? payoutLoading : earningLoading;
@@ -227,7 +240,10 @@ export default function WalletPage() {
                             imageSize="w-[182px] 3xl:w-[265px]"
                         />
                     ) : (
-                        <PendingBalanceBookingsTable items={payoutItems} />
+                        <PendingBalanceBookingsTable
+                            items={payoutItems}
+                            actions={renderDisputeAction}
+                        />
                     )
                 ) : (
                     <EarningHistoryTable items={earningItems} actions={renderDisputeAction} />
@@ -264,7 +280,9 @@ export default function WalletPage() {
                                     Type: {selectedDeduction.type.replace(/_/g, " ").toLowerCase()}
                                 </p>
                                 <p>Amount: ₦{formatNgnAmount(Number(selectedDeduction.amount) || 0)}</p>
-                                <p>Booking ID: {selectedDeduction.bookingId}</p>
+                                <p className="text-xs text-grey-500">
+                                    Reference: {selectedDeduction.type.replace(/_/g, " ").toLowerCase()}
+                                </p>
                             </div>
                         )}
                         <textarea

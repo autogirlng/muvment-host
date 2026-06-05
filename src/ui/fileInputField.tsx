@@ -43,9 +43,11 @@ const FileInputField = ({
     const displayValue =
         value instanceof File
             ? value.name
-            : typeof value === "string" && value !== "" // Ensure it's a non-empty string
-                ? value
-                : ""; // Fallback for empty string or null/undefined
+            : typeof value === "string" && value !== ""
+                ? value.includes("http")
+                    ? "Document uploaded"
+                    : value
+                : "";
 
     // Logic for showing the cancel icon: only if filePicker and a file/string is present
     const showClearIcon = filePicker && displayValue !== "";

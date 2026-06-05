@@ -91,6 +91,19 @@ export const useHttp = () => {
       }
     },
 
+    /** GET without error toasts — for optional data such as reviews. */
+    getSilent: async <T>(url: string, config?: AxiosRequestConfig<any>) => {
+      try {
+        const response = await http.get<T>(url, config);
+        return response.data;
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          handleAuthError(error);
+        }
+        return null;
+      }
+    },
+
     post: async <T>(
       url: string,
       data?: any,

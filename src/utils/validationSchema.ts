@@ -1,6 +1,8 @@
 import { array, object, ref, string, mixed, number, boolean } from "yup";
 import {
   emailRegEx,
+  VEHICLE_MAKE_PLACEHOLDER,
+  VEHICLE_SELECT_PLACEHOLDER,
 } from "@/utils/constants";
 import { validatePhoneNumber } from "./functions";
 
@@ -74,13 +76,27 @@ export const basicVehicleInformationSchema = object().shape({
   name: string().required("Vehicle name is required"),
   city: string().required("City is required"),
   address: string().required("Address is required"),
-  vehicleTypeId: string().required("Please select vehicle type"),
-  vehicleMakeId: string().required("Please select vehicle make"),
-  vehicleModelId: string().required("Please select vehicle model"),
-  yearOfRelease: string().required("Please select year of release"),
-  hasInsurance: string().required("Please select insurance status"),
-  hasTracker: string().required("Please select tracker status"),
-  isVehicleUpgraded: string().required("Please select upgraded status"),
+  vehicleTypeId: string()
+    .required("Please select vehicle type")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select vehicle type"),
+  vehicleMakeId: string()
+    .required("Please select vehicle make")
+    .notOneOf([VEHICLE_MAKE_PLACEHOLDER], "Please select vehicle make"),
+  vehicleModelId: string()
+    .required("Please select vehicle model")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select vehicle model"),
+  yearOfRelease: number()
+    .min(2013, "Please select year of release")
+    .required("Please select year of release"),
+  hasInsurance: string()
+    .required("Please select insurance status")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select insurance status"),
+  hasTracker: string()
+    .required("Please select tracker status")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select tracker status"),
+  isVehicleUpgraded: string()
+    .required("Please select upgraded status")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select upgraded status"),
 });
 
 export const addtionalVehicleInformationSchema = object().shape({
@@ -107,25 +123,89 @@ export const documentVehicleInformationSchema = object().shape({
   maintenanceHistory: mixed().nullable(),
   authorizationLetter: mixed().required("Authorization letter is required."),
 });
+const vehiclePhotoField = (label: string) =>
+  mixed()
+    .required(`Please upload ${label}`)
+    .test("is-photo", `Please upload ${label}`, (value) => {
+      if (value instanceof File) return true;
+      return typeof value === "string" && value.trim().length > 0;
+    });
+
 export const vehiclePhotosSchema = object().shape({
-  frontView: string().required("Please upload Front view image"),
-  backView: string().required("Please upload Back view image"),
-  sideView1: string().required("Please upload Side view image"),
-  sideView2: string().required("Please uploadSide view image"),
-  interior: string().required("Please upload Interior image"),
-  other: string().required("Please upload other image"),
+  frontView: vehiclePhotoField("Front view image"),
+  backView: vehiclePhotoField("Back view image"),
+  sideView1: vehiclePhotoField("Side view image"),
+  sideView2: vehiclePhotoField("Side view image"),
+  interior: vehiclePhotoField("Interior image"),
+  other: vehiclePhotoField("other image"),
 });
 
 export const availabilityAndPricingSchema = object().shape({
  
-  maxTripDurationValue: string().required("Maximum duration is required"),
-  advanceNoticeValue: string().required("Advance notice is required"),
-  willProvideDriver: string().required("Please select an option"),
-  willProvideFuel: string().required("Please select an option"),
+  maxTripDurationValue: number()
+    .typeError("Maximum duration is required")
+    .required("Maximum duration is required"),
+  advanceNoticeValue: number()
+    .typeError("Advance notice is required")
+    .required("Advance notice is required"),
+  willProvideDriver: string()
+    .required("Please select an option")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select an option"),
+  willProvideFuel: string()
+    .required("Please select an option")
+    .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select an option"),
+  driverMode: string().when("willProvideDriver", {
+    is: "yes",
+    then: (schema) => schema.oneOf(["existing", "new", ""]).notRequired(),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  driverId: string().when(["willProvideDriver", "driverMode"], {
+    is: (willProvideDriver: string, driverMode: string) =>
+      willProvideDriver === "yes" && driverMode === "existing",
+    then: (schema) =>
+      schema
+        .required("Please select a driver")
+        .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select a driver"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  newDriverFirstName: string().when(["willProvideDriver", "driverMode"], {
+    is: (willProvideDriver: string, driverMode: string) =>
+      willProvideDriver === "yes" && driverMode === "new",
+    then: (schema) => schema.required("First name is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  newDriverLastName: string().when(["willProvideDriver", "driverMode"], {
+    is: (willProvideDriver: string, driverMode: string) =>
+      willProvideDriver === "yes" && driverMode === "new",
+    then: (schema) => schema.required("Last name is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  newDriverPhoneNumber: string().when(["willProvideDriver", "driverMode"], {
+    is: (willProvideDriver: string, driverMode: string) =>
+      willProvideDriver === "yes" && driverMode === "new",
+    then: (schema) => schema.required("Phone number is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  newDriverLicenseNumber: string().when(["willProvideDriver", "driverMode"], {
+    is: (willProvideDriver: string, driverMode: string) =>
+      willProvideDriver === "yes" && driverMode === "new",
+    then: (schema) => schema.required("License number is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+  newDriverLicenseExpiryDate: string().when(["willProvideDriver", "driverMode"], {
+    is: (willProvideDriver: string, driverMode: string) =>
+      willProvideDriver === "yes" && driverMode === "new",
+    then: (schema) => schema.required("License expiry date is required"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
   supportedBookingTypeIds: array().min(1, "Please select at least one booking type"),
   outOfBoundsAreaIds: array().min(0),
-  outskirtFee: number().optional().min(0, "Not valid"),
-  extremeFee: number().optional().min(0, "Not valid"),
+  outskirtFee: mixed()
+    .transform((value) => (value === "" || value === null || value === undefined ? 0 : Number(value)))
+    .optional(),
+  extremeFee: mixed()
+    .transform((value) => (value === "" || value === null || value === undefined ? 0 : Number(value)))
+    .optional(),
 });
 
 export const assignNewDriverFormValidationSchema = object().shape({
@@ -137,8 +217,6 @@ export const assignNewDriverFormValidationSchema = object().shape({
       const { country } = this.parent;
       return validatePhoneNumber(val, country);
     }),
-  driverIdentifier: string().required("Please enter driver unique identifier"),
-    
   // country: string().required("Please enter your country code"),
 });
 

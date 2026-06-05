@@ -1,6 +1,8 @@
 "use client";
 import cn from "classnames";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 import BackLink from "@/components/BackLink";
 import AdditionalInformation from "@/components/VehicleOnboarding/AdditionalInformation";
 import AvailabilityAndPricing from "@/components/VehicleOnboarding/AvailabilityAndPricing";
@@ -12,7 +14,16 @@ import VehiclePhotos from "@/components/VehicleOnboarding/VehiclePhotos";
 import { FullPageSpinner, Stepper } from "@/ui";
 import { useKycStatus } from "@/hooks/useKycStatus";
 import KycRequiredNotice from "@/components/KycRequiredNotice";
-
+import { useAppSelector } from "@/lib/hooks";
+import {
+  canNavigateToOnboardingStep,
+  getMaxReachableOnboardingStep,
+} from "@/utils/vehicleOnboardingSteps";
+import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
+import {
+  isEditingExistingVehicle,
+  isVehicleDraft,
+} from "@/utils/vehicleOnboardingMode";
 
 const steps = [
   "Basic Details",
@@ -24,18 +35,65 @@ const steps = [
 
 export default function VehicleOnboardingPage() {
   const { isLoading } = useVehicleOnboarding();
+  const searchParams = useSearchParams();
+  const routeVehicleId = searchParams.get("id");
+  const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const kyc = useKycStatus();
 
+  const sessionVehicleId = getOnboardingVehicleId();
+  const vehicleId = routeVehicleId ?? sessionVehicleId;
+  const isDraftResume = !!vehicleId && isVehicleDraft(vehicle);
+  const isEditingExisting = isEditingExistingVehicle(vehicleId, vehicle);
+
+  useEffect(() => {
+    if (!vehicle || !isDraftResume || isEditingExisting) return;
+    setCurrentStep(getMaxReachableOnboardingStep(vehicle));
+  }, [vehicle?.id, isDraftResume, isEditingExisting]);
+
   const handleCurrentStep = (step: number) => {
+    const allowed = canNavigateToOnboardingStep({
+      targetStep: step,
+      currentStep,
+      vehicle,
+      isDraftResume,
+      isEditingExisting,
+    });
+
+    if (!allowed) {
+      toast.error(
+        isDraftResume || isEditingExisting
+          ? "Complete the required fields in that step before opening it."
+          : "Finish each step in order before moving forward."
+      );
+      return;
+    }
+
     setCurrentStep(step);
   };
+
+  const canClickStep = useMemo(
+    () => (stepIndex: number) =>
+      canNavigateToOnboardingStep({
+        targetStep: stepIndex,
+        currentStep,
+        vehicle,
+        isDraftResume,
+        isEditingExisting,
+      }),
+    [currentStep, vehicle, isDraftResume, isEditingExisting]
+  );
+
+  const pageTitle = useMemo(() => {
+    if (currentStep === 5 && !isEditingExisting) return "Summary";
+    if (isEditingExisting) return "Edit Vehicle";
+    return "Vehicle Onboarding";
+  }, [currentStep, isEditingExisting]);
 
   if (isLoading || kyc.isLoading) {
     return <FullPageSpinner />;
   }
 
-  // Block the onboarding flow itself (not just the button) until KYC + approved MOU
   if (!kyc.canCreateListing) {
     return <KycRequiredNotice />;
   }
@@ -51,24 +109,29 @@ export default function VehicleOnboardingPage() {
         )}
       >
         <div className="space-y-8">
-          <BackLink backLink="/dashboard" />
+          <BackLink backLink={isEditingExisting ? "/listings" : "/dashboard"} />
           <h2 className="text-h5 md:text-h3 3xl:text-4xl text-black">
-            {currentStep === 5 ? "Summary" : "Vehicle Onboarding"}
+            {pageTitle}
           </h2>
         </div>
-        <Stepper steps={steps} currentStep={currentStep}>
+        <Stepper
+          steps={steps}
+          currentStep={currentStep}
+          onStepClick={handleCurrentStep}
+          canClickStep={canClickStep}
+        >
           {currentStep === 0 && (
             <BasicVehicleInformation
               steps={steps}
               currentStep={currentStep}
-              setCurrentStep={handleCurrentStep}
+              setCurrentStep={setCurrentStep}
             />
           )}
           {currentStep === 1 && (
             <AdditionalInformation
               steps={steps}
               currentStep={currentStep}
-              setCurrentStep={handleCurrentStep}
+              setCurrentStep={setCurrentStep}
             />
           )}
 
@@ -76,28 +139,28 @@ export default function VehicleOnboardingPage() {
             <VehiclePhotos
               steps={steps}
               currentStep={currentStep}
-              setCurrentStep={handleCurrentStep}
+              setCurrentStep={setCurrentStep}
             />
           )}
           {currentStep === 3 && (
             <DocumentInformation
               steps={steps}
               currentStep={currentStep}
-              setCurrentStep={handleCurrentStep}
+              setCurrentStep={setCurrentStep}
             />
           )}
           {currentStep === 4 && (
             <AvailabilityAndPricing
               steps={steps}
               currentStep={currentStep}
-              setCurrentStep={handleCurrentStep}
+              setCurrentStep={setCurrentStep}
             />
           )}
-          {currentStep === 5 && (
+          {currentStep === 5 && !isEditingExisting && (
             <VehicleSummary
               steps={steps}
               currentStep={currentStep}
-              setCurrentStep={handleCurrentStep}
+              setCurrentStep={setCurrentStep}
             />
           )}
         </Stepper>
@@ -105,3 +168,4 @@ export default function VehicleOnboardingPage() {
     </main>
   );
 }
+

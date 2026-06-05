@@ -7,13 +7,20 @@ import { BlurredDialog } from "@/ui/dialog";
 import { PaymentBadge } from "@/ui";
 import { formatNgnAmount } from "@/utils/formatters";
 
-function paymentBadgeStatus(raw: string): "successful" | "paid" | "pending" | "failed" | "cancelled" {
+export type PayoutBadgeStatus = "successful" | "paid" | "pending" | "failed" | "cancelled";
+
+function paymentBadgeStatus(raw: string): PayoutBadgeStatus {
   const s = (raw ?? "").toLowerCase();
   if (s.includes("paid")) return "paid";
   if (s.includes("success")) return "successful";
   if (s.includes("fail")) return "failed";
   if (s.includes("cancel")) return "cancelled";
   return "pending";
+}
+
+export function canDownloadPayoutReceipt(raw: string): boolean {
+  const status = paymentBadgeStatus(raw);
+  return status === "paid" || status === "successful";
 }
 
 function DetailRow({ label, value }: { label: string; value: ReactNode }) {
@@ -59,7 +66,7 @@ export default function PayoutDetailsModal({
         <div className="space-y-5">
           <div className="rounded-2xl border border-grey-200 bg-white p-5">
             <DetailRow label="Invoice Number" value={item.invoiceNumber || "-"} />
-            <DetailRow label="Vehicle" value={item.vehicleName || "-"} />
+            <DetailRow label="Vehicle Name" value={item.vehicleName || "-"} />
             <DetailRow label="Booking Date" value={bookingDate} />
             <DetailRow
               label={isPaid ? "Amount Paid" : "Amount To Be Paid"}

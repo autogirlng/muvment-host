@@ -3,6 +3,15 @@ import * as Select from "@radix-ui/react-select";
 import cn from "classnames";
 import { Tooltip } from "./tooltip";
 import { SelectInputProps, OptionProps } from "./props";
+import {
+  VEHICLE_MAKE_PLACEHOLDER,
+  VEHICLE_SELECT_PLACEHOLDER,
+} from "@/utils/constants";
+
+const SELECT_PLACEHOLDER_VALUES = new Set([
+  VEHICLE_MAKE_PLACEHOLDER,
+  VEHICLE_SELECT_PLACEHOLDER,
+]);
 
 const SelectInput = ({
     className,
@@ -21,6 +30,12 @@ const SelectInput = ({
     disabled = false,
     width,
 }: SelectInputProps) => {
+    const isControlled = value !== undefined;
+    const selectValue =
+        value === undefined || value === null || value === ""
+            ? undefined
+            : String(value);
+
     return (
         <div className="w-full space-y-2 custom-radix-select">
             {label && (
@@ -42,9 +57,10 @@ const SelectInput = ({
                 </label>
             )}
             <Select.Root
-                defaultValue={defaultValue}
-                value={value}
-                onValueChange={onChange}
+                {...(isControlled
+                    ? { value: selectValue }
+                    : { defaultValue })}
+                onValueChange={(nextValue) => onChange?.(nextValue)}
             >
                 <Select.Trigger
                     className={cn(
@@ -87,10 +103,20 @@ const SelectInput = ({
                 >
                     <Select.Viewport className="px-6 py-[14px]">
                         <Select.Group className="space-y-3">
-                            {options.map((option: OptionProps, index) => (
+                            {options
+                                .filter(
+                                    (option) =>
+                                        option.value !== undefined &&
+                                        option.value !== null &&
+                                        option.value !== "" &&
+                                        !SELECT_PLACEHOLDER_VALUES.has(
+                                            String(option.value)
+                                        )
+                                )
+                                .map((option: OptionProps) => (
                                 <SelectItem
-                                    key={index}
-                                    value={option.value}
+                                    key={String(option.value)}
+                                    value={String(option.value)}
                                     className="flex items-center gap-2"
                                 >
                                     <span className="flex items-center gap-0.5">

@@ -1,4 +1,4 @@
-import { VehicleStatus, MappedInformation, EarningsStatistics, ListingInformation, AssignNewDriver, VehicleInformationStepper} from "@/types";
+import { VehicleStatus, MappedInformation, EarningsStatistics, ListingInformation, AssignNewDriver, VehicleInformationStepper, VehicleAssignedDriver, BookingTypeData} from "@/types";
 import { ReactNode } from "react";
 
 export interface DeleteListingProps  {
@@ -17,6 +17,10 @@ export interface DeactivateListingProps  {
    name?: string;
    status: VehicleStatus;
    id?: string;
+   slug?: string;
+   vehicleTypeName?: string;
+   vehicleType?: { id: string; name: string };
+   supportedBookingTypes?: BookingTypeData[];
  };
 
 export interface ListingDetailsVehicleImagesProps { vehicleImages: string[] };
@@ -63,7 +67,11 @@ export interface AssignDriverFormProps {
 };
 
 
-export interface DriverDetailsProps { id: string };
+export interface DriverDetailsProps {
+  id: string;
+  assignedDriver?: VehicleAssignedDriver | null;
+  vehicleName?: string;
+};
 
 interface Driver {
     firstName: string;
