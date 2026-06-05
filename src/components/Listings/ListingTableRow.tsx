@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { VehicleInformationStepper, VehicleStatus } from "@/types";
+import { getCustomerVehicleUrlFromListing } from "@/utils/customerApp";
 import { Popup, MoreButton } from "@/ui";
 import { TableCell, TableRow } from "@/components/Table";
 import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "@/components/Table/tableStyles";
@@ -35,6 +36,7 @@ export default function ListingTableRow({ listing }: ListingTableRowProps) {
     ? `/vehicle-onboarding?id=${listing.id}`
     : `/listings/${listing.id}`;
   const primaryActionLabel = isDraft ? "Complete Listing" : "View Details";
+  const customerVehicleUrl = getCustomerVehicleUrlFromListing(listing);
 
   return (
     <TableRow>
@@ -82,14 +84,28 @@ export default function ListingTableRow({ listing }: ListingTableRowProps) {
                       {primaryActionLabel}
                     </Link>
                   </li>
-                  {!isDraft && listing.status === VehicleStatus.APPROVED && (
+                  {!isDraft && (
                     <li>
                       <Link
-                        href={`/listings/view-as-customer/${listing.id}`}
+                        href={`/vehicle-onboarding?id=${listing.id}`}
+                        className="block rounded-lg px-2 py-2 text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
+                      >
+                        Edit listing
+                      </Link>
+                    </li>
+                  )}
+                  {!isDraft &&
+                    listing.status === VehicleStatus.APPROVED &&
+                    customerVehicleUrl && (
+                    <li>
+                      <a
+                        href={customerVehicleUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="block rounded-lg px-2 py-2 text-xs font-medium text-grey-700 transition-colors hover:bg-grey-50"
                       >
                         View as customer
-                      </Link>
+                      </a>
                     </li>
                   )}
                 </ul>

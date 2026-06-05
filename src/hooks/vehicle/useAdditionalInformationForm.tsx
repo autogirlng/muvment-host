@@ -15,7 +15,7 @@ import {
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useRouter } from "next/navigation";
 import { useHttp } from "@/hooks/useHttp";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export default function useAdditionalInformationForm({
     currentStep,
@@ -34,14 +34,17 @@ export default function useAdditionalInformationForm({
 
     const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
 
-    const initialValues: AdditionalVehicleInformationValues = {
-        licensePlateNumber: vehicle?.licensePlateNumber || "",
-        stateOfRegistration: vehicle?.stateOfRegistration || "",
-        description: vehicle?.description || "",
-        featureIds: vehicle?.features?.map((f) => f.id) || [],
-        vehicleColorId: vehicle?.vehicleColorId || "",
-        numberOfSeats: vehicle?.numberOfSeats || 0,
-    };
+    const initialValues: AdditionalVehicleInformationValues = useMemo(
+        () => ({
+            licensePlateNumber: vehicle?.licensePlateNumber || "",
+            stateOfRegistration: vehicle?.stateOfRegistration || "",
+            description: vehicle?.description || "",
+            featureIds: vehicle?.features?.map((f) => f.id) || [],
+            vehicleColorId: vehicle?.vehicleColorId || "",
+            numberOfSeats: vehicle?.numberOfSeats || 0,
+        }),
+        [vehicle]
+    );
 
 
     const saveStep2 = useMutation({

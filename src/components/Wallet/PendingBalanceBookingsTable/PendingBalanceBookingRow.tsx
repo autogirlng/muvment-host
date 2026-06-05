@@ -4,9 +4,16 @@ import type { ReactNode } from "react";
 import type { HostBookingDeduction, HostPendingBalanceBooking } from "@/types";
 import { Popup, MoreButton } from "@/ui";
 import { TableCell, TableRow } from "@/components/Table";
+import {
+  tableCellBaseClass,
+  tableCellValueClass,
+  tableMobileTitleClass,
+} from "@/components/Table/tableStyles";
 import { formatNgnAmount } from "@/utils/formatters";
 import { downloadPayoutReceipt } from "@/utils/functions/downloadPayoutReceipt";
-import PayoutDetailsModal, { paymentBadgeStatus } from "@/components/Wallet/PayoutDetailsModal";
+import PayoutDetailsModal, {
+  canDownloadPayoutReceipt,
+} from "@/components/Wallet/PayoutDetailsModal";
 
 export default function PendingBalanceBookingRow({
   item,
@@ -16,6 +23,7 @@ export default function PendingBalanceBookingRow({
   actions?: (deduction: HostBookingDeduction) => ReactNode;
 }) {
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const dateDisplay =
     item.bookingDate && !Number.isNaN(new Date(item.bookingDate).getTime())
@@ -40,9 +48,17 @@ export default function PendingBalanceBookingRow({
           .join(", ")
       : "None";
 
-  // Receipt download only allowed once the payout is no longer pending
-  const payoutStatus = paymentBadgeStatus(item.hostPaymentStatus);
-  const isPending = payoutStatus === "pending";
+  const showReceiptDownload = canDownloadPayoutReceipt(item.hostPaymentStatus);
+
+  const openPayoutDetails = () => {
+    setMenuOpen(false);
+    setDetailsOpen(true);
+  };
+
+  const handleDownloadReceipt = () => {
+    setMenuOpen(false);
+    downloadPayoutReceipt(item);
+  };
 
   return (
     <>
@@ -56,26 +72,28 @@ export default function PendingBalanceBookingRow({
         <TableCell title="Booking date" content={dateDisplay} className="text-grey-900" />
         <TableCell title="Deductions" content={deductionSummary} className="capitalize text-grey-900" />
         <TableCell
-          title="Pending payments"
+          title="Amount"
           content={`₦${formatNgnAmount(Number(item.toPayToHost) || 0)}`}
           className="text-grey-900 !font-semibold tabular-nums"
         />
         <TableCell title="Payment status" content={status} className="capitalize text-grey-900" />
-        <td className="px-4 py-3.5 lg:px-5 lg:py-4 block lg:table-cell w-full lg:w-fit text-sm text-grey-700">
-          <div className="flex items-center justify-between gap-5 lg:block">
-            <span className="font-medium text-grey-500 lg:hidden w-[42%] text-xs uppercase tracking-wide">
-              Actions
-            </span>
+        <td className={tableCellBaseClass}>
+          <span className={tableMobileTitleClass}>Actions</span>
+          <div className={tableCellValueClass}>
             <Popup
               align="end"
+              open
+              isOpen={menuOpen}
+              handleIsOpen={setMenuOpen}
+              className="!w-[min(240px,calc(100vw-2rem))] !p-2"
               trigger={<MoreButton className="!mx-0 ml-auto lg:mx-auto" />}
               content={
-                <ul className="min-w-[190px] space-y-1">
+                <ul className="space-y-0.5">
                   <li>
                     <button
                       type="button"
-                      onClick={() => setDetailsOpen(true)}
-                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
+                      onClick={openPayoutDetails}
+                      className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2.5 text-left text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
                     >
                       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" className="shrink-0 text-primary-500">
                         <path d="M1 8s2.5-5 7-5 7 5 7 5-2.5 5-7 5-7-5-7-5z" stroke="currentColor" strokeWidth="1.3" />
@@ -84,12 +102,12 @@ export default function PendingBalanceBookingRow({
                       View Payout Details
                     </button>
                   </li>
-                  {!isPending && (
+                  {showReceiptDownload && (
                     <li>
                       <button
                         type="button"
-                        onClick={() => downloadPayoutReceipt(item)}
-                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
+                        onClick={handleDownloadReceipt}
+                        className="flex w-full items-center gap-2 rounded-lg px-2.5 py-2.5 text-left text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
                       >
                         <svg width="15" height="15" viewBox="0 0 16 16" fill="none" className="shrink-0 text-primary-500">
                           <path d="M8 1v9m0 0L5 7m3 3l3-3M2 13h12" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />

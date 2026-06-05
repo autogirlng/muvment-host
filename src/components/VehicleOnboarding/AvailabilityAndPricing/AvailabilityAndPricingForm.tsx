@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { Formik, Form } from "formik";
 import { StepperNavigation, GroupCheckBox, SelectInput, AppSwitch, Tooltip, InputField } from "@/ui";
@@ -7,10 +7,24 @@ import FormRow from "@/components/VehicleOnboarding/AvailabilityAndPricing/FormR
 import useAvailabilityAndPricingForm from "@/hooks/vehicle/useAvailabilityAndPricingForm";
 import {
     vehicleAvailabilityOptions,
+    yesOrNoOptions,
 } from "@/utils/data";
 import { availabilityAndPricingSchema } from "@/utils/validationSchema";
+import { VEHICLE_SELECT_PLACEHOLDER } from "@/utils/constants";
+import ProvideDriverSection from "@/components/VehicleOnboarding/AvailabilityAndPricing/ProvideDriverSection";
+import PricingSheetModal from "@/components/VehicleOnboarding/AvailabilityAndPricing/PricingSheetModal";
+import BookingTypePricingPreview from "@/components/VehicleOnboarding/AvailabilityAndPricing/BookingTypePricingPreview";
 import { useHttp } from "@/hooks/useHttp";
-import { GeoFenceAreaResponse, BookingTypeResponse, VehicleOnboardingStepsHookProps } from "@/types";
+import {
+    AvailabilityAndPricingValues,
+    GeoFenceAreaResponse,
+    BookingTypeResponse,
+    VehicleOnboardingStepsHookProps,
+} from "@/types";
+import type { PricingSheetItem } from "@/hooks/pricing/usePublicPricing";
+import { ApiResponse } from "@/types";
+import ListingSuccessModal from "@/components/VehicleOnboarding/VehicleSummary/ListingSuccessModal";
+import { isVehicleDraft } from "@/utils/vehicleOnboardingMode";
 
 
 
@@ -26,23 +40,31 @@ const AvailabilityAndPricingForm = ({
         initialValues,
         showOuskirts,
         setShowOuskirts,
+        drivers,
+        driversLoading,
+        vehicle,
+        isEditingExisting,
     } = useAvailabilityAndPricingForm({ currentStep, setCurrentStep });
+
+    const [pricingModalOpen, setPricingModalOpen] = useState(false);
+    const [showUpdateSuccessModal, setShowUpdateSuccessModal] = useState(false);
+    const [pricingItems, setPricingItems] = useState<PricingSheetItem[]>([]);
+    const [pricingLoading, setPricingLoading] = useState(false);
+    const [pendingValues, setPendingValues] = useState<AvailabilityAndPricingValues | null>(null);
+
+    const yesNoSelectOptions = [
+        { option: "Select an option", value: VEHICLE_SELECT_PLACEHOLDER },
+        ...yesOrNoOptions,
+    ];
 
     const http = useHttp();
     const [bookingTypes, setBookingTypes] = useState<{ option: string, value: string }[]>([])
     const [geoFenceAreas, setGeoFencedAreas] = useState<{ option: string, value: string }[]>()
 
     const fetchAvailabilityAndPricingInfo = async () => {
-        const stateId = typeof window !== "undefined"
-            ? sessionStorage.getItem("vehicleStateId") ?? ""
-            : "";
-        const geoFenceUrl = stateId
-            ? `/geofence-areas?stateId=${stateId}`
-            : "/geofence-areas";
-
         const [bookingTypesRes, geoFenceAreasRes] = await Promise.all([
             http.get<BookingTypeResponse>("/booking-types"),
-            http.get<GeoFenceAreaResponse>(geoFenceUrl),
+            http.get<GeoFenceAreaResponse>("/geofence-areas"),
         ])
 
         const bookingTypes = bookingTypesRes?.data.map((booking) => {
@@ -65,16 +87,73 @@ const AvailabilityAndPricingForm = ({
     useEffect(() => {
         fetchAvailabilityAndPricingInfo()
     }, [])
+
+    const shouldShowPricingSheet = isVehicleDraft(vehicle);
+
+    const fetchPricingSheet = async () => {
+        const modelId = vehicle?.vehicleModelId;
+        const year = vehicle?.yearOfRelease;
+        if (!modelId || !year) return [];
+
+        const params = new URLSearchParams({
+            modelId,
+            year: String(year),
+        });
+        const result = await http.get<ApiResponse<PricingSheetItem[]>>(
+            `/public/pricing?${params.toString()}`
+        );
+        return result?.data ?? [];
+    };
+
+    const proceedToSummary = (values: AvailabilityAndPricingValues) => {
+        submitStep4.mutate(values, {
+            onSuccess: () => {
+                if (isEditingExisting) {
+                    setShowUpdateSuccessModal(true);
+                }
+            },
+            onSettled: () => {
+                setPricingModalOpen(false);
+                setPendingValues(null);
+            },
+        });
+    };
+
+    const handleStepSubmit = async (
+        values: AvailabilityAndPricingValues,
+        setSubmitting: (isSubmitting: boolean) => void
+    ) => {
+        if (shouldShowPricingSheet && vehicle?.vehicleModelId && vehicle?.yearOfRelease) {
+            setPendingValues(values);
+            setPricingLoading(true);
+            setPricingModalOpen(true);
+            try {
+                const items = await fetchPricingSheet();
+                setPricingItems(items);
+            } catch {
+                setPricingItems([]);
+            } finally {
+                setPricingLoading(false);
+                setSubmitting(false);
+            }
+            return;
+        }
+
+        proceedToSummary(values);
+        setSubmitting(false);
+    };
+
     return (
+        <>
         <Formik
             initialValues={initialValues}
             validationSchema={availabilityAndPricingSchema}
             onSubmit={(values, { setSubmitting }) => {
-                const payload = mapValuesToApiPayload(values);
-
-                submitStep4.mutate(payload);
-                setSubmitting(false);
+                handleStepSubmit(values, setSubmitting);
             }}
+            enableReinitialize
+            validateOnChange
+            validateOnBlur
         >
             {({
                 values,
@@ -103,7 +182,7 @@ const AvailabilityAndPricingForm = ({
                                 value={`${values.advanceNoticeValue}`}
                                 onChange={(value: string) => {
                                     setFieldTouched("advanceNoticeValue", true);
-                                    setFieldValue("advanceNoticeValue", value);
+                                    setFieldValue("advanceNoticeValue", Number(value));
                                 }}
                                 error={
                                     errors.advanceNoticeValue && touched.advanceNoticeValue
@@ -146,7 +225,7 @@ const AvailabilityAndPricingForm = ({
                                     value={`${values.maxTripDurationValue}`}
                                     onChange={(value: string) => {
                                         setFieldTouched("maxTripDurationValue", true);
-                                        setFieldValue("maxTripDurationValue", value);
+                                        setFieldValue("maxTripDurationValue", Number(value));
                                     }}
                                     error={
                                         errors.maxTripDurationValue &&
@@ -166,16 +245,22 @@ const AvailabilityAndPricingForm = ({
                                 <SelectInput
                                     id="willProvideDriver"
                                     label="Will you provide a driver?"
-                                    placeholder=""
+                                    placeholder="Select an option"
                                     variant="outlined"
-                                    options={[
-                                        { value: "yes", option: "Yes" },
-                                        { value: "no", option: "No" },
-                                    ]}
-                                    value={`${values.willProvideDriver}`}
+                                    options={yesNoSelectOptions}
+                                    value={values.willProvideDriver}
                                     onChange={(value: string) => {
-                                        setFieldTouched("willProvideDriver", true);
-                                        setFieldValue("willProvideDriver", value);
+                                        setFieldValue("willProvideDriver", value, true);
+                                        setFieldTouched("willProvideDriver", true, false);
+                                        if (value !== "yes") {
+                                            setFieldValue("driverMode", "", false);
+                                            setFieldValue("driverId", VEHICLE_SELECT_PLACEHOLDER, false);
+                                            setFieldValue("newDriverFirstName", "", false);
+                                            setFieldValue("newDriverLastName", "", false);
+                                            setFieldValue("newDriverPhoneNumber", "", false);
+                                            setFieldValue("newDriverLicenseNumber", "", false);
+                                            setFieldValue("newDriverLicenseExpiryDate", "", false);
+                                        }
                                     }}
                                     error={
                                         errors.willProvideDriver && touched.willProvideDriver
@@ -189,16 +274,13 @@ const AvailabilityAndPricingForm = ({
                                 <SelectInput
                                     id="willProvideFuel"
                                     label="Will you provide at least 20 liters of fuel?"
-                                    placeholder=""
+                                    placeholder="Select an option"
                                     variant="outlined"
-                                    options={[
-                                        { value: "yes", option: "Yes" },
-                                        { value: "no", option: "No" },
-                                    ]}
+                                    options={yesNoSelectOptions}
                                     value={values.willProvideFuel}
                                     onChange={(value: string) => {
-                                        setFieldTouched("willProvideFuel", true);
-                                        setFieldValue("willProvideFuel", value);
+                                        setFieldValue("willProvideFuel", value, true);
+                                        setFieldTouched("willProvideFuel", true, false);
                                     }}
                                     error={
                                         errors.willProvideFuel && touched.willProvideFuel
@@ -211,6 +293,27 @@ const AvailabilityAndPricingForm = ({
                                 />
                             </div>
                         </FormRow>
+
+                        {values.willProvideDriver === "yes" && (
+                            <ProvideDriverSection
+                                driverMode={values.driverMode}
+                                driverId={values.driverId}
+                                newDriverFirstName={values.newDriverFirstName}
+                                newDriverLastName={values.newDriverLastName}
+                                newDriverPhoneNumber={values.newDriverPhoneNumber}
+                                newDriverLicenseNumber={values.newDriverLicenseNumber}
+                                newDriverLicenseExpiryDate={values.newDriverLicenseExpiryDate}
+                                drivers={drivers}
+                                assignedDriver={vehicle?.assignedDriver}
+                                driversLoading={driversLoading}
+                                errors={errors}
+                                touched={touched}
+                                setFieldValue={setFieldValue}
+                                setFieldTouched={setFieldTouched}
+                                handleBlur={handleBlur}
+                                handleChange={handleChange}
+                            />
+                        )}
 
                         <FormRow title="Booking Types">
 
@@ -246,6 +349,12 @@ const AvailabilityAndPricingForm = ({
                                 ) : (
                                     ""
                                 )}
+                                <BookingTypePricingPreview
+                                    modelId={vehicle?.vehicleModelId}
+                                    year={vehicle?.yearOfRelease}
+                                    selectedBookingTypeIds={values.supportedBookingTypeIds}
+                                    bookingTypes={bookingTypes}
+                                />
                             </div>
                         </FormRow>
 
@@ -256,11 +365,10 @@ const AvailabilityAndPricingForm = ({
                     <div>
                         <div className="flex justify-between gap-3">
                             <p className="text-h6 3xl:text-h5 font-medium text-black flex justify-between items-center gap-1">
-                                Restricted Area AKA, NO GO AREA.
+                                Restricted Area aka No Go Area.
                                 <Tooltip
-                                    title="Do you charge extra for outskirt locations?"
-                                    description={`Do you charge extra for Outskirt & Extreme locations? Outskirts & Extreme locations
-                include but not limited to ${geoFenceAreas?.map(o => o.option).join(", ")}`}
+                                    title="Restricted Area aka No Go Area"
+                                    description={`Select areas where you charge an additional fee for restricted or no-go locations, including but not limited to ${geoFenceAreas?.map(o => o.option).join(", ")}`}
                                 />
                             </p>
                             <AppSwitch
@@ -270,8 +378,9 @@ const AvailabilityAndPricingForm = ({
                                 onChange={(checked) => {
                                     setShowOuskirts(checked);
                                     if (!checked) {
-                                        setFieldValue("outskirtsPrice", "");
-                                        setFieldValue("outskirtsLocation", []);
+                                        setFieldValue("outskirtFee", 0);
+                                        setFieldValue("extremeFee", 0);
+                                        setFieldValue("outOfBoundsAreaIds", []);
                                     }
                                 }}
                             />
@@ -290,8 +399,19 @@ const AvailabilityAndPricingForm = ({
                                             type="text"
                                             label="Outskirt Fee Charge"
                                             placeholder="+NGN0"
-                                            value={values.outskirtFee}
-                                            onChange={handleChange}
+                                            value={
+                                                values.outskirtFee
+                                                    ? String(values.outskirtFee)
+                                                    : ""
+                                            }
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                setFieldValue(
+                                                    "outskirtFee",
+                                                    e.target.value === ""
+                                                        ? 0
+                                                        : Number(e.target.value)
+                                                )
+                                            }
                                             onBlur={handleBlur}
                                             error={
                                                 errors.outskirtFee && touched.outskirtFee
@@ -307,8 +427,19 @@ const AvailabilityAndPricingForm = ({
                                             type="text"
                                             label="Extreme Fee Charge"
                                             placeholder="+NGN0"
-                                            value={values.extremeFee}
-                                            onChange={handleChange}
+                                            value={
+                                                values.extremeFee
+                                                    ? String(values.extremeFee)
+                                                    : ""
+                                            }
+                                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                                                setFieldValue(
+                                                    "extremeFee",
+                                                    e.target.value === ""
+                                                        ? 0
+                                                        : Number(e.target.value)
+                                                )
+                                            }
                                             onBlur={handleBlur}
                                             error={
                                                 errors.extremeFee && touched.extremeFee
@@ -373,8 +504,13 @@ const AvailabilityAndPricingForm = ({
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={() => {
-                            // const payload = mapValuesToApiPayload(values);
-                            // saveStep4.mutate(payload);
+                            saveStep4.mutate(values, {
+                                onSuccess: () => {
+                                    if (isEditingExisting) {
+                                        setShowUpdateSuccessModal(true);
+                                    }
+                                },
+                            });
                         }}
                         isSaveDraftloading={saveStep4.isPending}
                         isNextLoading={isSubmitting || submitStep4.isPending}
@@ -387,6 +523,26 @@ const AvailabilityAndPricingForm = ({
                 </Form>
             )}
         </Formik>
+        <PricingSheetModal
+            open={pricingModalOpen}
+            onOpenChange={(open) => {
+                setPricingModalOpen(open);
+                if (!open) setPendingValues(null);
+            }}
+            items={pricingItems}
+            isLoading={pricingLoading}
+            isContinuing={submitStep4.isPending}
+            onContinue={() => {
+                if (pendingValues) proceedToSummary(pendingValues);
+            }}
+        />
+        <ListingSuccessModal
+            open={showUpdateSuccessModal}
+            onOpenChange={setShowUpdateSuccessModal}
+            vehicleName={vehicle?.name || "vehicle"}
+            mode="updated"
+        />
+        </>
     );
 };
 

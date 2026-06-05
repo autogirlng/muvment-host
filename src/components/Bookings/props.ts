@@ -1,7 +1,7 @@
 import { ReactNode, Dispatch, SetStateAction } from "react";
-import { BookingBadgeStatus, MappedInformation } from "@/types";
+import { MappedInformation } from "@/types";
 
-export interface BookingInfoCardsProps  {
+export interface BookingInfoCardsProps {
     title: string;
     chipTitle: string;
     chipData: MappedInformation[];
@@ -11,15 +11,14 @@ export interface BookingInfoCardsProps  {
     linkText?: string;
     copyText?: string;
     children?: ReactNode;
-    status?: BookingBadgeStatus | string;
-};
+    status?: string;
+}
 
 export interface PopupContentProps {
     handleAction: () => void;
-    // openModal: boolean;
     handleModal: (value?: boolean) => void;
     isLoading: boolean;
-};
+}
 
 export interface AcceptTripProps {
     handleAction: () => void;
@@ -27,62 +26,33 @@ export interface AcceptTripProps {
     handleModal: (value?: boolean) => void;
     trigger: ReactNode;
     isLoading: boolean;
-};
+}
 
-export interface DeclineTripProps  {
-  handleAction: () => void;
-  openModal: boolean;
-  handleModal: (value?: boolean) => void;
-  trigger: ReactNode;
-  isLoading: boolean;
-};
+export interface DeclineTripProps {
+    handleAction: () => void;
+    openModal: boolean;
+    handleModal: (value?: boolean) => void;
+    trigger: ReactNode;
+    isLoading: boolean;
+}
 
-export interface PopupContentProps  {
-  handleAction: () => void;
-  handleModal: (value?: boolean) => void;
-  isLoading: boolean;
-};
-
-export interface ReportTripProps  {
-  handleAction: ({ message }: { message: string }) => void;
-  openModal: boolean;
-  handleModal: (value?: boolean) => void;
-  trigger: ReactNode;
-  isLoading: boolean;
-  setReport: Dispatch<SetStateAction<string>>;
-};
-
-export interface PopupProps  {
+export interface ReportTripProps {
     handleAction: ({ message }: { message: string }) => void;
-    // openModal: boolean;
+    openModal: boolean;
+    handleModal: (value?: boolean) => void;
+    trigger: ReactNode;
+    isLoading: boolean;
+    setReport: Dispatch<SetStateAction<string>>;
+}
+
+export interface PopupProps {
+    handleAction: ({ message }: { message: string }) => void;
     handleModal: (value?: boolean) => void;
     isLoading: boolean;
     setReport: Dispatch<SetStateAction<string>>;
+}
+
+export type BookingHistoryProps = {
+    search?: string;
+    filters?: Record<string, string[]>;
 };
-
-
-export interface BookingActionsProps  {
-    bookingStatus: BookingBadgeStatus;
-
-    openReportModal: boolean;
-    handleReportModal: () => void;
-    handleReportTrip: () => void;
-    isLoadingReportTrip: boolean;
-    setReport: Dispatch<SetStateAction<string>>;
-
-    openAcceptModal: boolean;
-    handleAcceptModal: () => void;
-    handleAcceptTrip: () => void;
-    isLoadingAcceptTrip: boolean;
-
-    openDeclineModal: boolean;
-    handleDeclineModal: () => void;
-    handleDeclineTrip: () => void;
-    isLoadingDeclineTrip: boolean;
-};
-
-export type BookingHistoryProps = { search?: string; filters?: Record<string, string[]> };
-
-
-
-

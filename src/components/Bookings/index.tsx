@@ -60,6 +60,7 @@ export default function Bookings() {
           categories={bookingHistoryFilters}
           onChange={handleFilterChange}
           dateEnabled
+          singleSelect
         />
       </div>
 

@@ -139,17 +139,17 @@ const FilterBy: React.FC<FilterByProps> = ({
             </div>
             <Popover.Portal>
                 <Popover.Content
-                    className="z-[200] w-[min(360px,calc(100vw-2rem))] rounded-2xl border border-grey-200 bg-white p-0 shadow-[0_8px_30px_rgba(16,25,40,0.12)]"
+                    className="z-[200] flex max-h-[min(70dvh,calc(100dvh-5rem))] w-[min(360px,calc(100vw-2rem))] flex-col overflow-hidden rounded-2xl border border-grey-200 bg-white p-0 shadow-[0_8px_30px_rgba(16,25,40,0.12)]"
                     side="bottom"
                     align="end"
                     sideOffset={6}
                     alignOffset={0}
-                    collisionPadding={12}
+                    collisionPadding={16}
                     avoidCollisions
                     sticky="partial"
                     onOpenAutoFocus={(e) => e.preventDefault()}
                 >
-                    <div className="border-b border-grey-100 px-5 py-4">
+                    <div className="shrink-0 border-b border-grey-100 px-5 py-4">
                         <div className="flex items-center justify-between">
                             <p className="text-sm font-semibold text-grey-800">
                                 Filter by
@@ -165,7 +165,7 @@ const FilterBy: React.FC<FilterByProps> = ({
                         </div>
                     </div>
 
-                    <div className="table-filter-scroll max-h-[min(320px,55vh)] overflow-y-auto overscroll-contain px-5 py-4">
+                    <div className="table-filter-scroll min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-4">
                         <div className="space-y-4">
                             {categories.map((category) => (
                                 <Collapsible.Root

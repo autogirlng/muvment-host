@@ -7,21 +7,27 @@ import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { VehicleInformation, VehicleInformationResponse } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import {useHttp} from "@/hooks/useHttp";
+import {
+  getOnboardingVehicleId,
+  setOnboardingVehicleId,
+} from "@/utils/vehicleOnboardingSession";
 
 export default function useVehicleOnboarding() {
   const dispatch = useAppDispatch();
   const routeParams = useSearchParams();
-  const vehicleId = routeParams.get("id");
+  const routeVehicleId = routeParams.get("id");
+  const sessionVehicleId = getOnboardingVehicleId();
+  const vehicleId = routeVehicleId ?? sessionVehicleId ?? null;
 
   const http = useHttp();
 
   const { user } = useAppSelector((state) => state.user);
 
   useEffect(() => {
-    if (vehicleId) {
-      sessionStorage.setItem("vehicleId", vehicleId);
+    if (routeVehicleId) {
+      setOnboardingVehicleId(routeVehicleId);
     }
-  }, [vehicleId]);
+  }, [routeVehicleId]);
 
   const { data, isError, isLoading, isSuccess } = useQuery({
     queryKey: ["getVehicleById", vehicleId],
@@ -31,11 +37,10 @@ export default function useVehicleOnboarding() {
     retry: false,
   });
   useEffect(() => {
-    if (isSuccess && data?.data) {
+    if (data?.data) {
       dispatch(updateVehicleInformation(data.data as unknown as VehicleInformation));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSuccess]);
+  }, [data, dispatch]);
   return {
     data,
     isError,

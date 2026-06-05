@@ -18,19 +18,11 @@ const DocumentInformationForm = ({
         <Formik
             initialValues={initialValues}
             validationSchema={documentVehicleInformationSchema}
+            enableReinitialize
+            validateOnChange
+            validateOnBlur
             onSubmit={async (values, { setSubmitting }) => {
-                const formData = new FormData();
-                for (const key in values) {
-                    // @ts-ignore
-                    if (values[key]) {
-                        formData.append(
-                            key,
-                            // @ts-ignore
-                            values[key] as File
-                        );
-                    }
-                }
-                await submitStep5.mutateAsync(formData);
+                await submitStep5.mutateAsync(values);
                 setSubmitting(false);
             }}
         >
@@ -116,18 +108,7 @@ const DocumentInformationForm = ({
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={async () => {
-                            const formData = new FormData();
-                            for (const key in values) {
-                                // @ts-ignore
-                                if (values[key]) {
-                                    formData.append(
-                                        key,
-                                        // @ts-ignore
-                                        values[key] as File
-                                    );
-                                }
-                            }
-                            await saveStep5.mutateAsync(formData);
+                            await saveStep5.mutateAsync(values);
                         }}
                         isSaveDraftloading={saveStep5.isPending}
                         isNextLoading={isSubmitting || submitStep5.isPending}

@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Icons, InputField as Input, Button } from "@/ui";
+import { InputField as Input, Button } from "@/ui";
 import { Eye, EyeSlash } from "@phosphor-icons/react";
 import useAuth from "@/hooks/useAuth";
 
@@ -40,7 +40,10 @@ export default function ChangePassword() {
 
   return (
     <div className="bg-white rounded-2xl border border-grey-200 p-6 max-w-2xl">
-      <h2 className="text-xl font-bold text-grey-700 mb-6">Change Password</h2>
+      <h2 className="text-xl font-bold text-grey-700 mb-2">Change Password</h2>
+      <p className="text-sm text-grey-500 mb-6">
+        Enter your current password, then choose a new one with at least 8 characters.
+      </p>
       <form onSubmit={formik.handleSubmit} className="space-y-6">
         <div>
           <Input
@@ -102,11 +105,15 @@ export default function ChangePassword() {
           />
         </div>
 
-        <div className="pt-4">
+        <div className="pt-2">
           <Button
             type="submit"
-            isLoading={changePasswordMutation.isPending}
-            className="w-full md:w-auto"
+            variant="filled"
+            color="primary"
+            radius="lg"
+            loading={changePasswordMutation.isPending}
+            disabled={changePasswordMutation.isPending}
+            className="w-full sm:w-auto min-w-[200px] px-8"
           >
             Update Password
           </Button>

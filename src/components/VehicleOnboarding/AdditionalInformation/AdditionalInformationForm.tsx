@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Formik, Form } from "formik";
 import { addtionalVehicleInformationSchema } from "@/utils/validationSchema";
 import { useHttp } from "@/hooks/useHttp";
 import { SelectInput, TextArea, InputField, StepperNavigation, GroupCheckBox } from "@/ui";
 import FormRow from "../FormRow";
 import useAdditionalInformationForm from "@/hooks/vehicle/useAdditionalInformationForm";
+import useRegistrationCountries from "@/hooks/vehicle/useRegistrationCountries";
+import useCountryStates from "@/hooks/vehicle/useCountryStates";
+import {
+    fetchStatesByCountryName,
+    normalizeStateName,
+} from "@/services/countryStates";
 import { VehicleFeaturesResponse, VehicleColorResponse, VehicleOnboardingStepsHookProps } from "@/types";
-
-interface CountryOption { id: string; name: string }
-interface StateOption  { id: string; name: string }
 
 const AdditionalInformationForm = ({
     steps, currentStep, setCurrentStep
@@ -21,11 +24,29 @@ const AdditionalInformationForm = ({
         vehicleFeatures: { name: string; id: string }[];
     }>({ vehicleColors: [], vehicleFeatures: [] });
 
-    // Country / State
-    const [countries, setCountries]               = useState<CountryOption[]>([]);
-    const [states, setStates]                     = useState<StateOption[]>([]);
     const [selectedCountryId, setSelectedCountryId] = useState("");
-    const [statesLoading, setStatesLoading]       = useState(false);
+    const { countries, isLoading: countriesLoading } = useRegistrationCountries();
+
+    const selectedCountryName = useMemo(
+        () => countries.find((c) => c.id === selectedCountryId)?.name ?? "",
+        [countries, selectedCountryId]
+    );
+
+    const { states, isLoading: statesLoading } = useCountryStates(selectedCountryName);
+
+    const stateOptions = useMemo(() => {
+        const options = [...states];
+        const currentState = normalizeStateName(initialValues.stateOfRegistration);
+
+        if (
+            currentState &&
+            !options.some((option) => option.value === currentState)
+        ) {
+            options.unshift({ option: currentState, value: currentState });
+        }
+
+        return options;
+    }, [states, initialValues.stateOfRegistration]);
 
     const fetchAdditionalVehicleDetails = async () => {
         const [vehicleFeaturesRes, vehicleColorsRes] = await Promise.all([
@@ -39,41 +60,34 @@ const AdditionalInformationForm = ({
         });
     };
 
-    const fetchCountries = async () => {
-        try {
-            const res = await http.get<any>("/countries");
-            const list: CountryOption[] = (res?.data ?? []).map((c: any) => ({
-                id: c.id,
-                name: c.name,
-            }));
-            setCountries(list);
-        } catch {}
-    };
-
-    const fetchStates = async (countryId: string) => {
-        setStatesLoading(true);
-        try {
-            const res = await http.get<any>(`/states/country/${countryId}`);
-            const list: StateOption[] = (res?.data ?? []).map((s: any) => ({
-                id: s.id,
-                name: s.name,
-            }));
-            setStates(list);
-        } catch {
-            setStates([]);
-        } finally {
-            setStatesLoading(false);
-        }
-    };
-
     useEffect(() => {
         fetchAdditionalVehicleDetails();
-        fetchCountries();
     }, []);
 
     useEffect(() => {
-        if (selectedCountryId) fetchStates(selectedCountryId);
-    }, [selectedCountryId]);
+        if (!initialValues.stateOfRegistration || selectedCountryId || !countries.length) {
+            return;
+        }
+
+        let cancelled = false;
+        const stateName = normalizeStateName(initialValues.stateOfRegistration);
+
+        (async () => {
+            for (const country of countries) {
+                const countryStates = await fetchStatesByCountryName(country.name);
+                if (cancelled) return;
+
+                if (countryStates.some((state) => state.value === stateName)) {
+                    setSelectedCountryId(country.id);
+                    break;
+                }
+            }
+        })();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [initialValues.stateOfRegistration, countries, selectedCountryId]);
 
     return (
         <Formik
@@ -83,6 +97,9 @@ const AdditionalInformationForm = ({
                 submitStep2.mutate(values);
                 setSubmitting(false);
             }}
+            enableReinitialize
+            validateOnChange
+            validateOnBlur
         >
             {({
                 values,
@@ -116,17 +133,15 @@ const AdditionalInformationForm = ({
                             tooltipDescription="Your vehicle's license plate number is required to verify its legal registration and for identification purposes."
                         />
 
-                        {/* Country selector (local — not submitted to API) */}
                         <SelectInput
                             id="country"
                             label="Country of Registration"
-                            placeholder="Select country"
+                            placeholder={countriesLoading ? "Loading countries…" : "Select country"}
                             variant="outlined"
                             options={countries.map((c) => ({ option: c.name, value: c.id }))}
                             value={selectedCountryId}
                             onChange={(value: string) => {
                                 setSelectedCountryId(value);
-                                setStates([]);
                                 setFieldValue("stateOfRegistration", "");
                             }}
                             info
@@ -135,24 +150,18 @@ const AdditionalInformationForm = ({
                         />
                     </FormRow>
 
-                    {/* State selector — shown after country is chosen */}
-                    {selectedCountryId && (
+                    {(selectedCountryId || values.stateOfRegistration) && (
                         <FormRow>
                             <SelectInput
                                 id="stateOfRegistration"
                                 label="State Of Registration"
                                 placeholder={statesLoading ? "Loading states…" : "Select state"}
                                 variant="outlined"
-                                options={states.map((s) => ({ option: s.name, value: s.name }))}
+                                options={stateOptions}
                                 value={values.stateOfRegistration}
                                 onChange={(value: string) => {
                                     setFieldTouched("stateOfRegistration", true);
                                     setFieldValue("stateOfRegistration", value);
-                                    // Persist stateId for Phase 5 geofence filter
-                                    const found = states.find((s) => s.name === value);
-                                    if (found && typeof window !== "undefined") {
-                                        sessionStorage.setItem("vehicleStateId", found.id);
-                                    }
                                 }}
                                 error={
                                     errors.stateOfRegistration && touched.stateOfRegistration
@@ -162,23 +171,6 @@ const AdditionalInformationForm = ({
                                 info
                                 tooltipTitle="State of registration:"
                                 tooltipDescription="Select the state where your vehicle is registered."
-                            />
-                        </FormRow>
-                    )}
-
-                    {/* Fallback text field when no country selected yet (keeps existing value visible) */}
-                    {!selectedCountryId && values.stateOfRegistration && (
-                        <FormRow>
-                            <InputField
-                                name="stateOfRegistration"
-                                id="stateOfRegistration"
-                                type="text"
-                                label="State Of Registration (current)"
-                                placeholder="State of registration"
-                                value={values.stateOfRegistration}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                disabled
                             />
                         </FormRow>
                     )}

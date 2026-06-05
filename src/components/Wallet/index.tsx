@@ -148,7 +148,7 @@ export default function Wallet() {
                                     Type: {selectedDeduction.type.replace(/_/g, " ").toLowerCase()}
                                 </p>
                                 <p>Amount: ₦{formatNgnAmount(Number(selectedDeduction.amount) || 0)}</p>
-                                <p>Booking ID: {selectedDeduction.bookingId}</p>
+                                <p>Invoice: {selectedDeduction.invoiceNumber || "—"}</p>
                             </div>
                         )}
                         <textarea

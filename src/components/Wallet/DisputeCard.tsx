@@ -1,4 +1,5 @@
 import type { Dispute } from "@/hooks/disputes/types";
+import { getDisputeDisplayId } from "@/utils/disputes";
 
 function formatDisputeStatus(status: string) {
   return status.replace(/_/g, " ").toLowerCase();
@@ -16,10 +17,10 @@ export default function DisputeCard({ dispute }: { dispute: Dispute }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase text-grey-500">
-            Deduction ID
+            Dispute ID
           </p>
           <p className="font-semibold text-grey-900 break-words">
-            {dispute.deductionId}
+            {getDisputeDisplayId(dispute)}
           </p>
         </div>
         <div className="space-y-1">
@@ -33,13 +34,13 @@ export default function DisputeCard({ dispute }: { dispute: Dispute }) {
       </div>
       <div className="space-y-1">
         <p className="text-xs font-semibold uppercase text-grey-500">
-          Dispute
+          Your reason
         </p>
         <p className="text-grey-800">{dispute.hostContext}</p>
       </div>
       <div className="space-y-1">
         <p className="text-xs font-semibold uppercase text-grey-500">
-          Support Resolution
+          Support resolution
         </p>
         <p className="text-grey-800">{getSupportResponse(dispute)}</p>
       </div>

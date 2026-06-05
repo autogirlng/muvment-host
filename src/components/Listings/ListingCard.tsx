@@ -101,7 +101,7 @@ export default function ListingCard(listing: ListingCardProps) {
                     </p>
                     {listing?.content.status === VehicleStatus.DRAFT ? (
                         <Link
-                            href={`/vehicle-onboarding`}
+                            href={`/vehicle-onboarding?id=${listing.content.id}`}
                             className="text-sm 3xl:text-base text-primary-500 block"
                         >
                             Complete Vehicle Listing

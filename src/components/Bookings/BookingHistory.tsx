@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { format } from "date-fns";
+import { getBookingDisplayId } from "@/utils/displayIds";
 import { FullPageSpinner, Pagination } from "@/ui";
 import EmptyState from "@/components/EmptyState";
 import { Table, TableBody, TableHead, TableCell, TableRow } from "@/components/Table";
@@ -61,7 +62,7 @@ export default function BookingHistory({
               <TableRow key={booking.bookingId}>
                 <TableCell
                   title="Invoice Number"
-                  content={booking.invoiceNumber || booking.bookingId || "—"}
+                  content={getBookingDisplayId(booking)}
                 />
                 <TableCell title="Vehicle" content={booking.vehicleName} />
                 <TableCell
@@ -71,7 +72,7 @@ export default function BookingHistory({
                   type="booking"
                 />
                 <TableCell
-                  title="Booked At"
+                  title="Date of booking"
                   content={
                     booking.bookedAt
                       ? format(new Date(booking.bookedAt), "MMM dd, yyyy")

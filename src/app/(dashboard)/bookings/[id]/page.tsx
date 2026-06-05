@@ -3,17 +3,15 @@
 import { useRouter, useParams } from "next/navigation";
 import { useEffect } from "react";
 
-import { PaymentBadge, Popup, FullPageSpinner, Icons } from "@/ui";
+import { Popup, FullPageSpinner, Icons } from "@/ui";
 import BackLink from "@/components/BackLink";
 import useBookingActions from "@/hooks/bookings/useBookingActions";
 import useGetBookingById from "@/hooks/bookings/useGetBookingById";
 import BookingInfoCards from "@/components/Bookings/BookingInfoCards";
 import BookingActions from "@/components/Bookings/BookingActions";
-import {
-  BookingBadgeStatus,
-  MappedInformation,
-  PaymentBadgeStatus,
-} from "@/types";
+import BookingVehicleCard from "@/components/Bookings/BookingVehicleCard";
+import BookingReviewSection from "@/components/Bookings/BookingReviewSection";
+import { MappedInformation } from "@/types";
 
 export default function BookingDetailPage() {
   const router = useRouter();
@@ -24,26 +22,19 @@ export default function BookingDetailPage() {
     isError,
     isLoading,
     bookingDetail,
-    vehicleDetails,
+    vehicleInfo,
+    isVehicleLoading,
     bookingDates,
-    contactInformation,
+    invoiceNumber,
+    formattedTotalPrice,
   } = useGetBookingById({ id });
 
   const {
     openReportModal,
     handleReportModal,
     reportBooking,
-    report,
     setReport,
-
-    openAcceptModal,
-    handleAcceptModal,
-    acceptBooking,
-
-    openDeclineModal,
-    handleDeclineModal,
-    declineBooking,
-  } = useBookingActions({ id });
+  } = useBookingActions({ id, invoiceNumber });
 
   useEffect(() => {
     if (!id) {
@@ -59,25 +50,29 @@ export default function BookingDetailPage() {
     return <p>something went wrong</p>;
   }
 
+  const bookingStatus = bookingDetail?.data.bookingStatus || "";
+  const bookingId = bookingDetail?.data.bookingId || id;
+  const customerName = bookingDetail?.data.booker?.fullName;
+
   return (
     <main className="py-14 space-y-[46px]">
       <BackLink backLink="/bookings" />
       <div className="space-y-14">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-4">
           <BookingInfoCards
             title="BOOKING INFORMATION"
-            chipTitle="Booking Dates"
-            chipData={bookingDates as MappedInformation[]}
-            nameTitle="Booking ID"
-            nameValue={bookingDetail?.data.bookingId || ""}
-            copyText={bookingDetail?.data.bookingId || ""}
-            status={bookingDetail?.data.bookingStatus || ""}
+            chipTitle="Booking dates"
+            chipData={bookingDates as unknown as MappedInformation[]}
+            nameTitle="Invoice number"
+            nameValue={invoiceNumber}
+            copyText={invoiceNumber !== "—" ? invoiceNumber : undefined}
+            status={bookingStatus}
           >
             <div className="flex items-center gap-8">
               <div className="space-y-2">
                 <p className="text-grey-500 text-sm 3xl:text-base">Amount</p>
                 <p className="text-primary-500 text-4xl 3xl:text-h2">
-                  {`NGN ${bookingDetail?.data.totalPrice}`}
+                  {formattedTotalPrice}
                 </p>
               </div>
             </div>
@@ -93,24 +88,11 @@ export default function BookingDetailPage() {
               }
               content={
                 <BookingActions
-                  bookingStatus={
-                    bookingDetail?.data.bookingStatus as BookingBadgeStatus
-                  }
                   openReportModal={openReportModal}
                   handleReportModal={handleReportModal}
-                  handleReportTrip={() =>
-                    reportBooking.mutate({ message: report })
-                  }
+                  handleReportTrip={(values) => reportBooking.mutate(values)}
                   setReport={setReport}
                   isLoadingReportTrip={reportBooking.isPending}
-                  handleAcceptTrip={() => acceptBooking.mutate()}
-                  openAcceptModal={openAcceptModal}
-                  handleAcceptModal={handleAcceptModal}
-                  isLoadingAcceptTrip={acceptBooking.isPending}
-                  openDeclineModal={openDeclineModal}
-                  handleDeclineModal={handleDeclineModal}
-                  handleDeclineTrip={() => declineBooking.mutate()}
-                  isLoadingDeclineTrip={declineBooking.isPending}
                 />
               }
             />
@@ -118,42 +100,23 @@ export default function BookingDetailPage() {
 
           <div className="hidden lg:block">
             <BookingActions
-              bookingStatus={
-                bookingDetail?.data.bookingStatus as BookingBadgeStatus
-              }
               openReportModal={openReportModal}
               handleReportModal={handleReportModal}
-              handleReportTrip={() =>
-                reportBooking.mutate({ message: report })
-              }
+              handleReportTrip={(values) => reportBooking.mutate(values)}
               setReport={setReport}
               isLoadingReportTrip={reportBooking.isPending}
-              handleAcceptTrip={() => acceptBooking.mutate()}
-              openAcceptModal={openAcceptModal}
-              handleAcceptModal={handleAcceptModal}
-              isLoadingAcceptTrip={acceptBooking.isPending}
-              openDeclineModal={openDeclineModal}
-              handleDeclineModal={handleDeclineModal}
-              handleDeclineTrip={() => declineBooking.mutate()}
-              isLoadingDeclineTrip={declineBooking.isPending}
             />
           </div>
         </div>
-        {/* <BookingInfoCards
-          title="GUEST INFORMATION"
-          chipTitle="Contact Information"
-          chipData={contactInformation as MappedInformation[]}
-          nameTitle="Guest Name"
-          nameValue={bookingDetail?.data.booker.fullName || ""}
-        /> */}
-        <BookingInfoCards
-          title="VEHICLE INFORMATION"
-          chipTitle="Vehicle Details"
-          chipData={vehicleDetails as MappedInformation[]}
-          nameTitle="Vehicle Requested"
-          nameValue={bookingDetail?.data.vehicle.name || ""}
-          link={`/listings/${bookingDetail?.data.vehicle.id}`}
-          linkText="View Vehicle"
+
+        <BookingVehicleCard
+          vehicle={vehicleInfo}
+          isLoadingDetails={isVehicleLoading}
+        />
+
+        <BookingReviewSection
+          bookingId={bookingId}
+          customerName={customerName}
         />
       </div>
     </main>

@@ -3,35 +3,16 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { debounce } from "@/utils/functions";
 import { format } from "date-fns";
-import { FullPageSpinner, Pagination, SearchInput, FilterBy, Popup, MoreButton } from "@/ui";
+import { FullPageSpinner, Pagination, SearchInput, FilterBy } from "@/ui";
 import EmptyState from "@/components/EmptyState";
 import { Table, TableBody, TableHead, TableCell, TableRow } from "@/components/Table";
 import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "@/components/Table/tableStyles";
-import type { TripAgent } from "@/types";
 import TripReceipt from "@/components/Trips/TripReceipt";
 import TripsHero from "@/components/Trips/TripsHero";
 import { tripTableHeadItems } from "@/utils/data";
+import { getBookingDisplayId, getTripAgentDisplayName } from "@/utils/displayIds";
 import { useMou } from "@/hooks/mou/useMou";
 import { HostTripsParams } from "@/types";
-
-function AgentBlock({ title, agent }: { title: string; agent?: TripAgent }) {
-    if (!agent || (!agent.name && !agent.email && !agent.phoneNumber)) {
-        return (
-            <div>
-                <p className="text-xs font-semibold text-grey-700">{title}</p>
-                <p className="text-xs text-grey-400">Not assigned</p>
-            </div>
-        );
-    }
-    return (
-        <div>
-            <p className="text-xs font-semibold text-grey-700">{title}</p>
-            {agent.name && <p className="text-xs text-grey-600">{agent.name}</p>}
-            {agent.phoneNumber && <p className="text-xs text-grey-500">{agent.phoneNumber}</p>}
-            {agent.email && <p className="text-xs text-grey-500 break-all">{agent.email}</p>}
-        </div>
-    );
-}
 
 const tripFilters = [
     {
@@ -141,7 +122,7 @@ export default function Trips() {
                             <TableRow key={trip.id}>
                                 <TableCell
                                     title="Invoice Number"
-                                    content={trip.invoiceNumber || trip.bookingId || trip.id || "—"}
+                                    content={getBookingDisplayId(trip)}
                                 />
                                 <TableCell title="Vehicle" content={trip.vehicleName || trip.vehicleIdentifier} />
                                 <TableCell
@@ -153,25 +134,11 @@ export default function Trips() {
                                 <TableCell title="End Date" content={trip.endDateTime ? formatDate(trip.endDateTime) : "N/A"} />
                                 <TableCell title="Booking Status" content={trip.bookingStatus} isBadge type="booking" />
                                 <TableCell title="Trip Status" content={trip.tripStatus} isBadge type="booking" />
-                                <td className={tableCellBaseClass}>
-                                    <span className={tableMobileTitleClass}>Agent</span>
-                                    <div className={tableCellValueClass}>
-                                        {trip.customerAgent || trip.opsAgent ? (
-                                            <Popup
-                                                align="end"
-                                                trigger={<MoreButton className="!mx-0 ml-auto lg:mx-0" />}
-                                                content={
-                                                    <div className="space-y-3">
-                                                        <AgentBlock title="Customer Agent" agent={trip.customerAgent} />
-                                                        <AgentBlock title="Operations Agent" agent={trip.opsAgent} />
-                                                    </div>
-                                                }
-                                            />
-                                        ) : (
-                                            <span className="text-grey-400">—</span>
-                                        )}
-                                    </div>
-                                </td>
+                                <TableCell
+                                    title="Agent"
+                                    content={getTripAgentDisplayName(trip)}
+                                    className="!font-medium !text-grey-900"
+                                />
                             </TableRow>
                         ))}
                     </TableBody>

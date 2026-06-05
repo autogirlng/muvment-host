@@ -2,6 +2,7 @@ import { Icons } from "@/ui";
 import {
   AccountSetupTask,
   BookingBadgeStatus,
+  BookingStatus,
   BookingType,
   ListingStatus,
   TopRatedVehicleType,
@@ -677,7 +678,7 @@ export const hostPendingBalanceTableHeadItems: string[] = [
   "Vehicle",
   "Booking date",
   "Deductions",
-  "Pending payments",
+  "Amount",
   "Payment status",
   "Actions",
 ];
@@ -798,9 +799,9 @@ export const bookingHistoryFilters = [
   {
     title: "bookingStatus",
     options: [
-      { option: "Pending Payment", value: "PENDING_PAYMENT" },
-      { option: "Confirmed", value: "CONFIRMED" },
-      { option: "Cancelled", value: "CANCELLED" },
+      { option: "Pending Payment", value: BookingStatus.PENDING_PAYMENT },
+      { option: "Confirmed", value: BookingStatus.CONFIRMED },
+      { option: "Cancelled", value: BookingStatus.CANCELLED_BY_ADMIN },
     ],
   },
 ];

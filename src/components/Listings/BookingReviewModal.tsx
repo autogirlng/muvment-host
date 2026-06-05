@@ -16,7 +16,7 @@ export default function BookingReviewModal({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { review, isLoading, isError } = useBookingReview(open ? bookingId : null);
+  const { review, isLoading } = useBookingReview(open ? bookingId : null);
 
   const reviewerName =
     review?.isAnonymous
@@ -41,7 +41,7 @@ export default function BookingReviewModal({
             <div className="flex justify-center py-10">
               <Spinner />
             </div>
-          ) : isError || !review ? (
+          ) : !review ? (
             <div className="flex flex-col items-center justify-center gap-2 py-10 text-center">
               <div className="flex h-12 w-12 items-center justify-center rounded-full bg-grey-100 text-grey-400">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none">

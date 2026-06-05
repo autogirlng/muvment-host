@@ -149,10 +149,13 @@ const DateFilter: React.FC<DateFilterProps> = ({
             </Popover.Trigger>
             <Popover.Portal>
                 <Popover.Content
-                    className="px-4 py-3 w-[300px] bg-white rounded-lg border border-grey-300 shadow-md z-50"
+                    className="z-[250] w-[300px] rounded-lg border border-grey-300 bg-white px-4 py-3 shadow-md"
                     sideOffset={5}
                     side="bottom"
                     align="end"
+                    collisionPadding={16}
+                    avoidCollisions
+                    sticky="partial"
                 >
                     <div className="mb-2 flex justify-end">
                         <button

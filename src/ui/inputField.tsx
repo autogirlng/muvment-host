@@ -4,6 +4,7 @@ import { InputFieldProps } from "./props";
 
 const InputField = ({
     id,
+    name,
     label,
     placeholder,
     variant,
@@ -16,8 +17,16 @@ const InputField = ({
     inputClass,
     className,
     toggleShowPassword,
+    onIconClick,
     ...rest
-}: InputFieldProps) => (
+}: InputFieldProps) => {
+    const handleIconClick = onIconClick ?? toggleShowPassword;
+    const isPasswordField =
+        type === "password" ||
+        /password/i.test(id) ||
+        /password/i.test(name ?? "");
+
+    return (
     <div className={cn("w-full space-y-1", className)}>
         {label && (
             <label
@@ -57,19 +66,20 @@ const InputField = ({
                 autoComplete={`new-${type || "text"}`}
                 {...rest}
             />
-            {(id === "password" ||
-                id === "confirmPassword" ||
-                id === "currentPassword") && (
-                    <div
+            {isPasswordField && icon && (
+                    <button
+                        type="button"
                         className="absolute right-3 bottom-[19px] fill-grey-500 cursor-pointer"
-                        onClick={toggleShowPassword}
+                        onClick={handleIconClick}
+                        aria-label="Toggle password visibility"
                     >
                         {icon}
-                    </div>
+                    </button>
                 )}
         </div>
         {error && <p className="text-error-500 text-sm mt-2">{error}</p>}
     </div>
-);
+    );
+};
 
 export { InputField };
