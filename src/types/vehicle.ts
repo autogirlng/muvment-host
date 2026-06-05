@@ -1,11 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
 
+import type { VehicleAssignedDriver } from "./driver";
 import { 
   BookingTypeData, 
   BaseResponse, 
   Option,  
   Review, 
-  CloudinaryPhotoUpload
+  CloudinaryPhotoUpload,
 } from "@/types";
 
 
@@ -136,6 +137,10 @@ export interface VehiclePhotos {
   other: string;
 }
 
+export type VehiclePhotosFormValues = {
+  [K in keyof VehiclePhotos]: string | File;
+};
+
 
 // export enum VehicleStatus {
 //   DRAFT = "draft",
@@ -156,6 +161,10 @@ export interface DocumentVehicleInformationValues {
   maintenanceHistory?: string;
   authorizationLetter: string;
 }
+
+export type DocumentVehicleInformationFormValues = {
+  [K in keyof DocumentVehicleInformationValues]: string | File;
+};
 
 export interface VehicleInformation extends BaseResponse {
     id:string,
@@ -182,6 +191,8 @@ export interface VehicleInformation extends BaseResponse {
     pricing: any[],
     discounts: any[],
     outOfBoundsAreaIds: string[]
+    outOfBoundsAreas?: { id: string; name: string }[];
+    assignedDriver?: VehicleAssignedDriver | null;
     licensePlateNumber: string,
     stateOfRegistration: string,
     vehicleColorId: string,
@@ -260,6 +271,7 @@ export interface VehicleInformationStepper {
     vehicleModel?: { id: string; name: string; code: string };
     vehicleType?: { id: string; name: string };
     vehicleColor?: { id: string; name: string; hexCode: string };
+    assignedDriver?: VehicleAssignedDriver | null;
     createdAt?: string;
     updatedAt?: string;
 }
@@ -311,6 +323,8 @@ export interface ListingDataType {
 };
 
 
+export type DriverProvisionMode = "existing" | "new" | "";
+
 export interface AvailabilityAndPricingValues {
   
   maxTripDurationUnit: string,
@@ -319,6 +333,13 @@ export interface AvailabilityAndPricingValues {
   advanceNoticeValue: number,
   willProvideDriver: string,
   willProvideFuel: string,
+  driverMode: DriverProvisionMode,
+  driverId: string,
+  newDriverFirstName: string,
+  newDriverLastName: string,
+  newDriverPhoneNumber: string,
+  newDriverLicenseNumber: string,
+  newDriverLicenseExpiryDate: string,
   supportedBookingTypeIds: string[],
   outOfBoundsAreaIds: string[],
   outskirtFee: number,

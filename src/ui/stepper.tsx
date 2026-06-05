@@ -6,36 +6,71 @@ export const Stepper = ({
     steps,
     children,
     currentStep,
+    onStepClick,
+    canClickStep,
 }: {
     steps: string[];
     children: ReactNode;
     currentStep: number;
+    onStepClick?: (step: number) => void;
+    canClickStep?: (stepIndex: number) => boolean;
 }) => {
     return (
         <>
             <div className="flex justify-between items-center gap-2">
-                {steps.map((step, index) => (
+                {steps.map((step, index) => {
+                    const isCompleted = currentStep > index;
+                    const isCurrent = currentStep === index;
+                    const isClickable =
+                        !!onStepClick &&
+                        (canClickStep ? canClickStep(index) : isCompleted);
+
+                    const stepCircleClass = cn(
+                        "flex items-center justify-center w-8 sm:w-10 h-8 sm:h-10 rounded-full border-[1.5px] text-xs transition-colors",
+                        isCompleted && "bg-primary-500 border-primary-500 text-white",
+                        isCurrent && "bg-grey-500 border-grey-500 text-white",
+                        !isCompleted && !isCurrent && "border-grey-500 text-grey-500",
+                        isClickable && "cursor-pointer hover:bg-primary-600 hover:border-primary-600"
+                    );
+
+                    const stepLabelClass = cn(
+                        "font-medium text-base 3xl:text-xl hidden md:block transition-colors",
+                        isCurrent ? "text-grey-800" : "text-grey-500",
+                        isClickable && "cursor-pointer hover:text-primary-600"
+                    );
+
+                    const handleStepClick = () => {
+                        if (isClickable) onStepClick(index);
+                    };
+
+                    return (
                     <Fragment key={index}>
-                        <div className="flex items-center justify-between gap-6">
-                            <div
-                                className={`flex items-center justify-center w-8 sm:w-10 h-8 sm:h-10 rounded-full border-grey-500 border-[1.5px] text-xs ${currentStep > index
-                                    ? "bg-primary-500 border-primary-500 text-white"
-                                    : currentStep === index
-                                        ? "bg-grey-500 text-white"
-                                        : "text-grey-500"
-                                    }`}
+                        {isClickable ? (
+                            <button
+                                type="button"
+                                onClick={handleStepClick}
+                                className="flex items-center justify-between gap-6 rounded-lg outline-none focus-visible:ring-2 focus-visible:ring-primary-200"
+                                aria-label={`Go back to ${step}`}
                             >
-                                {index + 1}
+                                <div className={stepCircleClass}>
+                                    {index + 1}
+                                </div>
+                                <p className={stepLabelClass}>{step}</p>
+                            </button>
+                        ) : (
+                            <div className="flex items-center justify-between gap-6">
+                                <div className={stepCircleClass}>
+                                    {index + 1}
+                                </div>
+                                <p className={stepLabelClass}>{step}</p>
                             </div>
-                            <p className="font-medium text-base 3xl:text-xl text-grey-500 hidden md:block">
-                                {step}
-                            </p>
-                        </div>
+                        )}
                         {index < steps.length - 1 && (
                             <div className="text-black">{Icons.ic_chevron_right}</div>
                         )}
                     </Fragment>
-                ))}
+                    );
+                })}
             </div>
 
             {/* ========== content here ========== */}

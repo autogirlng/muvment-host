@@ -21,9 +21,16 @@ const vehicleSlice = createSlice({
     setVehicleOnboardingCurrentStep: (state, action: PayloadAction<number>) => {
       state.currentStep = action.payload;
     },
+    clearVehicleOnboarding: (state) => {
+      state.vehicle = null;
+      state.currentStep = 0;
+    },
   },
 });
 
-export const { updateVehicleInformation, setVehicleOnboardingCurrentStep } =
-  vehicleSlice.actions;
+export const {
+  updateVehicleInformation,
+  setVehicleOnboardingCurrentStep,
+  clearVehicleOnboarding,
+} = vehicleSlice.actions;
 export default vehicleSlice.reducer;

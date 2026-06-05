@@ -22,6 +22,7 @@ export interface CreateComplaintPayload {
   title: string;
   description: string;
   type: ComplaintType;
+  invoiceNumber?: string;
 }
 
 export interface UpdateComplaintPayload {

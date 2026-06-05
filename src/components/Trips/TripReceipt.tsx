@@ -1,5 +1,6 @@
 import { format } from "date-fns";
 import { HostTripItem } from "@/types";
+import { getBookingDisplayId } from "@/utils/displayIds";
 
 interface TripReceiptProps {
     trip: HostTripItem;
@@ -21,7 +22,7 @@ export function printTripReceipt(trip: HostTripItem) {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>Trip Receipt - ${trip.bookingId || trip.id}</title>
+            <title>Trip Receipt - ${getBookingDisplayId(trip)}</title>
             <style>
                 * { box-sizing: border-box; margin: 0; padding: 0; }
                 body { font-family: Arial, sans-serif; padding: 48px; color: #1a1a1a; max-width: 600px; margin: 0 auto; }
@@ -47,7 +48,7 @@ export function printTripReceipt(trip: HostTripItem) {
             <hr class="divider" />
 
             <div class="section-label">Booking Info</div>
-            <div class="row"><span class="label">Booking ID</span><span class="value">${trip.bookingId || trip.id || "—"}</span></div>
+            <div class="row"><span class="label">Invoice</span><span class="value">${getBookingDisplayId(trip)}</span></div>
             <div class="row"><span class="label">Vehicle</span><span class="value">${trip.vehicleName || trip.vehicleIdentifier || "—"}</span></div>
             <div class="row"><span class="label">Customer</span><span class="value">${trip.driverName || "—"}</span></div>
             <div class="row"><span class="label">Phone</span><span class="value">${trip.driverPhoneNumber || "—"}</span></div>
@@ -90,7 +91,7 @@ export default function TripReceipt({ trip }: TripReceiptProps) {
             <div className="space-y-1">
                 <p className="text-xs font-bold uppercase tracking-widest text-grey-400">Booking Info</p>
                 <div className="divide-y divide-grey-100">
-                    <Row label="Booking ID" value={trip.bookingId || trip.id} />
+                    <Row label="Invoice" value={getBookingDisplayId(trip)} />
                     <Row label="Vehicle" value={trip.vehicleName || trip.vehicleIdentifier} />
                     <Row label="Customer" value={trip.driverName} />
                     <Row label="Phone" value={trip.driverPhoneNumber} />

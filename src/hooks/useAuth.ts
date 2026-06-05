@@ -331,7 +331,7 @@ export default function useAuth() {
         throw new Error("Authentication required");
       }
 
-      return http.post("/v1/users/change-password", values);
+      return http.post("/users/change-password", values);
     },
     onSuccess: (data) => {
       console.log("[Change password] success", data);

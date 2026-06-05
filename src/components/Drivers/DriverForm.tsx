@@ -10,7 +10,6 @@ export interface DriverFormValues {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  driverIdentifier: string;
   licenseNumber: string;
   licenseExpiryDate: string;
   country?: string;
@@ -21,7 +20,6 @@ const validationSchema = Yup.object({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
   phoneNumber: Yup.string().required("Phone number is required"),
-  driverIdentifier: Yup.string().required("Driver identifier is required"),
   licenseNumber: Yup.string().required("License number is required"),
   licenseExpiryDate: Yup.string().required("License expiry date is required"),
 });
@@ -45,7 +43,6 @@ export default function DriverForm({
         firstName: initialValues?.firstName ?? "",
         lastName: initialValues?.lastName ?? "",
         phoneNumber: initialValues?.phoneNumber ?? "",
-        driverIdentifier: initialValues?.driverIdentifier ?? "",
         licenseNumber: initialValues?.licenseNumber ?? "",
         licenseExpiryDate: initialValues?.licenseExpiryDate ?? "",
         country: "NG",
@@ -120,30 +117,17 @@ export default function DriverForm({
             inputError={errors.phoneNumber && touched.phoneNumber ? errors.phoneNumber : ""}
           />
 
-          <div className="flex flex-col gap-6 sm:flex-row">
-            <InputField
-              name="driverIdentifier"
-              id="driverIdentifier"
-              type="text"
-              label="Unique Driver Identifier"
-              placeholder="e.g. DRV-HSTf339-001"
-              value={values.driverIdentifier}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={errors.driverIdentifier && touched.driverIdentifier ? errors.driverIdentifier : ""}
-            />
-            <InputField
-              name="licenseNumber"
-              id="licenseNumber"
-              type="text"
-              label="License Number"
-              placeholder="Enter license number"
-              value={values.licenseNumber}
-              onChange={handleChange}
-              onBlur={handleBlur}
-              error={errors.licenseNumber && touched.licenseNumber ? errors.licenseNumber : ""}
-            />
-          </div>
+          <InputField
+            name="licenseNumber"
+            id="licenseNumber"
+            type="text"
+            label="License Number"
+            placeholder="Enter license number"
+            value={values.licenseNumber}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={errors.licenseNumber && touched.licenseNumber ? errors.licenseNumber : ""}
+          />
 
           <InputField
             name="licenseExpiryDate"

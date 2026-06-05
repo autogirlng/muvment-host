@@ -1,6 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+    VEHICLE_MAKE_PLACEHOLDER,
+    VEHICLE_SELECT_PLACEHOLDER,
+} from "@/utils/constants";
 import { useMutation } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
@@ -85,36 +89,39 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
     const [searchAddressLoading, setSearchAddressLoading] = useState(false);
     const [showAddressList, setShowAddressList] = useState(false);
 
-    const initialValues: BasicVehicleInformationValues = {
-        name: vehicle?.name || "",
-        city: vehicle?.city || "",
-        address: vehicle?.address || "",
-        latitude: vehicle?.latitude || 0,
-        longitude: vehicle?.longitude || 0,
-        vehicleMakeId: vehicle?.vehicleMakeId || "",
-        vehicleModelId: vehicle?.vehicleModelId || "",
-        vehicleTypeId: vehicle?.vehicleTypeId || "",
-        yearOfRelease: vehicle?.yearOfRelease || 0,
-        hasInsurance:
-        vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
-                ? ""
-                : vehicle?.hasInsurance
-                    ? "yes"
-                    : "no",
-        hasTracker:
-            vehicle?.hasTracker === undefined || vehicle?.hasTracker === null
-                ? ""
-                : vehicle?.hasTracker
-                    ? "yes"
-                    : "no",
-        isVehicleUpgraded:
-            vehicle?.isVehicleUpgraded === undefined || vehicle?.isVehicleUpgraded === null
-                ? ""
-                : vehicle?.isVehicleUpgraded
-                    ? "yes"
-                    : "no",
-        yearOfUpgrade: (vehicle as any)?.yearOfUpgrade || undefined,
-    };
+    const initialValues: BasicVehicleInformationValues = useMemo(
+        () => ({
+            name: vehicle?.name || "",
+            city: vehicle?.city || "",
+            address: vehicle?.address || "",
+            latitude: vehicle?.latitude || 0,
+            longitude: vehicle?.longitude || 0,
+            vehicleMakeId: vehicle?.vehicleMakeId || VEHICLE_MAKE_PLACEHOLDER,
+            vehicleModelId: vehicle?.vehicleModelId || VEHICLE_SELECT_PLACEHOLDER,
+            vehicleTypeId: vehicle?.vehicleTypeId || VEHICLE_SELECT_PLACEHOLDER,
+            yearOfRelease: vehicle?.yearOfRelease || 0,
+            hasInsurance:
+                vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
+                    ? VEHICLE_SELECT_PLACEHOLDER
+                    : vehicle?.hasInsurance
+                        ? "yes"
+                        : "no",
+            hasTracker:
+                vehicle?.hasTracker === undefined || vehicle?.hasTracker === null
+                    ? VEHICLE_SELECT_PLACEHOLDER
+                    : vehicle?.hasTracker
+                        ? "yes"
+                        : "no",
+            isVehicleUpgraded:
+                vehicle?.isVehicleUpgraded === undefined || vehicle?.isVehicleUpgraded === null
+                    ? VEHICLE_SELECT_PLACEHOLDER
+                    : vehicle?.isVehicleUpgraded
+                        ? "yes"
+                        : "no",
+            yearOfUpgrade: (vehicle as any)?.yearOfUpgrade || undefined,
+        }),
+        [vehicle]
+    );
 
     const fetchPlaces = async (query: string) => {
         setSearchAddressLoading(true);
@@ -159,8 +166,14 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
         }
     }, [searchAddressQuery, debouncedFetchPlaces]);
 
+    const stripPlaceholder = (value: string, placeholder: string) =>
+        value === placeholder ? "" : value;
+
     const buildPayload = (values: BasicVehicleInformationValues) => ({
         ...values,
+        vehicleMakeId: stripPlaceholder(values.vehicleMakeId, VEHICLE_MAKE_PLACEHOLDER),
+        vehicleModelId: stripPlaceholder(values.vehicleModelId, VEHICLE_SELECT_PLACEHOLDER),
+        vehicleTypeId: stripPlaceholder(values.vehicleTypeId, VEHICLE_SELECT_PLACEHOLDER),
         hasTracker: values.hasTracker === "yes",
         hasInsurance: values.hasInsurance === "yes",
         isVehicleUpgraded: values.isVehicleUpgraded === "yes",

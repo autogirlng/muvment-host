@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BlurredDialog } from "@/ui/dialog";
 import { SelectInput, Button } from "@/ui";
 import useListings from "@/hooks/listings/useListings";
+import { VehicleStatus } from "@/types";
 
 export default function AssignToVehicleModal({
   driver,
@@ -21,7 +22,11 @@ export default function AssignToVehicleModal({
   const [vehicleId, setVehicleId] = useState("");
   const { listings, isLoading } = useListings({ currentPage: 0, pageLimit: 100 });
 
-  const vehicleOptions = listings.map((v) => ({
+  const approvedListings = listings.filter(
+    (v) => v.status === VehicleStatus.APPROVED
+  );
+
+  const vehicleOptions = approvedListings.map((v) => ({
     option: v.name
       ? `${v.name}${v.licensePlateNumber ? ` · ${v.licensePlateNumber}` : ""}`
       : v.vehicleIdentifier || v.id,
@@ -48,7 +53,13 @@ export default function AssignToVehicleModal({
           <SelectInput
             id="vehicleId"
             label="Select Vehicle"
-            placeholder={isLoading ? "Loading vehicles…" : "Choose a vehicle"}
+            placeholder={
+              isLoading
+                ? "Loading vehicles…"
+                : vehicleOptions.length === 0
+                  ? "No approved vehicles"
+                  : "Choose a vehicle"
+            }
             variant="outlined"
             options={vehicleOptions}
             value={vehicleId}

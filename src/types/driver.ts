@@ -20,12 +20,29 @@ export interface AssignedDriver {
 
 /** POST /v1/drivers — create driver payload */
 export interface AssignNewDriver {
-  driverIdentifier: string;
+  driverIdentifier?: string;
   firstName: string;
   lastName: string;
   phoneNumber: string;
   licenseNumber?: string;
   licenseExpiryDate?: string;
+}
+
+/** Driver summary returned on GET /vehicles/{id} as assignedDriver */
+export interface VehicleAssignedDriver {
+  id: string;
+  driverIdentifier: string;
+  fullName: string;
+  phoneNumber: string;
+  ownerType?: string;
+  ownerName?: string;
+  assignedVehicleId?: string;
+  assignedVehicleIdentifier?: string;
+  assignedVehicleName?: string;
+  profilePictureUrl?: string;
+  licenseNumber?: string;
+  licenseExpiryDate?: string;
+  active?: boolean;
 }
 
 export interface DriverContent {
@@ -80,7 +97,7 @@ export interface EditDriverPayload {
   firstName: string;
   lastName: string;
   phoneNumber: string;
-  driverIdentifier: string;
+  driverIdentifier?: string;
   licenseNumber?: string;
   licenseExpiryDate?: string;
 }

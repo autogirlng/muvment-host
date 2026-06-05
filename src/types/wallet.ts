@@ -132,6 +132,7 @@ export type Transaction = {
   origin: TransactionOrigin;
   userId: string;
   bookingId: string | null;
+  invoiceNumber?: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -166,6 +167,7 @@ export type HostPaymentStatus = string;
 export interface HostBookingDeduction {
   id: string;
   bookingId: string;
+  invoiceNumber?: string | null;
   type: string;
   amount: number;
 }

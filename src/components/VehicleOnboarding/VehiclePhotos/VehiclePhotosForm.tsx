@@ -2,6 +2,7 @@ import Image from "next/image";
 import { useEffect } from "react";
 import { Formik, Form } from "formik";
 import { vehiclePhotosSchema } from "@/utils/validationSchema";
+import { photoViewOptions } from "@/utils/data";
 import { VehiclePhotos, VehicleOnboardingStepsHookProps } from "@/types";
 import { PhotoUpload, StepperNavigation } from "@/ui";
 import useVehiclePhotosForm from "@/hooks/vehicle/useVehiclePhotosForm";
@@ -18,16 +19,12 @@ const VehiclePhotosForm = ({
         setPhotoViews,
         submitStep3,
         saveStep3,
-        appendFormData,
-        photoViewOptions,
     } = useVehiclePhotosForm({ setPhotoTipIndex, currentStep, setCurrentStep });
 
-    // Set the initial photoTipIndex when the component mounts
     useEffect(() => {
         const filledFields = photoViewOptions.filter(
             (view) => initialValues[view.name as keyof VehiclePhotos]
         );
-
 
         if (filledFields.length > 0) {
             // @ts-ignore
@@ -36,19 +33,19 @@ const VehiclePhotosForm = ({
             // @ts-ignore
             setPhotoTipIndex(0);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [initialValues, setPhotoTipIndex]);
 
     return (
         <Formik
             initialValues={initialValues}
             validationSchema={vehiclePhotosSchema}
             onSubmit={(values, { setSubmitting }) => {
-                const formData = appendFormData(values);
-
-                submitStep3.mutate(formData);
+                submitStep3.mutate(values);
                 setSubmitting(false);
             }}
+            enableReinitialize
+            validateOnChange
+            validateOnBlur
         >
             {({
                 values,
@@ -99,7 +96,7 @@ const VehiclePhotosForm = ({
                                 disabled={item.disabled}
                                 fieldName={item.name}
                                 handlePhotoDelete={() => {
-                                    setFieldValue(item.name, null);
+                                    setFieldValue(item.name, "");
                                 }}
                             />
                         );
@@ -111,8 +108,7 @@ const VehiclePhotosForm = ({
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
                         handleSaveDraft={async () => {
-                            const formData = appendFormData(values);
-                            saveStep3.mutate(formData);
+                            saveStep3.mutate(values);
                         }}
                         isSaveDraftloading={saveStep3.isPending}
                         isNextLoading={isSubmitting || submitStep3.isPending}

@@ -12,7 +12,7 @@ type TripCardProps = { content: HostTripItem };
 
 export default function TripCard({ content: trip }: TripCardProps) {
     const tripDetails = [
-        { "Trip ID": trip.bookingId || "N/A" },
+        { "Invoice": trip.invoiceNumber || "—" },
         { "Customer": trip.driverName || "N/A" },
         { "Start Date": trip.startDateTime ? format(new Date(trip.startDateTime), "MMM dd, yyyy HH:mm") : "N/A" },
         { "End Date": trip.endDateTime ? format(new Date(trip.endDateTime), "MMM dd, yyyy HH:mm") : "N/A" },

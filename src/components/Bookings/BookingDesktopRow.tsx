@@ -1,10 +1,9 @@
 import Link from "next/link";
-import { BookingSegmentContent, BookingStatus } from "@/types";
+import { BookingSegmentContent } from "@/types";
 import { Popup, MoreButton } from "@/ui";
 import { TableCell, TableRow } from "@/components/Table";
-import DeclineTrip from "@/components/Bookings/modals/DeclineTrip";
-import AcceptTrip from "@/components/Bookings/modals/AcceptTrip";
-import useBookingActions from "@/hooks/bookings/useBookingActions";
+import { getBookingDisplayId } from "@/utils/displayIds";
+import { formatNgnAmount } from "@/utils/formatters";
 
 function formatDurationLabel(duration: string | undefined): string {
   if (duration == null || duration === "") return "";
@@ -14,15 +13,6 @@ function formatDurationLabel(duration: string | undefined): string {
 }
 
 const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
-  const {
-    openAcceptModal,
-    handleAcceptModal,
-    acceptBooking,
-    openDeclineModal,
-    handleDeclineModal,
-    declineBooking,
-  } = useBookingActions({ id: items.bookingId });
-
   return (
     <TableRow className="lg:hover:bg-grey-50/80">
       <TableCell
@@ -30,7 +20,7 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
         className="!font-semibold !text-grey-900"
       />
       <TableCell
-        content={items?.invoiceNumber || items?.bookingId || "—"}
+        content={getBookingDisplayId(items)}
         className="!text-grey-600"
       />
       <TableCell content={items?.bookingCategory} className="!text-grey-600" />
@@ -42,7 +32,10 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
       <TableCell content="" className="!text-grey-600" />
       <TableCell content="" className="!text-grey-600" />
       <TableCell content={items?.bookingStatus} isBadge type="booking" />
-      <TableCell content={`NGN ${items?.price}`} className="!text-grey-600" />
+      <TableCell
+        content={`NGN ${formatNgnAmount(Number(items?.price) || 0)}`}
+        className="!text-grey-600"
+      />
       <td className="px-5 py-4">
         <Popup
           trigger={<MoreButton />}
@@ -50,36 +43,6 @@ const BookingDesktopRow = ({ items }: { items: BookingSegmentContent }) => {
             <>
               <p className="!text-xs !font-semibold 3xl:!text-base">Actions</p>
               <ul className="space-y-2 *:py-2">
-                {items.bookingStatus !== BookingStatus.CONFIRMED && (
-                  <>
-                    <li>
-                      <DeclineTrip
-                        openModal={openDeclineModal}
-                        handleModal={() => handleDeclineModal()}
-                        isLoading={declineBooking.isPending}
-                        handleAction={() => declineBooking.mutate()}
-                        trigger={
-                          <button className="!text-xs 3xl:!text-base ">
-                            Decline Trip
-                          </button>
-                        }
-                      />
-                    </li>
-                    <li>
-                      <AcceptTrip
-                        openModal={openAcceptModal}
-                        handleModal={() => handleAcceptModal()}
-                        isLoading={acceptBooking.isPending}
-                        handleAction={() => acceptBooking.mutate()}
-                        trigger={
-                          <button className="!text-xs 3xl:!text-base ">
-                            Accept Trip
-                          </button>
-                        }
-                      />
-                    </li>
-                  </>
-                )}
                 <li>
                   <Link
                     href={`/bookings/${items?.bookingId}`}

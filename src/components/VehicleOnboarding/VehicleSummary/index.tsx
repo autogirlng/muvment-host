@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SingleCheckBox, StepperNavigation } from "@/ui";
 import useVehicleSummary from "@/hooks/vehicle/useVehicleSummary";
 import ViewAsCustomer from "@/components/VehicleOnboarding/VehicleSummary/ViewAsCustomer";
+import ListingSuccessModal from "@/components/VehicleOnboarding/VehicleSummary/ListingSuccessModal";
 import { useHttp } from "@/hooks/useHttp";
 import { useEffect, useState } from "react";
 import { VehicleInformationResponse, VehicleInformationStepper, VehicleOnboardingStepsHookProps } from "@/types";
@@ -27,7 +28,14 @@ export default function VehicleSummary({
     }, [])
 
 
-    const { submitVehicleOnboarding, agreeToTerms, setAgreeToTerms } = useVehicleSummary();
+    const {
+        submitVehicleOnboarding,
+        agreeToTerms,
+        setAgreeToTerms,
+        showSuccessModal,
+        setShowSuccessModal,
+        submittedVehicleName,
+    } = useVehicleSummary();
 
     return (
         <div className="space-y-11">
@@ -56,11 +64,20 @@ export default function VehicleSummary({
                 currentStep={currentStep}
                 setCurrentStep={setCurrentStep}
                 handleSubmit={() => {
+                    if (vehicleInfo?.name) {
+                        sessionStorage.setItem("submittedVehicleName", vehicleInfo.name);
+                    }
                     submitVehicleOnboarding.mutate();
                 }}
                 isSubmitloading={submitVehicleOnboarding.isPending}
                 disableSubmitButton={!agreeToTerms}
                 disableSaveDraftButton
+            />
+
+            <ListingSuccessModal
+                open={showSuccessModal}
+                onOpenChange={setShowSuccessModal}
+                vehicleName={submittedVehicleName}
             />
         </div>
     );

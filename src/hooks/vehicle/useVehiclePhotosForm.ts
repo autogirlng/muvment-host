@@ -1,17 +1,25 @@
 "use client";
 
-import {  useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { handleErrors } from "@/utils/functions";
-import { photoViewOptions } from "@/utils/data";
-import { ErrorResponse, VehiclePhotos, VehicleOnboardingStepsHookProps } from "@/types";
+import {
+  ErrorResponse,
+  VehiclePhotos,
+  VehiclePhotosFormValues,
+  VehicleOnboardingStepsHookProps,
+} from "@/types";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useHttp } from "@/hooks/useHttp";
-import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
-
+import {
+  buildPhotoViewsFromValues,
+  buildVehiclePhotosInitialValues,
+  resolvePhotosForPatch,
+} from "@/utils/vehicleOnboardingPrefill";
+import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
 
 export default function useVehiclePhotosForm({
   currentStep,
@@ -20,51 +28,34 @@ export default function useVehiclePhotosForm({
   const http = useHttp();
   const router = useRouter();
   const dispatch = useAppDispatch();
-const [vehicleId, setVehicleId] = useState<string>("")
-    useEffect(()=>{
-    const id = sessionStorage.getItem("vehicleId") ?? ""
-    setVehicleId(id)
-    }, [])
+  const [vehicleId, setVehicleId] = useState<string>("");
+
+  useEffect(() => {
+    setVehicleId(getOnboardingVehicleId());
+  }, []);
+
   const { vehicle } = useAppSelector((state) => state.vehicleOnboarding);
 
-  const appendFormData = (values: VehiclePhotos) => {
-    const formData = new FormData();
-    photoViewOptions.forEach((item) => {
-      formData.append(item.name, values[item.name as keyof VehiclePhotos]);
-    });
-    return formData;
-  };
+  const initialValues: VehiclePhotos = useMemo(
+    () => buildVehiclePhotosInitialValues(vehicle),
+    [vehicle]
+  );
 
-  const initialValues: VehiclePhotos = {
-    frontView: "",
-    backView:  "",
-    sideView1:  "",
-    sideView2:  "",
-    interior:  "",
-    other:  "",
-  };
-
-  const [photoViews, setPhotoViews] = useState(
-    photoViewOptions.map((view, index) => ({
-      ...view,
-      disabled:
-        index === 0
-          ? false
-          : !initialValues[
-              photoViewOptions[index - 1].name as keyof VehiclePhotos
-            ],
-    }))
+  const [photoViews, setPhotoViews] = useState(() =>
+    buildPhotoViewsFromValues(initialValues)
   );
 
   useEffect(() => {
-  }, [photoViews]);
+    setPhotoViews(buildPhotoViewsFromValues(initialValues));
+  }, [initialValues]);
+
+  const patchPhotos = async (values: VehiclePhotosFormValues) => {
+    const photos = await resolvePhotosForPatch(values, vehicle?.photos ?? []);
+    return http.patch(`/vehicles/photos?vehicleId=${vehicleId}`, { photos });
+  };
 
   const saveStep3 = useMutation({
-    mutationFn: async (values: FormData) => {
-      const vehiclePhotos = (await uploadToCloudinary(values, "photos")).filter(Boolean)
-      return http.patch(`/vehicles/photos?vehicleId=${vehicleId}`, {photos:vehiclePhotos})
-    },
-
+    mutationFn: patchPhotos,
     onSuccess: (data) => {
       dispatch(
         // @ts-ignore
@@ -72,17 +63,12 @@ const [vehicleId, setVehicleId] = useState<string>("")
       );
       router.push("/listings");
     },
-
     onError: (error: AxiosError<ErrorResponse>) =>
       handleErrors(error, "Vehicle Onboarding Step 3"),
   });
 
   const submitStep3 = useMutation({
-    mutationFn: async (values: FormData) => {
-      const vehiclePhotos = (await uploadToCloudinary(values, "photos")).filter(Boolean)
-      return http.patch(`/vehicles/photos?vehicleId=${vehicleId}`, {photos:vehiclePhotos})
-    },
-
+    mutationFn: patchPhotos,
     onSuccess: (data) => {
       dispatch(
         // @ts-ignore
@@ -90,7 +76,6 @@ const [vehicleId, setVehicleId] = useState<string>("")
       );
       setCurrentStep(currentStep + 1);
     },
-
     onError: (error: AxiosError<ErrorResponse>) =>
       handleErrors(error, "Vehicle Onboarding Step 3"),
   });
@@ -102,7 +87,5 @@ const [vehicleId, setVehicleId] = useState<string>("")
     submitStep3,
     saveStep3,
     vehicle,
-    appendFormData,
-    photoViewOptions,
   };
 }

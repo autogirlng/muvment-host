@@ -145,7 +145,7 @@ export default function Drivers() {
         open={createOpen}
         onOpenChange={setCreateOpen}
         title="Add New Driver"
-        description="Create a driver profile. An ID is auto-generated if you leave the identifier blank."
+        description="Create a driver profile. A driver ID will be auto-generated."
         width="max-w-[600px]"
         content={
           <DriverForm
@@ -157,7 +157,6 @@ export default function Drivers() {
                 firstName: values.firstName,
                 lastName: values.lastName,
                 phoneNumber: values.phoneNumber,
-                driverIdentifier: values.driverIdentifier,
                 licenseNumber: values.licenseNumber,
                 licenseExpiryDate: values.licenseExpiryDate,
               })

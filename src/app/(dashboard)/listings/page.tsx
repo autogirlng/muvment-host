@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ChangeEvent, Suspense, useCallback, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { listingFilters, listingTableHeadItems } from "@/utils/data";
+import { ListingStatus } from "@/types";
 import { debounce } from "@/utils/functions";
 import { FullPageSpinner, Icons, Button, Pagination, SearchInput, FilterBy } from "@/ui";
 import { BlurredDialog } from "@/ui/dialog";
@@ -13,6 +14,7 @@ import { Table, TableBody, TableHead } from "@/components/Table";
 import ListingTableRow from "@/components/Listings/ListingTableRow";
 import useListings from "@/hooks/listings/useListings";
 import { useKycStatus } from "@/hooks/useKycStatus";
+import { resetVehicleOnboardingSession } from "@/utils/vehicleOnboardingSession";
 
 function StatusRow({
   label,
@@ -63,6 +65,13 @@ function ListingsPageContent() {
   const router = useRouter();
   const pageLimit = 10;
   const kyc = useKycStatus();
+
+  useEffect(() => {
+    const statusParam = searchParams.get("status");
+    if (!statusParam) return;
+    setFilters({ status: [statusParam] });
+    setCurrentPage(0);
+  }, [searchParams]);
 
   const { listings, totalCount, isError, isLoading } = useListings({
     currentPage,
@@ -128,6 +137,7 @@ function ListingsPageContent() {
             className="flex items-center gap-2 !py-2 !px-3 md:!px-4 !text-sm 3xl:!text-base button_icon"
             onClick={() => {
               if (kyc.canCreateListing) {
+                resetVehicleOnboardingSession();
                 router.push("/vehicle-onboarding");
               } else {
                 setKycModalOpen(true);
@@ -162,7 +172,8 @@ function ListingsPageContent() {
               <button
                 onClick={() => {
                   if (kyc.canCreateListing) {
-                    router.push("/vehicle-onboarding");
+                    resetVehicleOnboardingSession();
+                router.push("/vehicle-onboarding");
                   } else {
                     setKycModalOpen(true);
                   }
