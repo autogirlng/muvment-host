@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 
@@ -91,7 +91,7 @@ export default function useAvailabilityAndPricingForm({
 
   currentStep: number;
 
-  setCurrentStep: (step: number) => void;
+  setCurrentStep: Dispatch<SetStateAction<number>>;
 
 }) {
 
@@ -159,9 +159,9 @@ export default function useAvailabilityAndPricingForm({
 
       outOfBoundsAreaIds: getVehicleOutOfBoundsAreaIds(vehicle),
 
-      outskirtFee: vehicle?.outskirtFee ?? 0,
+      outskirtFee: 0,
 
-      extremeFee: vehicle?.extremeFee ?? 0,
+      extremeFee: 0,
 
     }),
 
@@ -216,10 +216,6 @@ export default function useAvailabilityAndPricingForm({
       supportedBookingTypeIds: values.supportedBookingTypeIds,
 
       outOfBoundsAreaIds: values.outOfBoundsAreaIds,
-
-      outskirtFee: Number(values.outskirtFee),
-
-      extremeFee: Number(values.extremeFee),
 
       pricing: [],
 
@@ -396,7 +392,7 @@ export default function useAvailabilityAndPricingForm({
       }
 
       if (!isEditingExisting) {
-        setCurrentStep(currentStep + 1);
+        setCurrentStep((step) => step + 1);
       }
     },
 

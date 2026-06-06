@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useEffect, useState } from "react";
+import { useMemo, useEffect, useState, type Dispatch, type SetStateAction } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
@@ -23,7 +23,7 @@ export default function useDocumentInformationForm({
     setCurrentStep,
 }: {
     currentStep: number;
-    setCurrentStep: (step: number) => void;
+    setCurrentStep: Dispatch<SetStateAction<number>>;
 }) {
     const http = useHttp();
     const dispatch = useAppDispatch();
@@ -69,7 +69,7 @@ export default function useDocumentInformationForm({
                     { ...vehicle, document: data }
                 )
             );
-            setCurrentStep(currentStep + 1);
+            setCurrentStep((step) => step + 1);
         },
         onError: (error: AxiosError<ErrorResponse>) =>
             handleErrors(error, "Vehicle Onboarding Step 5 Submit"),

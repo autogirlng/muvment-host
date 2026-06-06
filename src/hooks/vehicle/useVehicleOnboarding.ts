@@ -11,6 +11,7 @@ import {
   getOnboardingVehicleId,
   setOnboardingVehicleId,
 } from "@/utils/vehicleOnboardingSession";
+import { normalizeVehicleOnboardingData } from "@/utils/vehicleOnboardingPrefill";
 
 export default function useVehicleOnboarding() {
   const dispatch = useAppDispatch();
@@ -38,7 +39,10 @@ export default function useVehicleOnboarding() {
   });
   useEffect(() => {
     if (data?.data) {
-      dispatch(updateVehicleInformation(data.data as unknown as VehicleInformation));
+      const normalized = normalizeVehicleOnboardingData(data.data);
+      if (normalized) {
+        dispatch(updateVehicleInformation(normalized));
+      }
     }
   }, [data, dispatch]);
   return {
