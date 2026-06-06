@@ -86,7 +86,7 @@ export interface HostVehicleListings extends BaseResponse {
 export interface VehicleOnboardingStepsHookProps  {
     steps?: string[];
     currentStep: number;
-    setCurrentStep: (step: number) => void
+    setCurrentStep: Dispatch<SetStateAction<number>>
     setPhotoTipIndex?: Dispatch<SetStateAction<number>>
 }
 

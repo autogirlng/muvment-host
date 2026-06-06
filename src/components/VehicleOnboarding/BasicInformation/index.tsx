@@ -2,18 +2,13 @@ import { TipsPopup } from "@/ui";
 import Tips from "@/components/VehicleOnboarding/Tips";
 import BasicVehicleInformationForm from "@/components/VehicleOnboarding/BasicInformation/BasicInformationForm";
 import BasicInformationTips from "@/components/VehicleOnboarding/BasicInformation/BasicInformationTips";
-
-export interface BasicVehicleInformationProps {
-    steps: string[];
-    currentStep: number;
-    setCurrentStep: (step: number) => void;
-};
+import { VehicleOnboardingStepsHookProps } from "@/types";
 
 const BasicVehicleInformation = ({
     steps,
     currentStep,
     setCurrentStep,
-}: BasicVehicleInformationProps) => {
+}: VehicleOnboardingStepsHookProps) => {
     return (
         <div className="flex justify-between flex-col-reverse md:flex-row gap-8">
             <BasicVehicleInformationForm

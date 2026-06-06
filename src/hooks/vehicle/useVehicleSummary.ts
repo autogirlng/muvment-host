@@ -9,6 +9,7 @@ import { handleErrors } from "@/utils/functions";
 import { ErrorResponse, VehicleInformation } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 import { getListingsDraftUrl } from "@/utils/listingsNavigation";
+import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
 
 function isDraftOnlySubmitError(error: AxiosError<ErrorResponse>): boolean {
   const body = error.response?.data;
@@ -31,16 +32,22 @@ export default function useVehicleSummary() {
   }, []);
 
   const submitVehicleOnboarding = useMutation({
-    mutationFn: () =>
-      http.post<VehicleInformation>(`/vehicles/submit-review?id=${vehicleId}`),
+    mutationFn: () => {
+      const id = vehicleId || getOnboardingVehicleId();
+      if (!id) {
+        throw new Error("Vehicle ID is missing. Please complete onboarding from step 1.");
+      }
+      return http.post<VehicleInformation>(`/vehicles/submit-review?id=${id}`);
+    },
 
     onSuccess: (data) => {
+      const submittedId = vehicleId || getOnboardingVehicleId();
       const vehicleName =
         (data as VehicleInformation)?.name ??
         sessionStorage.getItem("submittedVehicleName") ??
         "vehicle";
 
-      sessionStorage.setItem("submittedVehicleId", vehicleId);
+      sessionStorage.setItem("submittedVehicleId", submittedId);
       sessionStorage.setItem("submittedVehicleName", vehicleName);
       setSubmittedVehicleName(vehicleName);
       setShowSuccessModal(true);

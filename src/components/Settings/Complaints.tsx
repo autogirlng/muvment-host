@@ -28,6 +28,7 @@ const complaintTableHeadItems = [
   "Status",
   "Created",
   "Description",
+  "Admin Feedback",
 ];
 
 const complaintTypeOptions: { option: string; value: ComplaintType }[] = [
@@ -113,6 +114,18 @@ function ComplaintRow({
       <TableCell title="Status" content={<ComplaintStatusBadge status={complaint.status} />} />
       <TableCell title="Created" content={formatDate(complaint.createdAt ?? fallbackCreatedAt)} />
       <TableCell title="Description" content={complaint.description} />
+      <TableCell
+        title="Admin Feedback"
+        content={
+          complaint.resolutionNote?.trim() ? (
+            <span className="text-sm text-grey-700 whitespace-pre-wrap">
+              {complaint.resolutionNote}
+            </span>
+          ) : (
+            <span className="text-sm text-grey-400">—</span>
+          )
+        }
+      />
     </TableRow>
   );
 }

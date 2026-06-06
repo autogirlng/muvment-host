@@ -1,5 +1,6 @@
 import { VEHICLE_MAKE_PLACEHOLDER, VEHICLE_SELECT_PLACEHOLDER } from "@/utils/constants";
 import type { VehicleInformation } from "@/types";
+import { normalizeVehicleOnboardingData } from "@/utils/vehicleOnboardingPrefill";
 
 const PLACEHOLDER_VALUES = new Set([
   VEHICLE_MAKE_PLACEHOLDER,
@@ -25,36 +26,38 @@ export function isOnboardingStepComplete(
 ): boolean {
   if (!vehicle) return stepIndex === 0;
 
+  const normalized = normalizeVehicleOnboardingData(vehicle) ?? vehicle;
+
   switch (stepIndex) {
     case 0:
       return (
-        hasValue(vehicle.name) &&
-        hasValue(vehicle.vehicleMakeId) &&
-        hasValue(vehicle.vehicleModelId) &&
-        hasValue(vehicle.vehicleTypeId) &&
-        hasValue(vehicle.yearOfRelease) &&
-        hasValue(vehicle.city) &&
-        hasValue(vehicle.address)
+        hasValue(normalized.name) &&
+        hasValue(normalized.vehicleMakeId) &&
+        hasValue(normalized.vehicleModelId) &&
+        hasValue(normalized.vehicleTypeId) &&
+        hasValue(normalized.yearOfRelease) &&
+        hasValue(normalized.city) &&
+        hasValue(normalized.address)
       );
     case 1:
       return (
-        hasValue(vehicle.licensePlateNumber) &&
-        hasValue(vehicle.stateOfRegistration) &&
-        hasValue(vehicle.vehicleColorId) &&
-        hasValue(vehicle.numberOfSeats) &&
-        hasValue(vehicle.description)
+        hasValue(normalized.licensePlateNumber) &&
+        hasValue(normalized.stateOfRegistration) &&
+        hasValue(normalized.vehicleColorId) &&
+        hasValue(normalized.numberOfSeats) &&
+        hasValue(normalized.description)
       );
     case 2:
-      return (vehicle.photos?.length ?? 0) >= 1;
+      return (normalized.photos?.length ?? 0) >= 1;
     case 3:
-      return (vehicle.documents?.length ?? 0) >= 1;
+      return (normalized.documents?.length ?? 0) >= 1;
     case 4:
       return (
-        (vehicle.supportedBookingTypes?.length ?? 0) >= 1 &&
-        vehicle.willProvideDriver !== undefined &&
-        vehicle.willProvideDriver !== null &&
-        vehicle.willProvideFuel !== undefined &&
-        vehicle.willProvideFuel !== null
+        (normalized.supportedBookingTypes?.length ?? 0) >= 1 &&
+        normalized.willProvideDriver !== undefined &&
+        normalized.willProvideDriver !== null &&
+        normalized.willProvideFuel !== undefined &&
+        normalized.willProvideFuel !== null
       );
     default:
       return false;

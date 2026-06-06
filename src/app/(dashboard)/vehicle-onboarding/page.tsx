@@ -1,6 +1,6 @@
 "use client";
 import cn from "classnames";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "react-toastify";
 import BackLink from "@/components/BackLink";
@@ -18,6 +18,7 @@ import { useAppSelector } from "@/lib/hooks";
 import {
   canNavigateToOnboardingStep,
   getMaxReachableOnboardingStep,
+  isOnboardingStepComplete,
 } from "@/utils/vehicleOnboardingSteps";
 import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
 import {
@@ -46,10 +47,30 @@ export default function VehicleOnboardingPage() {
   const isDraftResume = !!vehicleId && isVehicleDraft(vehicle);
   const isEditingExisting = isEditingExistingVehicle(vehicleId, vehicle);
 
+  const hasResumedDraftStep = useRef(false);
+
   useEffect(() => {
-    if (!vehicle || !isDraftResume || isEditingExisting) return;
-    setCurrentStep(getMaxReachableOnboardingStep(vehicle));
-  }, [vehicle?.id, isDraftResume, isEditingExisting]);
+    if (!routeVehicleId || !vehicle || hasResumedDraftStep.current) return;
+    if (!isDraftResume || isEditingExisting) return;
+
+    hasResumedDraftStep.current = true;
+
+    if (isOnboardingStepComplete(vehicle, 4)) {
+      setCurrentStep(5);
+      return;
+    }
+
+    const maxReachable = getMaxReachableOnboardingStep(vehicle);
+    if (
+      maxReachable < 4 &&
+      isOnboardingStepComplete(vehicle, maxReachable)
+    ) {
+      setCurrentStep(maxReachable + 1);
+      return;
+    }
+
+    setCurrentStep(maxReachable);
+  }, [routeVehicleId, vehicle, isDraftResume, isEditingExisting]);
 
   const handleCurrentStep = (step: number) => {
     const allowed = canNavigateToOnboardingStep({
