@@ -55,12 +55,12 @@ export default function BookingPageStats() {
         isLoading={isLoading}
       />
       <StatCard
-        title="Successful"
+        title="Successful booking"
         value={formatStat(summary, "successfulBookings")}
         isLoading={isLoading}
       />
       <StatCard
-        title="Pending"
+        title="Pending booking"
         value={formatStat(summary, "pendingBookings")}
         isLoading={isLoading}
       />

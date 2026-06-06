@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import cn from "classnames";
 import { format } from "date-fns";
 import * as Popover from "@radix-ui/react-popover";
@@ -10,6 +10,7 @@ import { FilterByProps } from "./props";
 const FilterBy: React.FC<FilterByProps> = ({
     categories,
     onChange,
+    initialFilters,
     hideOnMobile,
     dateEnabled = false,
     singleSelect = false,
@@ -18,7 +19,7 @@ const FilterBy: React.FC<FilterByProps> = ({
 
     const [selectedFilters, setSelectedFilters] = useState<
         Record<string, string[]>
-    >({});
+    >(initialFilters ?? {});
     const [openSections, setOpenSections] = useState<Record<string, boolean>>(
         categories.reduce(
             (acc, category, index) => ({ ...acc, [category.title]: index === 0 }),
@@ -84,9 +85,22 @@ const FilterBy: React.FC<FilterByProps> = ({
         }
     };
 
+    const onChangeRef = useRef(onChange);
+    onChangeRef.current = onChange;
+
     useEffect(() => {
-        onChange(selectedFilters, dateRange);
-    }, [selectedFilters, dateRange, onChange]);
+        if (!initialFilters) return;
+        setSelectedFilters((prev) => {
+            const prevKey = JSON.stringify(prev);
+            const nextKey = JSON.stringify(initialFilters);
+            if (prevKey === nextKey) return prev;
+            return initialFilters;
+        });
+    }, [initialFilters]);
+
+    useEffect(() => {
+        onChangeRef.current(selectedFilters, dateRange);
+    }, [selectedFilters, dateRange]);
 
     const addSpaceBeforeUppercase = (str: string): string => {
         return str?.replace(/([a-z])([A-Z])/g, "$1 $2");

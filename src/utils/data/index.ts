@@ -799,9 +799,10 @@ export const bookingHistoryFilters = [
   {
     title: "bookingStatus",
     options: [
-      { option: "Pending Payment", value: BookingStatus.PENDING_PAYMENT },
-      { option: "Confirmed", value: BookingStatus.CONFIRMED },
-      { option: "Cancelled", value: BookingStatus.CANCELLED_BY_ADMIN },
+      { option: "Successful booking", value: BookingStatus.COMPLETED },
+      { option: "Pending booking", value: BookingStatus.PENDING_PAYMENT },
+      { option: "Confirm payment", value: BookingStatus.CONFIRMED },
+      { option: "Cancelled payment", value: BookingStatus.CANCELLED_BY_ADMIN },
     ],
   },
 ];

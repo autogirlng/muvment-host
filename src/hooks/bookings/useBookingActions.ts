@@ -5,7 +5,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import type { CreateComplaintPayload } from "@/hooks/complaints/types";
+import type { Complaint, CreateComplaintPayload } from "@/hooks/complaints/types";
+import type { ApiResponse } from "@/types/trip";
 
 export default function useBookingActions({
   id,
@@ -24,7 +25,11 @@ export default function useBookingActions({
   };
 
   const reportBooking = useMutation({
-    mutationFn: (values: { message: string }) => {
+    mutationFn: async (values: { message: string }) => {
+      if (!id?.trim()) {
+        throw new Error("Booking id is required");
+      }
+
       const description = values.message.trim();
       const payload: CreateComplaintPayload = {
         title: invoiceNumber
@@ -32,20 +37,25 @@ export default function useBookingActions({
           : "Booking report",
         description,
         type: "COMPLAINT",
+        complaintCause: "BOOKING",
+        bookingId: id.trim(),
       };
-      if (invoiceNumber?.trim()) {
-        payload.invoiceNumber = invoiceNumber.trim();
-      }
-      return http.post("/complaints", payload);
+
+      return http.post<ApiResponse<Complaint>>("/complaints", payload);
     },
 
-    onSuccess: () => {
+    onSuccess: (response) => {
       queryClient.invalidateQueries({ queryKey: ["getBookingById", id] });
       queryClient.invalidateQueries({ queryKey: ["host", "complaints"] });
       queryClient.invalidateQueries({ queryKey: ["getBookings"] });
       queryClient.invalidateQueries({ queryKey: ["getUpcomingBookings"] });
 
-      toast.success("Report submitted successfully");
+      const invoiceId = response?.data?.invoiceId;
+      toast.success(
+        invoiceId
+          ? `Report submitted successfully. Reference: ${invoiceId}`
+          : "Report submitted successfully"
+      );
       setReport("");
       setOpenReportModal(false);
     },

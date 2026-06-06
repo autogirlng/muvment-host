@@ -80,15 +80,34 @@ function ListingsPageContent() {
     search: debouncedSearch,
   });
 
-  const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
-    setFilters(selectedFilters);
-    if (selectedFilters.status?.length >= 1) {
+  const handleFilterChange = useCallback(
+    (selectedFilters: Record<string, string[]>) => {
+      setFilters((prev) => {
+        const prevKey = JSON.stringify(prev);
+        const nextKey = JSON.stringify(selectedFilters);
+        if (prevKey === nextKey) return prev;
+        return selectedFilters;
+      });
+
       setCurrentPage(0);
-      const params = new URLSearchParams(searchParams);
+      const params = new URLSearchParams(searchParams.toString());
       params.set("page", "0");
-      router.push(`?${params.toString()}`, { scroll: false });
-    }
-  };
+
+      const status = selectedFilters.status?.[0];
+      if (status) {
+        params.set("status", status);
+      } else {
+        params.delete("status");
+      }
+
+      const nextQuery = params.toString();
+      const currentQuery = searchParams.toString();
+      if (nextQuery !== currentQuery) {
+        router.push(`?${nextQuery}`, { scroll: false });
+      }
+    },
+    [router, searchParams]
+  );
 
   const handleSearch = (value: string) => {
     setSearch(value);
@@ -150,6 +169,7 @@ function ListingsPageContent() {
           <div className="relative">
             <FilterBy
               categories={listingFilters}
+              initialFilters={filters}
               onChange={handleFilterChange}
               hideOnMobile
               singleSelect={true}
