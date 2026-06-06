@@ -102,8 +102,13 @@ export default function WalletPage() {
                 payload: { hostContext },
             },
             {
-                onSuccess: () => {
-                    toast.success("Deduction dispute submitted successfully");
+                onSuccess: (response) => {
+                    const reference = response?.data?.csTicketReference?.trim();
+                    toast.success(
+                        reference
+                            ? `Dispute submitted. Reference: ${reference}`
+                            : "Deduction dispute submitted successfully"
+                    );
                     setIsDisputeDialogOpen(false);
                     setSelectedDeduction(null);
                     setDisputeContext("");

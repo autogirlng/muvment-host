@@ -7,6 +7,7 @@ import {
     ReferralBadgeProps
 } from "./props";
 import { VehicleStatus } from "@/types";
+import { getBookingStatusLabel } from "@/utils/bookingStatusLabels";
 
 /* ─── shared primitive ─── */
 function StatusPill({
@@ -61,11 +62,14 @@ function bookingColors(status: string): { dot: string; bg: string; text: string 
 /* ─── Booking table badge (used inside TableCell isBadge) ─── */
 export const BookingTableBadge = ({ status }: BookingBadgeProps) => {
     const { dot, bg, text } = bookingColors(status);
-    const label =
-        status === "APPROVED" || status === "ACCEPTED"
-            ? "Confirmed"
-            : formatLabel(status);
-    return <StatusPill dot={dot} bg={bg} text={text} label={label} />;
+    return (
+        <StatusPill
+            dot={dot}
+            bg={bg}
+            text={text}
+            label={getBookingStatusLabel(status)}
+        />
+    );
 };
 
 /* ─── Booking badge (used on booking detail pages) ─── */
@@ -76,7 +80,7 @@ export const BookingBadge = ({ status }: BookingBadgeProps) => {
             dot={dot}
             bg={bg}
             text={text}
-            label={formatLabel(status)}
+            label={getBookingStatusLabel(status)}
             className="px-4 py-1.5 text-sm"
         />
     );
