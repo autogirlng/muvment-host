@@ -6,6 +6,7 @@ import {
   DocumentVehicleInformationFormValues,
   DocumentVehicleInformationValues,
   VehicleInformation,
+  VehicleInformationStepper,
   VehiclePhotos,
   VehiclePhotosFormValues,
 } from "@/types";
@@ -15,8 +16,32 @@ import type { DriverProvisionMode } from "@/types/vehicle";
 
 type VehicleOutskirtSource = Pick<
   VehicleInformation,
-  "outOfBoundsAreaIds" | "outOfBoundsAreas" | "outskirtFee" | "extremeFee"
+  "outOfBoundsAreaIds" | "outOfBoundsAreas"
 >;
+
+/** Flatten nested make/model/type from GET /vehicles/{id} into form-friendly IDs. */
+export function normalizeVehicleOnboardingData(
+  vehicle:
+    | VehicleInformation
+    | VehicleInformationStepper
+    | Partial<VehicleInformation>
+    | null
+    | undefined
+): VehicleInformation | null {
+  if (!vehicle) return null;
+
+  const nested = vehicle as VehicleInformationStepper;
+
+  return {
+    ...(vehicle as VehicleInformation),
+    vehicleTypeId:
+      vehicle.vehicleTypeId || nested.vehicleType?.id || "",
+    vehicleMakeId:
+      vehicle.vehicleMakeId || nested.vehicleMake?.id || "",
+    vehicleModelId:
+      vehicle.vehicleModelId || nested.vehicleModel?.id || "",
+  };
+}
 
 export function getVehicleOutOfBoundsAreaIds(
   vehicle?: VehicleOutskirtSource | null
@@ -30,11 +55,7 @@ export function vehicleHasOutskirtConfig(
   vehicle?: VehicleOutskirtSource | null
 ): boolean {
   if (!vehicle) return false;
-  return (
-    getVehicleOutOfBoundsAreaIds(vehicle).length > 0 ||
-    (vehicle.outskirtFee ?? 0) > 0 ||
-    (vehicle.extremeFee ?? 0) > 0
-  );
+  return getVehicleOutOfBoundsAreaIds(vehicle).length > 0;
 }
 
 export function buildAvailabilityDriverFields(vehicle?: VehicleInformation | null) {
@@ -60,9 +81,12 @@ export function mergeVehicleOnboardingState(
 ): VehicleInformation {
   if (!incoming) return previous as VehicleInformation;
 
+  const normalizedIncoming = normalizeVehicleOnboardingData(incoming);
+  const normalizedPrevious = normalizeVehicleOnboardingData(previous);
+
   return {
-    ...(previous ?? {}),
-    ...incoming,
+    ...(normalizedPrevious ?? {}),
+    ...(normalizedIncoming ?? {}),
     assignedDriver:
       incoming.assignedDriver !== undefined
         ? incoming.assignedDriver

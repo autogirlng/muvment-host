@@ -1,7 +1,7 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { Formik, Form } from "formik";
-import { StepperNavigation, GroupCheckBox, SelectInput, AppSwitch, Tooltip, InputField } from "@/ui";
+import { StepperNavigation, GroupCheckBox, SelectInput, AppSwitch, Tooltip } from "@/ui";
 
 import FormRow from "@/components/VehicleOnboarding/AvailabilityAndPricing/FormRow";
 import useAvailabilityAndPricingForm from "@/hooks/vehicle/useAvailabilityAndPricingForm";
@@ -63,7 +63,7 @@ const AvailabilityAndPricingForm = ({
 
     const fetchAvailabilityAndPricingInfo = async () => {
         const [bookingTypesRes, geoFenceAreasRes] = await Promise.all([
-            http.get<BookingTypeResponse>("/booking-types"),
+            http.get<BookingTypeResponse>("/hosts/me/booking-types"),
             http.get<GeoFenceAreaResponse>("/geofence-areas"),
         ])
 
@@ -378,8 +378,6 @@ const AvailabilityAndPricingForm = ({
                                 onChange={(checked) => {
                                     setShowOuskirts(checked);
                                     if (!checked) {
-                                        setFieldValue("outskirtFee", 0);
-                                        setFieldValue("extremeFee", 0);
                                         setFieldValue("outOfBoundsAreaIds", []);
                                     }
                                 }}
@@ -387,71 +385,6 @@ const AvailabilityAndPricingForm = ({
                         </div>
                         {showOuskirts && (
                             <div className="space-y-8">
-
-                                <FormRow title="">
-
-                                    <div className="max-w-[770px] flex flex-col sm:flex-row gap-5">
-
-
-                                        <InputField
-                                            name="outskirtFee"
-                                            id="outskirtFee"
-                                            type="text"
-                                            label="Outskirt Fee Charge"
-                                            placeholder="+NGN0"
-                                            value={
-                                                values.outskirtFee
-                                                    ? String(values.outskirtFee)
-                                                    : ""
-                                            }
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                setFieldValue(
-                                                    "outskirtFee",
-                                                    e.target.value === ""
-                                                        ? 0
-                                                        : Number(e.target.value)
-                                                )
-                                            }
-                                            onBlur={handleBlur}
-                                            error={
-                                                errors.outskirtFee && touched.outskirtFee
-                                                    ? errors.outskirtFee
-                                                    : ""
-                                            }
-                                            className="sm:w-[150px] md:w-[180px]"
-                                        />
-
-                                        <InputField
-                                            name="extremeFee"
-                                            id="extremeFee"
-                                            type="text"
-                                            label="Extreme Fee Charge"
-                                            placeholder="+NGN0"
-                                            value={
-                                                values.extremeFee
-                                                    ? String(values.extremeFee)
-                                                    : ""
-                                            }
-                                            onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                                                setFieldValue(
-                                                    "extremeFee",
-                                                    e.target.value === ""
-                                                        ? 0
-                                                        : Number(e.target.value)
-                                                )
-                                            }
-                                            onBlur={handleBlur}
-                                            error={
-                                                errors.extremeFee && touched.extremeFee
-                                                    ? errors.extremeFee
-                                                    : ""
-                                            }
-                                            className="sm:w-[150px] md:w-[180px]"
-                                        />
-
-                                    </div>
-                                </FormRow>
-
                                 <div className="space-y-3">
                                     <label
                                         htmlFor="features"

@@ -200,12 +200,6 @@ export const availabilityAndPricingSchema = object().shape({
   }),
   supportedBookingTypeIds: array().min(1, "Please select at least one booking type"),
   outOfBoundsAreaIds: array().min(0),
-  outskirtFee: mixed()
-    .transform((value) => (value === "" || value === null || value === undefined ? 0 : Number(value)))
-    .optional(),
-  extremeFee: mixed()
-    .transform((value) => (value === "" || value === null || value === undefined ? 0 : Number(value)))
-    .optional(),
 });
 
 export const assignNewDriverFormValidationSchema = object().shape({

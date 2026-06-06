@@ -23,6 +23,7 @@ import {
 } from "@/types";
 import { updateVehicleInformation } from "@/lib/features/vehicleOnboardingSlice";
 import { useHttp } from "@/hooks/useHttp";
+import { normalizeVehicleOnboardingData } from "@/utils/vehicleOnboardingPrefill";
 
 
 
@@ -89,38 +90,43 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
     const [searchAddressLoading, setSearchAddressLoading] = useState(false);
     const [showAddressList, setShowAddressList] = useState(false);
 
+    const normalizedVehicle = useMemo(
+        () => normalizeVehicleOnboardingData(vehicle),
+        [vehicle]
+    );
+
     const initialValues: BasicVehicleInformationValues = useMemo(
         () => ({
-            name: vehicle?.name || "",
-            city: vehicle?.city || "",
-            address: vehicle?.address || "",
-            latitude: vehicle?.latitude || 0,
-            longitude: vehicle?.longitude || 0,
-            vehicleMakeId: vehicle?.vehicleMakeId || VEHICLE_MAKE_PLACEHOLDER,
-            vehicleModelId: vehicle?.vehicleModelId || VEHICLE_SELECT_PLACEHOLDER,
-            vehicleTypeId: vehicle?.vehicleTypeId || VEHICLE_SELECT_PLACEHOLDER,
-            yearOfRelease: vehicle?.yearOfRelease || 0,
+            name: normalizedVehicle?.name || "",
+            city: normalizedVehicle?.city || "",
+            address: normalizedVehicle?.address || "",
+            latitude: normalizedVehicle?.latitude || 0,
+            longitude: normalizedVehicle?.longitude || 0,
+            vehicleMakeId: normalizedVehicle?.vehicleMakeId || VEHICLE_MAKE_PLACEHOLDER,
+            vehicleModelId: normalizedVehicle?.vehicleModelId || VEHICLE_SELECT_PLACEHOLDER,
+            vehicleTypeId: normalizedVehicle?.vehicleTypeId || VEHICLE_SELECT_PLACEHOLDER,
+            yearOfRelease: normalizedVehicle?.yearOfRelease || 0,
             hasInsurance:
-                vehicle?.hasInsurance === undefined || vehicle?.hasInsurance === null
+                normalizedVehicle?.hasInsurance === undefined || normalizedVehicle?.hasInsurance === null
                     ? VEHICLE_SELECT_PLACEHOLDER
-                    : vehicle?.hasInsurance
+                    : normalizedVehicle?.hasInsurance
                         ? "yes"
                         : "no",
             hasTracker:
-                vehicle?.hasTracker === undefined || vehicle?.hasTracker === null
+                normalizedVehicle?.hasTracker === undefined || normalizedVehicle?.hasTracker === null
                     ? VEHICLE_SELECT_PLACEHOLDER
-                    : vehicle?.hasTracker
+                    : normalizedVehicle?.hasTracker
                         ? "yes"
                         : "no",
             isVehicleUpgraded:
-                vehicle?.isVehicleUpgraded === undefined || vehicle?.isVehicleUpgraded === null
+                normalizedVehicle?.isVehicleUpgraded === undefined || normalizedVehicle?.isVehicleUpgraded === null
                     ? VEHICLE_SELECT_PLACEHOLDER
-                    : vehicle?.isVehicleUpgraded
+                    : normalizedVehicle?.isVehicleUpgraded
                         ? "yes"
                         : "no",
-            yearOfUpgrade: (vehicle as any)?.yearOfUpgrade || undefined,
+            yearOfUpgrade: (normalizedVehicle as any)?.yearOfUpgrade || undefined,
         }),
-        [vehicle]
+        [normalizedVehicle]
     );
 
     const fetchPlaces = async (query: string) => {
@@ -188,7 +194,8 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
         onSuccess: (data) => {
             const id = data?.data?.id;
             if (id) sessionStorage.setItem("vehicleId", id);
-            dispatch(updateVehicleInformation(data?.data as unknown as VehicleInformation));
+            const normalized = normalizeVehicleOnboardingData(data?.data);
+            if (normalized) dispatch(updateVehicleInformation(normalized));
             router.push("/listings");
         },
 
@@ -205,8 +212,9 @@ export default function useBasicInformationForm({currentStep,setCurrentStep}:Veh
         onSuccess: (data) => {
             const id = data?.data?.id;
             if (id) sessionStorage.setItem("vehicleId", id);
-            dispatch(updateVehicleInformation(data?.data as unknown as VehicleInformation));
-            setCurrentStep(currentStep + 1);
+            const normalized = normalizeVehicleOnboardingData(data?.data);
+            if (normalized) dispatch(updateVehicleInformation(normalized));
+            setCurrentStep((step) => step + 1);
         },
 
         onError: (error: AxiosError<ErrorResponse>) =>
