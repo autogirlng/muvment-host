@@ -324,6 +324,8 @@ export interface FilterByProps  {
     selectedFilters: Record<string, string[]>,
     dateRange?: { startDate: Date | null; endDate: Date | null }
   ) => void;
+  /** Sync checkbox state from parent (e.g. URL-driven status filter). */
+  initialFilters?: Record<string, string[]>;
   hideOnMobile?: boolean;
   dateEnabled?: boolean;
   singleSelect?:boolean;

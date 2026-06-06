@@ -79,7 +79,10 @@ export function useHostPerformanceBookings() {
     return `?${new URLSearchParams(filtered.map(([k, v]) => [k, String(v)]))}`;
   };
 
-  const useGetHostBookings = (params?: HostPerformanceBookingsParams) =>
+  const useGetHostBookings = (
+    params?: HostPerformanceBookingsParams,
+    enabled = true
+  ) =>
     useQuery({
       queryKey: ["host-performance-bookings", params],
       queryFn: async (): Promise<HostBookingsResponse> => {
@@ -90,6 +93,7 @@ export function useHostPerformanceBookings() {
         if (!result) throw new Error("Failed to fetch bookings");
         return result;
       },
+      enabled,
       retry: false,
     });
 

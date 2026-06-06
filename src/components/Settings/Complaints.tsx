@@ -1,26 +1,60 @@
 "use client";
 
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useMemo, useState } from "react";
 import cn from "classnames";
 import { format } from "date-fns";
 import { toast } from "react-toastify";
 import EmptyState from "@/components/EmptyState";
 import { Table, TableBody, TableCell, TableHead, TableRow } from "@/components/Table";
+import {
+  HostBookingItem,
+  useHostPerformanceBookings,
+} from "@/hooks/bookings/useHostPerformanceBookings";
 import { useHostComplaints } from "@/hooks/complaints/useComplaints";
 import {
   Complaint,
+  ComplaintCause,
   ComplaintStatus,
   ComplaintType,
   CreateComplaintPayload,
 } from "@/hooks/complaints/types";
 import { BlurredDialog, Button, FullPageSpinner, InputField, Pagination, SelectInput, TextArea } from "@/ui";
 
-const complaintTableHeadItems = ["Title", "Type", "Status", "Created", "Description"];
+const complaintTableHeadItems = [
+  "Title",
+  "Cause",
+  "Invoice",
+  "Type",
+  "Status",
+  "Created",
+  "Description",
+];
 
 const complaintTypeOptions: { option: string; value: ComplaintType }[] = [
   { option: "Complaint", value: "COMPLAINT" },
   { option: "Suggestion", value: "SUGGESTION" },
 ];
+
+const complaintCauseOptions: { option: string; value: ComplaintCause }[] = [
+  { option: "General", value: "GENERAL" },
+  { option: "Booking", value: "BOOKING" },
+];
+
+function formatBookingOptionLabel(booking: HostBookingItem): string {
+  const invoice = booking.invoiceNumber?.trim() || "Booking";
+  const vehicle = booking.vehicleName?.trim();
+  let dateLabel = "";
+
+  try {
+    if (booking.bookedAt) {
+      dateLabel = format(new Date(booking.bookedAt), "dd MMM yyyy");
+    }
+  } catch {
+    dateLabel = "";
+  }
+
+  return [invoice, vehicle, dateLabel].filter(Boolean).join(" · ");
+}
 
 const statusLabel: Record<ComplaintStatus, string> = {
   PENDING: "Pending",
@@ -70,6 +104,11 @@ function ComplaintRow({
   return (
     <TableRow>
       <TableCell title="Title" content={complaint.title} className="!font-medium !text-grey-900" />
+      <TableCell
+        title="Cause"
+        content={complaint.complaintCause?.toLowerCase() ?? "general"}
+      />
+      <TableCell title="Invoice" content={complaint.invoiceId || "—"} />
       <TableCell title="Type" content={complaint.type.toLocaleLowerCase()} />
       <TableCell title="Status" content={<ComplaintStatusBadge status={complaint.status} />} />
       <TableCell title="Created" content={formatDate(complaint.createdAt ?? fallbackCreatedAt)} />
@@ -84,13 +123,30 @@ function MakeComplaintForm({
   onClose: () => void;
 }) {
   const { useCreateComplaint } = useHostComplaints();
+  const { useGetHostBookings } = useHostPerformanceBookings();
   const createComplaint = useCreateComplaint();
   const [values, setValues] = useState<CreateComplaintPayload>({
     title: "",
     description: "",
     type: "COMPLAINT",
+    complaintCause: "GENERAL",
+    bookingId: "",
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CreateComplaintPayload, string>>>({});
+
+  const isBookingCause = values.complaintCause === "BOOKING";
+  const { data: bookingsData, isLoading: bookingsLoading } = useGetHostBookings(
+    { page: 0, size: 100 },
+    isBookingCause
+  );
+
+  const bookingOptions = useMemo(() => {
+    const bookings = bookingsData?.data?.content?.content ?? [];
+    return bookings.map((booking) => ({
+      option: formatBookingOptionLabel(booking),
+      value: booking.bookingId,
+    }));
+  }, [bookingsData]);
 
   const validate = () => {
     const nextErrors: Partial<Record<keyof CreateComplaintPayload, string>> = {};
@@ -98,6 +154,10 @@ function MakeComplaintForm({
     if (!values.title.trim()) nextErrors.title = "Title is required";
     if (!values.description.trim()) nextErrors.description = "Description is required";
     if (!values.type) nextErrors.type = "Type is required";
+    if (!values.complaintCause) nextErrors.complaintCause = "Cause is required";
+    if (values.complaintCause === "BOOKING" && !values.bookingId?.trim()) {
+      nextErrors.bookingId = "Please select a booking";
+    }
 
     setErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
@@ -107,23 +167,38 @@ function MakeComplaintForm({
     event.preventDefault();
     if (!validate()) return;
 
-    createComplaint.mutate(
-      {
-        title: values.title.trim(),
-        description: values.description.trim(),
-        type: values.type,
+    const payload: CreateComplaintPayload = {
+      title: values.title.trim(),
+      description: values.description.trim(),
+      type: values.type,
+      complaintCause: values.complaintCause,
+    };
+
+    if (values.complaintCause === "BOOKING") {
+      payload.bookingId = values.bookingId?.trim();
+    }
+
+    createComplaint.mutate(payload, {
+      onSuccess: (response) => {
+        const invoiceId = response?.data?.invoiceId;
+        toast.success(
+          invoiceId
+            ? `Complaint submitted. Invoice: ${invoiceId}`
+            : "Complaint submitted successfully"
+        );
+        onClose();
+        setValues({
+          title: "",
+          description: "",
+          type: "COMPLAINT",
+          complaintCause: "GENERAL",
+          bookingId: "",
+        });
       },
-      {
-        onSuccess: () => {
-          toast.success("Complaint submitted successfully");
-          onClose();
-          setValues({ title: "", description: "", type: "COMPLAINT" });
-        },
-        onError: () => {
-          toast.error("Could not submit complaint. Please try again.");
-        },
-      }
-    );
+      onError: () => {
+        toast.error("Could not submit complaint. Please try again.");
+      },
+    });
   };
 
   return (
@@ -139,6 +214,48 @@ function MakeComplaintForm({
         }
         error={errors.title}
       />
+      <SelectInput
+        id="complaintCause"
+        label="Cause"
+        placeholder="Select cause"
+        options={complaintCauseOptions}
+        value={values.complaintCause}
+        onChange={(value) =>
+          setValues((current) => ({
+            ...current,
+            complaintCause: value as ComplaintCause,
+            bookingId: value === "BOOKING" ? current.bookingId : "",
+          }))
+        }
+        error={errors.complaintCause}
+      />
+      {values.complaintCause === "BOOKING" && (
+        <div className="space-y-2">
+          <SelectInput
+            id="complaintBookingId"
+            label="Booking"
+            placeholder={
+              bookingsLoading
+                ? "Loading bookings..."
+                : bookingOptions.length
+                  ? "Select a booking"
+                  : "No bookings available"
+            }
+            options={bookingOptions}
+            value={values.bookingId || undefined}
+            onChange={(value) =>
+              setValues((current) => ({ ...current, bookingId: value }))
+            }
+            error={errors.bookingId}
+            disabled={bookingsLoading || bookingOptions.length === 0}
+          />
+          {!bookingsLoading && bookingOptions.length === 0 && (
+            <p className="text-xs text-grey-500">
+              You have no bookings to attach to this complaint yet.
+            </p>
+          )}
+        </div>
+      )}
       <SelectInput
         id="complaintType"
         label="Type"

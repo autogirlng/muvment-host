@@ -1,13 +1,11 @@
 import type { Dispute } from "@/hooks/disputes/types";
-import { getDisputeDisplayId } from "@/utils/disputes";
 
 function formatDisputeStatus(status: string) {
   return status.replace(/_/g, " ").toLowerCase();
 }
 
 function getSupportResponse(dispute: Dispute) {
-  if (dispute.resolutionNotes) return dispute.resolutionNotes;
-  if (dispute.csTicketReference) return dispute.csTicketReference;
+  if (dispute.resolutionNotes?.trim()) return dispute.resolutionNotes;
   return "Pending response";
 }
 
@@ -17,10 +15,10 @@ export default function DisputeCard({ dispute }: { dispute: Dispute }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-1">
           <p className="text-xs font-semibold uppercase text-grey-500">
-            Dispute ID
+            Ticket reference
           </p>
           <p className="font-semibold text-grey-900 break-words">
-            {getDisputeDisplayId(dispute)}
+            {dispute.csTicketReference?.trim() || "—"}
           </p>
         </div>
         <div className="space-y-1">
