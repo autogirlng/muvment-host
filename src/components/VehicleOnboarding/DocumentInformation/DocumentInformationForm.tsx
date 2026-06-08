@@ -21,8 +21,8 @@ const DocumentInformationForm = ({
             enableReinitialize
             validateOnChange
             validateOnBlur
-            onSubmit={async (values, { setSubmitting }) => {
-                await submitStep5.mutateAsync(values);
+            onSubmit={(values, { setSubmitting }) => {
+                submitStep5.mutate(values);
                 setSubmitting(false);
             }}
         >
@@ -107,8 +107,8 @@ const DocumentInformationForm = ({
                         steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
-                        handleSaveDraft={async () => {
-                            await saveStep5.mutateAsync(values);
+                        handleSaveDraft={() => {
+                            saveStep5.mutate(values);
                         }}
                         isSaveDraftloading={saveStep5.isPending}
                         isNextLoading={isSubmitting || submitStep5.isPending}

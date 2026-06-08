@@ -42,12 +42,7 @@ export default function useNotifications({
     queryFn: async () => {
       const filterQuery = handleFilterQuery({ filters: {}, startDate, endDate });
       
-      // FIX 1: Convert UI page (starts at 1) to API page (starts at 0)
-      // If TopHeader passes 1, it requests 0 from the API.
-      const apiPage = currentPage > 0 ? currentPage - 1 : 0;
-      
-      // FIX 2: Removed the "/v1" prefix to match your useMou pattern
-      const url = `/notification/notification-by-user?page=${apiPage}&size=${pageLimit}${
+      const url = `/notification/notification-by-user?page=${currentPage}&size=${pageLimit}${
         filterQuery ? `&${filterQuery}` : ""
       }`;
 

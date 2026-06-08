@@ -193,7 +193,7 @@ export interface SelectSearchInputProps  {
 };
 
 export interface BookingBadgeProps  {
-  status: "ACCEPTED" | "PENDING" | "CANCELLED" | "APPROVED" | "COMPLETED";
+  status: string;
 };
 
 
@@ -417,6 +417,7 @@ export interface FileFieldProps  {
 
   /** Enable file picking */
   filePicker?: boolean;
+  accept?: string;
 
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onBlur?: (event: React.FocusEvent<HTMLInputElement>) => void;

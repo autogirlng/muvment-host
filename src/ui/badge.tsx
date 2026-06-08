@@ -8,6 +8,7 @@ import {
 } from "./props";
 import { VehicleStatus } from "@/types";
 import { getBookingStatusLabel } from "@/utils/bookingStatusLabels";
+import { getTripStatusLabel, tripStatusColors } from "@/utils/tripStatusLabels";
 
 /* ─── shared primitive ─── */
 function StatusPill({
@@ -58,6 +59,19 @@ function bookingColors(status: string): { dot: string; bg: string; text: string 
         return { dot: "bg-grey-400", bg: "bg-grey-90", text: "text-grey-600" };
     return { dot: "bg-grey-400", bg: "bg-grey-90", text: "text-grey-600" };
 }
+
+/* ─── Trip table badge ─── */
+export const TripTableBadge = ({ status }: BookingBadgeProps) => {
+    const { dot, bg, text } = tripStatusColors(status);
+    return (
+        <StatusPill
+            dot={dot}
+            bg={bg}
+            text={text}
+            label={getTripStatusLabel(status)}
+        />
+    );
+};
 
 /* ─── Booking table badge (used inside TableCell isBadge) ─── */
 export const BookingTableBadge = ({ status }: BookingBadgeProps) => {

@@ -15,6 +15,8 @@ type ViewAsCustomerProps = { vehicleInfo?: VehicleInformationStepper };
 export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
 
     const [openCancellationModal, setOpenCancellationModal] = useState(false);
+    const photos = vehicleInfo?.photos ?? [];
+    const canLoop = photos.length > 1;
 
     const handleOpenCancellationModal = () => {
         setOpenCancellationModal((prev) => !prev); // Use functional update for state
@@ -28,16 +30,20 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
                         pagination={{
                             type: "fraction",
                         }}
-                        navigation={true}
+                        navigation={canLoop}
                         modules={[Pagination, Navigation, Autoplay]}
-                        autoplay={{
-                            delay: 5000,
-                            pauseOnMouseEnter: true,
-                        }}
-                        loop={true}
+                        autoplay={
+                            canLoop
+                                ? {
+                                      delay: 5000,
+                                      pauseOnMouseEnter: true,
+                                  }
+                                : false
+                        }
+                        loop={canLoop}
                         className="vehicle-summary-swiper"
                     >
-                        {vehicleInfo?.photos.map((image, index) => (
+                        {photos.map((image, index) => (
                             <SwiperSlide key={index}>
                                 <Image
                                     src={image.cloudinaryUrl}
@@ -53,7 +59,7 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
                         {vehicleInfo?.name ?? ""}
                     </h2>
                     <div className="flex items-center gap-1 md:gap-7 3xl:gap-[41px]">
-                        {vehicleInfo?.photos.map((image, index) => (
+                        {photos.map((image, index) => (
                             <Image
                                 key={index}
                                 src={image.cloudinaryUrl}

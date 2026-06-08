@@ -1,15 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { handleErrors } from "@/utils/functions";
-import { ErrorResponse, VehicleInformation } from "@/types";
+import { ErrorResponse, VehicleInformation, VehicleInformationResponse } from "@/types";
 import { useHttp } from "@/hooks/useHttp";
 import { getListingsDraftUrl } from "@/utils/listingsNavigation";
 import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
+import { invalidateListingsCache } from "@/utils/invalidateListingsCache";
 
 function isDraftOnlySubmitError(error: AxiosError<ErrorResponse>): boolean {
   const body = error.response?.data;
@@ -20,39 +21,20 @@ function isDraftOnlySubmitError(error: AxiosError<ErrorResponse>): boolean {
 export default function useVehicleSummary() {
   const http = useHttp();
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false);
-  const [vehicleId, setVehicleId] = useState<string>("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [submittedVehicleName, setSubmittedVehicleName] = useState("vehicle");
 
-  useEffect(() => {
-    const id = sessionStorage.getItem("vehicleId") ?? "";
-    setVehicleId(id);
-  }, []);
-
   const submitVehicleOnboarding = useMutation({
-    mutationFn: () => {
-      const id = vehicleId || getOnboardingVehicleId();
+    mutationFn: async () => {
+      const id = getOnboardingVehicleId();
       if (!id) {
         throw new Error("Vehicle ID is missing. Please complete onboarding from step 1.");
       }
-      return http.post<VehicleInformation>(`/vehicles/submit-review?id=${id}`);
+      return http.post<VehicleInformationResponse>(`/vehicles/submit-review?id=${id}`);
     },
-
-    onSuccess: (data) => {
-      const submittedId = vehicleId || getOnboardingVehicleId();
-      const vehicleName =
-        (data as VehicleInformation)?.name ??
-        sessionStorage.getItem("submittedVehicleName") ??
-        "vehicle";
-
-      sessionStorage.setItem("submittedVehicleId", submittedId);
-      sessionStorage.setItem("submittedVehicleName", vehicleName);
-      setSubmittedVehicleName(vehicleName);
-      setShowSuccessModal(true);
-    },
-
     onError: (error: AxiosError<ErrorResponse>) => {
       if (isDraftOnlySubmitError(error)) {
         toast.error(
@@ -66,8 +48,28 @@ export default function useVehicleSummary() {
     },
   });
 
+  const submitForReview = useCallback((vehicleName?: string) => {
+    submitVehicleOnboarding.mutate(undefined, {
+      onSuccess: (response) => {
+        const submittedId = getOnboardingVehicleId();
+        const name =
+          response?.data?.name ??
+          vehicleName ??
+          sessionStorage.getItem("submittedVehicleName") ??
+          "vehicle";
+
+        sessionStorage.setItem("submittedVehicleId", submittedId);
+        sessionStorage.setItem("submittedVehicleName", name);
+        setSubmittedVehicleName(name);
+        invalidateListingsCache(queryClient, submittedId);
+        setShowSuccessModal(true);
+      },
+    });
+  }, [queryClient]);
+
   return {
     submitVehicleOnboarding,
+    submitForReview,
     agreeToTerms,
     setAgreeToTerms,
     showSuccessModal,

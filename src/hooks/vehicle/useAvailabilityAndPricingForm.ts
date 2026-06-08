@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
 
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { AxiosError } from "axios";
 
@@ -40,6 +40,7 @@ import {
 } from "@/utils/vehicleOnboardingPrefill";
 import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
 import { isEditingExistingVehicle } from "@/utils/vehicleOnboardingMode";
+import { invalidateListingsCache } from "@/utils/invalidateListingsCache";
 
 
 
@@ -96,7 +97,7 @@ export default function useAvailabilityAndPricingForm({
 }) {
 
   const http = useHttp();
-
+  const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
 
 
@@ -336,17 +337,18 @@ export default function useAvailabilityAndPricingForm({
 
 
   const persistStep4 = async (values: AvailabilityAndPricingValues) => {
+    const targetVehicleId = getOnboardingVehicleId();
     const payload = mapValuesToApiPayload(values);
 
     await http.patch<VehicleInformation>(
-      `/vehicles/configuration?id=${vehicleId}`,
+      `/vehicles/configuration?id=${targetVehicleId}`,
       payload
     );
 
-    if (vehicleId) {
-      await syncVehicleDriverAssignment(values, vehicleId);
+    if (targetVehicleId) {
+      await syncVehicleDriverAssignment(values, targetVehicleId);
       const refreshed = await http.get<VehicleInformationResponse>(
-        `/vehicles/${vehicleId}`
+        `/vehicles/${targetVehicleId}`
       );
       return refreshed?.data ?? null;
     }
@@ -354,63 +356,73 @@ export default function useAvailabilityAndPricingForm({
     return null;
   };
 
+  const handleStep4Success = (data: VehicleInformation | null) => {
+    if (data) {
+      dispatch(
+        updateVehicleInformation(
+          mergeVehicleOnboardingState(vehicle, data as VehicleInformation)
+        )
+      );
+    }
+    invalidateListingsCache(queryClient, getOnboardingVehicleId());
+  };
+
   const saveStep4 = useMutation({
-
     mutationFn: persistStep4,
-
-    onSuccess: (data) => {
-      if (data) {
-        dispatch(
-          updateVehicleInformation(
-            mergeVehicleOnboardingState(vehicle, data as VehicleInformation)
-          )
-        );
-      }
-    },
-
-
-
     onError: (error: AxiosError<ErrorResponse>) =>
-
       handleErrors(error, "Vehicle Onboarding Step 4"),
-
   });
-
-
 
   const submitStep4 = useMutation({
-
     mutationFn: persistStep4,
-
-    onSuccess: (data) => {
-      if (data) {
-        dispatch(
-          updateVehicleInformation(
-            mergeVehicleOnboardingState(vehicle, data as VehicleInformation)
-          )
-        );
-      }
-
-      if (!isEditingExisting) {
-        setCurrentStep((step) => step + 1);
-      }
-    },
-
-
-
     onError: (error: AxiosError<ErrorResponse>) =>
-
       handleErrors(error, "Vehicle Onboarding Step 4"),
-
   });
 
+  const saveDraft = (
+    values: AvailabilityAndPricingValues,
+    options?: { onSuccess?: () => void; onSettled?: () => void }
+  ) => {
+    saveStep4.mutate(values, {
+      onSuccess: (data) => {
+        handleStep4Success(data as VehicleInformation);
+        options?.onSuccess?.();
+      },
+      onSettled: () => {
+        options?.onSettled?.();
+      },
+    });
+  };
 
+  const submit = (
+    values: AvailabilityAndPricingValues,
+    options?: { onSuccess?: () => void; onSettled?: () => void }
+  ) => {
+    submitStep4.mutate(values, {
+      onSuccess: (data) => {
+        handleStep4Success(data as VehicleInformation);
+        if (!isEditingExisting) {
+          setCurrentStep((step) => step + 1);
+        }
+        options?.onSuccess?.();
+      },
+      onSettled: () => {
+        options?.onSettled?.();
+      },
+    });
+  };
 
   return {
-
-    submitStep4,
-
-    saveStep4,
+    submitStep4: {
+      ...submitStep4,
+      mutate: submit,
+      isPending: submitStep4.isPending,
+    },
+    saveStep4: {
+      ...saveStep4,
+      mutate: saveDraft,
+      isPending: saveStep4.isPending,
+    },
 
     vehicle,
 

@@ -7,6 +7,7 @@ import DeactivateListing from "@/components/Listings/modals/DeactivateListing";
 import VehicleUnavailability from "@/components/Listings/VehicleUnavailability";
 import { ListingDetailHeaderProps } from "./props";
 import { getCustomerVehicleUrlFromListing } from "@/utils/customerApp";
+import { beginVehicleEdit } from "@/utils/vehicleOnboardingSession";
 
 
 export default function ListingDetailsHeader({
@@ -17,6 +18,7 @@ export default function ListingDetailsHeader({
     vehicleTypeName,
     vehicleType,
     supportedBookingTypes,
+    listingForEdit,
 }: ListingDetailHeaderProps) {
     const customerVehicleUrl = getCustomerVehicleUrlFromListing({
         slug,
@@ -55,6 +57,13 @@ export default function ListingDetailsHeader({
                                     <li>
                                         <Link
                                             href={`/vehicle-onboarding?id=${id}`}
+                                            onClick={() => {
+                                                if (listingForEdit) {
+                                                    beginVehicleEdit(listingForEdit);
+                                                } else if (id) {
+                                                    beginVehicleEdit({ id });
+                                                }
+                                            }}
                                             className="!text-xs 3xl:!text-base"
                                         >
                                             Edit listing

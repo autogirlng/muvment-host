@@ -14,9 +14,12 @@ export interface Complaint {
   description: string;
   type: ComplaintType;
   status: ComplaintStatus;
+  /** API may return `cause` or `complaintCause` depending on endpoint version. */
+  cause?: ComplaintCause;
   complaintCause?: ComplaintCause;
   bookingId?: string;
   invoiceId?: string | null;
+  /** Admin resolution text returned on GET /complaints and GET /complaints/{id}. */
   resolutionNote?: string;
   complaintUser?: ComplaintUser;
   createdAt?: string;

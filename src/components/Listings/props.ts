@@ -21,6 +21,7 @@ export interface DeactivateListingProps  {
    vehicleTypeName?: string;
    vehicleType?: { id: string; name: string };
    supportedBookingTypes?: BookingTypeData[];
+   listingForEdit?: VehicleInformationStepper;
  };
 
 export interface ListingDetailsVehicleImagesProps { vehicleImages: string[] };

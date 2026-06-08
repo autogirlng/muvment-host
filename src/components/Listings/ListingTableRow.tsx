@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { VehicleInformationStepper, VehicleStatus } from "@/types";
 import { getCustomerVehicleUrlFromListing } from "@/utils/customerApp";
+import { beginVehicleEdit } from "@/utils/vehicleOnboardingSession";
 import { Popup, MoreButton } from "@/ui";
 import { TableCell, TableRow } from "@/components/Table";
 import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "@/components/Table/tableStyles";
@@ -32,9 +33,8 @@ type ListingTableRowProps = {
 
 export default function ListingTableRow({ listing }: ListingTableRowProps) {
   const isDraft = listing.status === VehicleStatus.DRAFT;
-  const detailHref = isDraft
-    ? `/vehicle-onboarding?id=${listing.id}`
-    : `/listings/${listing.id}`;
+  const onboardingHref = `/vehicle-onboarding?id=${listing.id}`;
+  const detailHref = isDraft ? onboardingHref : `/listings/${listing.id}`;
   const primaryActionLabel = isDraft ? "Complete Listing" : "View Details";
   const customerVehicleUrl = getCustomerVehicleUrlFromListing(listing);
 
@@ -79,6 +79,9 @@ export default function ListingTableRow({ listing }: ListingTableRowProps) {
                   <li>
                     <Link
                       href={detailHref}
+                      onClick={
+                        isDraft ? () => beginVehicleEdit(listing) : undefined
+                      }
                       className="block rounded-lg px-2 py-2 text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
                     >
                       {primaryActionLabel}
@@ -88,6 +91,7 @@ export default function ListingTableRow({ listing }: ListingTableRowProps) {
                     <li>
                       <Link
                         href={`/vehicle-onboarding?id=${listing.id}`}
+                        onClick={() => beginVehicleEdit(listing)}
                         className="block rounded-lg px-2 py-2 text-xs font-medium text-grey-800 transition-colors hover:bg-grey-50"
                       >
                         Edit listing

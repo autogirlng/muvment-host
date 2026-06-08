@@ -6,6 +6,7 @@ import { useMou } from "@/hooks/mou/useMou";
 import EmptyState from "@/components/EmptyState";
 import { Table, TableBody, TableHead, TableCell, TableRow } from "@/components/Table";
 import { FullPageSpinner } from "@/ui";
+import { getMouDisplayId } from "@/utils/displayIds";
 
 export default function MouDetails() {
   const { useGetHostMou, useDownloadHostMou } = useMou();
@@ -41,7 +42,7 @@ export default function MouDetails() {
           <TableBody>
             {mouList.map((mou) => (
               <TableRow key={mou.id}>
-                <TableCell title="MOU ID" content={mou.id} />
+                <TableCell title="MOU ID" content={getMouDisplayId(mou.id)} />
                 <TableCell title="Address" content={mou.address} />
                 <TableCell title="Reason" content={mou.reason || "—"} />
                 <TableCell title="Status" content={mou.status} isBadge type="booking" />
