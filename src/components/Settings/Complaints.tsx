@@ -122,14 +122,8 @@ function ComplaintDetailContent({
 }: {
   complaint: Complaint;
 }) {
-  const { useGetComplaintDetails } = useHostComplaints();
-  const { data, isLoading } = useGetComplaintDetails(complaint.id);
-  const detail = data?.data ?? complaint;
+  const detail = complaint;
   const resolutionNote = getResolutionNote(detail);
-
-  if (isLoading && !data?.data) {
-    return <FullPageSpinner />;
-  }
 
   return (
     <div className="space-y-5">
