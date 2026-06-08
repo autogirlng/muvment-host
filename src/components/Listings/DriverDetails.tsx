@@ -33,6 +33,7 @@ export default function DriversDetails({
   } = useListingDrivers(id, assignedDriver);
 
   const [selectedDriverId, setSelectedDriverId] = useState("");
+  const [unassignConfirmOpen, setUnassignConfirmOpen] = useState(false);
 
   if (isLoading) {
     return <FullPageSpinner />;
@@ -71,7 +72,7 @@ export default function DriversDetails({
       {vehicleDriver ? (
         <AssignedDriverCard
           driver={vehicleDriver}
-          onUnassign={() => unassignFromVehicle.mutate()}
+          onUnassign={() => setUnassignConfirmOpen(true)}
           isUnassigning={unassignFromVehicle.isPending}
         />
       ) : (
@@ -134,6 +135,43 @@ export default function DriversDetails({
               onClick={handleAssignPromptYes}
             >
               Yes, assign
+            </Button>
+          </div>
+        }
+      />
+
+      <BlurredDialog
+        open={unassignConfirmOpen}
+        onOpenChange={setUnassignConfirmOpen}
+        title="Unassign driver from vehicle?"
+        description={
+          vehicleName
+            ? `Are you sure you want to unassign ${vehicleDriver?.fullName ?? "this driver"} from ${vehicleName}?`
+            : `Are you sure you want to unassign ${vehicleDriver?.fullName ?? "this driver"} from this vehicle?`
+        }
+        width="max-w-[480px]"
+        content={
+          <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+            <Button
+              variant="outlined"
+              color="transparent"
+              className="!py-3 !px-6 !text-sm"
+              onClick={() => setUnassignConfirmOpen(false)}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="filled"
+              color="white"
+              className="!py-3 !px-6 !text-sm !bg-error-50 !text-error-800"
+              loading={unassignFromVehicle.isPending}
+              onClick={() =>
+                unassignFromVehicle.mutate(undefined, {
+                  onSuccess: () => setUnassignConfirmOpen(false),
+                })
+              }
+            >
+              Yes, unassign
             </Button>
           </div>
         }

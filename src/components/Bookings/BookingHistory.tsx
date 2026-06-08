@@ -20,12 +20,12 @@ export default function BookingHistory({
   startDate,
   endDate,
 }: BookingHistoryProps) {
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const pageLimit = 10;
 
   const { useGetHostBookings } = useHostPerformanceBookings();
   const { data, isError, isLoading } = useGetHostBookings({
-    page: currentPage - 1,
+    page: currentPage,
     size: pageLimit,
     bookingStatus: filters?.bookingStatus?.[0] || undefined,
     startDate: startDate || undefined,
@@ -37,7 +37,7 @@ export default function BookingHistory({
   const totalCount = data?.data?.content?.totalElements ?? 0;
 
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(0);
   }, [search, filters, startDate, endDate]);
 
   return (

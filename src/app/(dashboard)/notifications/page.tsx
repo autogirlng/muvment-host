@@ -9,7 +9,7 @@ import classNames from "classnames";
 
 export default function NotificationsPage() {
   const pageLimit = 20;
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState<number>(0);
   const [filters, setFilters] = useState<CalendarValue>(null);
   const [value, onChange] = useState<CalendarValue>(null);
   const [calendarValues, setCalendarValues] = useState<CalendarValue>(null);
@@ -21,11 +21,11 @@ export default function NotificationsPage() {
     isLoading,
     totalCount,
     // unreadCount,
-  } = useNotifications({ pageLimit, currentPage });
+  } = useNotifications({ pageLimit, currentPage, filters });
 
   useEffect(() => {
     setFilters(calendarValues);
-    setCurrentPage(1);
+    setCurrentPage(0);
     setCalendarIsOpen(false);
   }, [calendarValues]);
 

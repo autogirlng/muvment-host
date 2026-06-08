@@ -119,6 +119,16 @@ const AvailabilityAndPricingForm = ({
         });
     };
 
+    const handleSaveDraft = (values: AvailabilityAndPricingValues) => {
+        saveStep4.mutate(values, {
+            onSuccess: () => {
+                if (isEditingExisting) {
+                    setShowUpdateSuccessModal(true);
+                }
+            },
+        });
+    };
+
     const handleStepSubmit = async (
         values: AvailabilityAndPricingValues,
         setSubmitting: (isSubmitting: boolean) => void
@@ -436,15 +446,7 @@ const AvailabilityAndPricingForm = ({
                         steps={steps ?? []}
                         currentStep={currentStep}
                         setCurrentStep={setCurrentStep}
-                        handleSaveDraft={() => {
-                            saveStep4.mutate(values, {
-                                onSuccess: () => {
-                                    if (isEditingExisting) {
-                                        setShowUpdateSuccessModal(true);
-                                    }
-                                },
-                            });
-                        }}
+                        handleSaveDraft={() => handleSaveDraft(values)}
                         isSaveDraftloading={saveStep4.isPending}
                         isNextLoading={isSubmitting || submitStep4.isPending}
                         disableNextButton={

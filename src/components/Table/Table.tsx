@@ -51,9 +51,14 @@ export function TableBody({
 export function TableRow({
     children,
     className,
-}: {
+    ...props
+}: React.HTMLAttributes<HTMLTableRowElement> & {
     children: ReactNode;
     className?: string;
 }) {
-    return <tr className={cn(tableRowClass, className)}>{children}</tr>;
+    return (
+        <tr className={cn(tableRowClass, className)} {...props}>
+            {children}
+        </tr>
+    );
 }

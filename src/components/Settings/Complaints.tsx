@@ -27,8 +27,6 @@ const complaintTableHeadItems = [
   "Type",
   "Status",
   "Created",
-  "Description",
-  "Admin Feedback",
 ];
 
 const complaintTypeOptions: { option: string; value: ComplaintType }[] = [
@@ -95,37 +93,105 @@ function ComplaintStatusBadge({ status }: { status: ComplaintStatus }) {
   );
 }
 
+function getComplaintCause(complaint: Complaint): string {
+  const cause = complaint.cause ?? complaint.complaintCause ?? "GENERAL";
+  return cause.toLowerCase();
+}
+
+function getResolutionNote(complaint: Complaint): string {
+  return complaint.resolutionNote?.trim() ?? "";
+}
+
+function DetailField({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-1">
+      <p className="text-xs font-semibold uppercase tracking-wide text-grey-500">{label}</p>
+      <div className="text-sm text-grey-800">{children}</div>
+    </div>
+  );
+}
+
+function ComplaintDetailContent({
+  complaint,
+}: {
+  complaint: Complaint;
+}) {
+  const { useGetComplaintDetails } = useHostComplaints();
+  const { data, isLoading } = useGetComplaintDetails(complaint.id);
+  const detail = data?.data ?? complaint;
+  const resolutionNote = getResolutionNote(detail);
+
+  if (isLoading && !data?.data) {
+    return <FullPageSpinner />;
+  }
+
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <DetailField label="Status">
+          <ComplaintStatusBadge status={detail.status} />
+        </DetailField>
+        <DetailField label="Type">{detail.type.toLowerCase()}</DetailField>
+        <DetailField label="Cause">{getComplaintCause(detail)}</DetailField>
+        <DetailField label="Invoice">{detail.invoiceId?.trim() || "—"}</DetailField>
+        <DetailField label="Created">{formatDate(detail.createdAt)}</DetailField>
+      </div>
+
+      <DetailField label="Description">
+        <p className="whitespace-pre-wrap">{detail.description}</p>
+      </DetailField>
+
+      <DetailField label="Admin feedback">
+        {resolutionNote ? (
+          <p className="whitespace-pre-wrap rounded-xl border border-grey-200 bg-white px-4 py-3">
+            {resolutionNote}
+          </p>
+        ) : (
+          <p className="text-grey-400">
+            {detail.status === "RESOLVED"
+              ? "No feedback provided yet."
+              : "Admin feedback will appear here once your complaint is resolved."}
+          </p>
+        )}
+      </DetailField>
+    </div>
+  );
+}
+
 function ComplaintRow({
   complaint,
   fallbackCreatedAt,
+  onSelect,
 }: {
   complaint: Complaint;
   fallbackCreatedAt?: string;
+  onSelect: (complaint: Complaint) => void;
 }) {
   return (
-    <TableRow>
+    <TableRow
+      className="cursor-pointer"
+      onClick={() => onSelect(complaint)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect(complaint);
+        }
+      }}
+    >
       <TableCell title="Title" content={complaint.title} className="!font-medium !text-grey-900" />
-      <TableCell
-        title="Cause"
-        content={complaint.complaintCause?.toLowerCase() ?? "general"}
-      />
+      <TableCell title="Cause" content={getComplaintCause(complaint)} />
       <TableCell title="Invoice" content={complaint.invoiceId || "—"} />
       <TableCell title="Type" content={complaint.type.toLocaleLowerCase()} />
       <TableCell title="Status" content={<ComplaintStatusBadge status={complaint.status} />} />
       <TableCell title="Created" content={formatDate(complaint.createdAt ?? fallbackCreatedAt)} />
-      <TableCell title="Description" content={complaint.description} />
-      <TableCell
-        title="Admin Feedback"
-        content={
-          complaint.resolutionNote?.trim() ? (
-            <span className="text-sm text-grey-700 whitespace-pre-wrap">
-              {complaint.resolutionNote}
-            </span>
-          ) : (
-            <span className="text-sm text-grey-400">—</span>
-          )
-        }
-      />
     </TableRow>
   );
 }
@@ -316,17 +382,19 @@ function MakeComplaintForm({
 }
 
 export default function Complaints() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(0);
   const [openComplaintModal, setOpenComplaintModal] = useState(false);
+  const [selectedComplaint, setSelectedComplaint] = useState<Complaint | null>(null);
   const pageLimit = 10;
   const { useGetMyComplaints } = useHostComplaints();
   const { data, isError, isLoading } = useGetMyComplaints({
-    page: currentPage - 1,
+    page: currentPage,
     size: pageLimit,
   });
 
   const complaints = data?.data?.content ?? [];
-  const totalCount = data?.data?.totalElements ?? 0;
+  const pageData = data?.data as { totalElements?: number; totalItems?: number } | undefined;
+  const totalCount = pageData?.totalElements ?? pageData?.totalItems ?? 0;
 
   return (
     <div className="space-y-6">
@@ -366,6 +434,7 @@ export default function Complaints() {
                 key={complaint.id}
                 complaint={complaint}
                 fallbackCreatedAt={data?.timestamp}
+                onSelect={setSelectedComplaint}
               />
             ))}
           </TableBody>
@@ -387,6 +456,20 @@ export default function Complaints() {
         title="Make a Complaint"
         width="max-w-[620px]"
         content={<MakeComplaintForm onClose={() => setOpenComplaintModal(false)} />}
+      />
+
+      <BlurredDialog
+        open={!!selectedComplaint}
+        onOpenChange={(open) => {
+          if (!open) setSelectedComplaint(null);
+        }}
+        title={selectedComplaint?.title ?? "Complaint details"}
+        width="max-w-[620px]"
+        content={
+          selectedComplaint ? (
+            <ComplaintDetailContent complaint={selectedComplaint} />
+          ) : null
+        }
       />
     </div>
   );

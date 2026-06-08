@@ -27,11 +27,17 @@ import { DriverContent } from "@/types";
 
 const PAGE_LIMIT = 10;
 
+type DriverConfirmAction = {
+  type: "unassign" | "disable" | "enable";
+  driver: DriverContent;
+} | null;
+
 export default function Drivers() {
   const { user } = useAppSelector((state) => state.user);
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [confirmAction, setConfirmAction] = useState<DriverConfirmAction>(null);
 
   const debouncedSet = useCallback(
     debounce((q: string) => setDebouncedSearch(q), 500),
@@ -120,10 +126,13 @@ export default function Drivers() {
                 onAssign={() => setAssignDriver({ id: driver.id, name: driver.fullName })}
                 onUnassign={() =>
                   driver.assignedVehicleId &&
-                  unassignFromVehicle.mutate({ vehicleId: driver.assignedVehicleId })
+                  setConfirmAction({ type: "unassign", driver })
                 }
                 onToggleStatus={() =>
-                  toggleStatus.mutate({ driverId: driver.id, isActive: !driver.active })
+                  setConfirmAction({
+                    type: driver.active ? "disable" : "enable",
+                    driver,
+                  })
                 }
               />
             ))}
@@ -133,10 +142,10 @@ export default function Drivers() {
 
       {totalCount > 0 && (
         <Pagination
-          currentPage={page + 1}
+          currentPage={page}
           totalCount={totalCount}
           pageLimit={PAGE_LIMIT}
-          onPageChange={(p) => setPage(p - 1)}
+          onPageChange={setPage}
         />
       )}
 
@@ -162,6 +171,79 @@ export default function Drivers() {
               })
             }
           />
+        }
+      />
+
+      <BlurredDialog
+        open={!!confirmAction}
+        onOpenChange={(open) => {
+          if (!open) setConfirmAction(null);
+        }}
+        title={
+          confirmAction?.type === "unassign"
+            ? "Unassign driver from vehicle?"
+            : confirmAction?.type === "disable"
+              ? "Disable this driver?"
+              : "Enable this driver?"
+        }
+        description={
+          confirmAction?.type === "unassign"
+            ? `Are you sure you want to unassign ${confirmAction.driver.fullName} from their vehicle?`
+            : confirmAction?.type === "disable"
+              ? `Are you sure you want to disable ${confirmAction?.driver.fullName}? They will not be available for new assignments.`
+              : `Are you sure you want to enable ${confirmAction?.driver.fullName}?`
+        }
+        width="max-w-[480px]"
+        content={
+          confirmAction ? (
+            <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-end">
+              <Button
+                variant="outlined"
+                color="transparent"
+                className="!py-3 !px-6 !text-sm"
+                onClick={() => setConfirmAction(null)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="filled"
+                color={confirmAction.type === "enable" ? "primary" : "white"}
+                className={
+                  confirmAction.type === "enable"
+                    ? "!py-3 !px-6 !text-sm"
+                    : "!py-3 !px-6 !text-sm !bg-error-50 !text-error-800"
+                }
+                loading={
+                  confirmAction.type === "unassign"
+                    ? unassignFromVehicle.isPending
+                    : toggleStatus.isPending
+                }
+                onClick={() => {
+                  if (confirmAction.type === "unassign" && confirmAction.driver.assignedVehicleId) {
+                    unassignFromVehicle.mutate(
+                      { vehicleId: confirmAction.driver.assignedVehicleId },
+                      { onSuccess: () => setConfirmAction(null) }
+                    );
+                    return;
+                  }
+
+                  toggleStatus.mutate(
+                    {
+                      driverId: confirmAction.driver.id,
+                      isActive: confirmAction.type === "enable",
+                    },
+                    { onSuccess: () => setConfirmAction(null) }
+                  );
+                }}
+              >
+                {confirmAction.type === "unassign"
+                  ? "Yes, unassign"
+                  : confirmAction.type === "disable"
+                    ? "Yes, disable"
+                    : "Yes, enable"}
+              </Button>
+            </div>
+          ) : null
         }
       />
 

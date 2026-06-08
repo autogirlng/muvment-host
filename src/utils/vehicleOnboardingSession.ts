@@ -1,5 +1,10 @@
-import { clearVehicleOnboarding } from "@/lib/features/vehicleOnboardingSlice";
+import {
+  clearVehicleOnboarding,
+  updateVehicleInformation,
+} from "@/lib/features/vehicleOnboardingSlice";
 import { getClientStore } from "@/lib/storeHolder";
+import { VehicleInformationStepper } from "@/types";
+import { normalizeVehicleOnboardingData } from "@/utils/vehicleOnboardingPrefill";
 
 const VEHICLE_ID_KEY = "vehicleId";
 const SUBMITTED_VEHICLE_ID_KEY = "submittedVehicleId";
@@ -24,4 +29,26 @@ export function setOnboardingVehicleId(vehicleId: string) {
 export function getOnboardingVehicleId(): string {
   if (typeof window === "undefined") return "";
   return sessionStorage.getItem(VEHICLE_ID_KEY) ?? "";
+}
+
+/**
+ * Prime Redux + session before navigating to edit so type/make/model prefill
+ * immediately from listing data (table row or detail page).
+ */
+export function beginVehicleEdit(
+  listing: Pick<VehicleInformationStepper, "id"> & Partial<VehicleInformationStepper>
+) {
+  if (typeof window === "undefined") return;
+
+  getClientStore()?.dispatch(clearVehicleOnboarding());
+  sessionStorage.removeItem(SUBMITTED_VEHICLE_ID_KEY);
+  sessionStorage.removeItem(SUBMITTED_VEHICLE_NAME_KEY);
+  setOnboardingVehicleId(listing.id);
+
+  const normalized = normalizeVehicleOnboardingData(
+    listing as VehicleInformationStepper
+  );
+  if (normalized) {
+    getClientStore()?.dispatch(updateVehicleInformation(normalized));
+  }
 }

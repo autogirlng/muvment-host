@@ -28,6 +28,7 @@ export default function useListings({
       ), 
     enabled: !!user?.data.userId,
     retry: false,
+    refetchOnMount: "always",
   });
   return {
     listings: data?.data.content || [],
