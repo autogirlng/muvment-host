@@ -27,7 +27,7 @@ const tripFilters = [
 ];
 
 export default function Trips() {
-    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [filters, setFilters] = useState<Record<string, string[]>>({});
     const [search, setSearch] = useState<string>("");
     const [debouncedSearch, setDebouncedSearch] = useState<string>("");
@@ -45,13 +45,13 @@ export default function Trips() {
     }, [search, debouncedTripSearch]);
 
     useEffect(() => {
-        setCurrentPage(1);
+        setCurrentPage(0);
     }, [debouncedSearch, filters]);
 
     const { useGetHostTrips } = useMou();
 
     const queryParams: HostTripsParams = {
-        page: currentPage - 1,
+        page: currentPage,
         size: pageLimit,
     };
 
@@ -64,7 +64,7 @@ export default function Trips() {
 
     const handleFilterChange = (selectedFilters: Record<string, string[]>) => {
         setFilters(selectedFilters);
-        setCurrentPage(1);
+        setCurrentPage(0);
     };
 
 
@@ -133,7 +133,7 @@ export default function Trips() {
                                 <TableCell title="Start Date" content={trip.startDateTime ? formatDate(trip.startDateTime) : "N/A"} />
                                 <TableCell title="End Date" content={trip.endDateTime ? formatDate(trip.endDateTime) : "N/A"} />
                                 <TableCell title="Booking Status" content={trip.bookingStatus} isBadge type="booking" />
-                                <TableCell title="Trip Status" content={trip.tripStatus} isBadge type="booking" />
+                                <TableCell title="Trip Status" content={trip.tripStatus} isBadge type="trip" />
                                 <TableCell
                                     title="Agent"
                                     content={getTripAgentDisplayName(trip)}

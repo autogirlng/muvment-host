@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BlurredDialog, Button } from "@/ui";
@@ -11,8 +10,6 @@ type ListingSuccessModalProps = {
   vehicleName: string;
   mode?: "submitted" | "updated";
 };
-
-const SUCCESS_DISPLAY_MS = 1000;
 
 export default function ListingSuccessModal({
   open,
@@ -28,21 +25,13 @@ export default function ListingSuccessModal({
     router.push("/listings");
   };
 
-  useEffect(() => {
-    if (!open || isUpdate) return;
-
-    const timer = window.setTimeout(() => {
-      onOpenChange(false);
-      router.push("/listings");
-    }, SUCCESS_DISPLAY_MS);
-
-    return () => window.clearTimeout(timer);
-  }, [open, isUpdate, onOpenChange, router]);
-
   return (
     <BlurredDialog
       open={open}
-      onOpenChange={onOpenChange}
+      onOpenChange={(nextOpen) => {
+        if (!nextOpen) return;
+        onOpenChange(nextOpen);
+      }}
       width="max-w-[640px]"
       title={
         <div className="flex flex-col items-center text-center gap-6">
@@ -70,7 +59,7 @@ export default function ListingSuccessModal({
             className="px-8"
             onClick={handleBackToListings}
           >
-            Back to Listings
+            Go to Listings
           </Button>
         </div>
       }

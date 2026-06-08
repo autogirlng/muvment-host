@@ -47,6 +47,8 @@ const BasicVehicleInformationForm = ({
         submitStep1,
         saveStep1,
         initialValues,
+        routeVehicleId,
+        isFormReady,
         googlePlaces,
         searchAddressError,
         searchAddressLoading,
@@ -58,8 +60,20 @@ const BasicVehicleInformationForm = ({
 
     const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number }>()
 
+    if (!isFormReady) {
+        return <FullPageSpinner className="!min-h-[320px]" />;
+    }
+
+    const formKey = [
+        routeVehicleId ?? "new",
+        initialValues.vehicleTypeId,
+        initialValues.vehicleMakeId,
+        initialValues.vehicleModelId,
+    ].join("-");
+
     return (
         <Formik
+            key={formKey}
             initialValues={initialValues}
             validationSchema={basicVehicleInformationSchema}
             onSubmit={(values, { setSubmitting }) => {

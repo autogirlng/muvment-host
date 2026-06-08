@@ -1,7 +1,7 @@
 import cn from "classnames";
 import { ReactNode } from "react";
 import { BookingBadgeStatus, TransactionStatus, VehicleStatus } from "@/types";
-import { BookingTableBadge, TransactionBadge, VehicleListingBadge } from "@/ui";
+import { BookingTableBadge, TransactionBadge, TripTableBadge, VehicleListingBadge } from "@/ui";
 import { TableCellProps } from "./props";
 import { tableCellBaseClass, tableCellValueClass, tableMobileTitleClass } from "./tableStyles";
 
@@ -11,6 +11,9 @@ function renderBadge(content: string | ReactNode, type?: TableCellProps["type"])
     }
     if (type === "listing") {
         return <VehicleListingBadge status={content as VehicleStatus} />;
+    }
+    if (type === "trip") {
+        return <TripTableBadge status={String(content)} />;
     }
     return <BookingTableBadge status={content as BookingBadgeStatus} />;
 }

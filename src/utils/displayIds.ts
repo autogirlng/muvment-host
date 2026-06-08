@@ -27,3 +27,11 @@ export function getTripAgentDisplayName(trip: {
     "—"
   );
 }
+
+/** Short, human-readable MOU reference from a UUID or backend id. */
+export function getMouDisplayId(id?: string | null): string {
+  if (!id?.trim()) return "—";
+  const normalized = id.trim();
+  if (normalized.length <= 12) return normalized.toUpperCase();
+  return `MOU-${normalized.slice(0, 8).toUpperCase()}`;
+}

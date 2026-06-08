@@ -96,6 +96,7 @@ export default function ListingDetailPage() {
           vehicleTypeName={v.vehicleTypeName}
           vehicleType={v.vehicleType}
           supportedBookingTypes={v.supportedBookingTypes}
+          listingForEdit={v}
         />
 
         {/* Vehicle identifier */}
