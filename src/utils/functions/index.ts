@@ -273,6 +273,26 @@ const KNOWN_API_ERROR_MESSAGES: Record<string, string> = {
   USER_NOT_FOUND: "User not found.",
 };
 
+/** Valid map coordinates from Google Places selection (rejects 0,0 and invalid ranges). */
+export function isValidVehicleCoordinates(
+  lat?: number | null,
+  lng?: number | null
+): boolean {
+  if (lat == null || lng == null) return false;
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+  if (lat === 0 && lng === 0) return false;
+  return lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+}
+
+export function parseVehicleCoordinate(value: unknown): number {
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string" && value.trim()) {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) return parsed;
+  }
+  return 0;
+}
+
 export function pickSuccessMessage(data: unknown, fallback: string): string {
   if (data != null && typeof data === "object" && "message" in data) {
     const m = (data as { message: unknown }).message;

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent } from "react";
 import { Formik, Form } from "formik";
 import { toast } from "react-toastify";
 import { FullPageSpinner, StepperNavigation, InputField, SelectInput } from "@/ui";
@@ -14,6 +14,23 @@ import {
     VEHICLE_MAKE_PLACEHOLDER,
     VEHICLE_SELECT_PLACEHOLDER,
 } from "@/utils/constants";
+import { isValidVehicleCoordinates } from "@/utils/functions";
+
+type GooglePlaceLocation = {
+    latitude?: number;
+    longitude?: number;
+    latLng?: { latitude?: number; longitude?: number };
+};
+
+function getPlaceCoordinates(
+    location?: GooglePlaceLocation
+): { latitude: number; longitude: number } | null {
+    if (!location) return null;
+    const latitude = location.latitude ?? location.latLng?.latitude;
+    const longitude = location.longitude ?? location.latLng?.longitude;
+    if (!isValidVehicleCoordinates(latitude, longitude)) return null;
+    return { latitude: latitude!, longitude: longitude! };
+}
 
 const yesNoSelectOptions = [
     { option: "Select an option", value: VEHICLE_SELECT_PLACEHOLDER },
@@ -58,8 +75,6 @@ const BasicVehicleInformationForm = ({
         vehicleOptions
     } = useBasicInformationForm({ currentStep, setCurrentStep });
 
-    const [coordinates, setCoordinates] = useState<{ latitude: number, longitude: number }>()
-
     if (!isFormReady) {
         return <FullPageSpinner className="!min-h-[320px]" />;
     }
@@ -77,14 +92,7 @@ const BasicVehicleInformationForm = ({
             initialValues={initialValues}
             validationSchema={basicVehicleInformationSchema}
             onSubmit={(values, { setSubmitting }) => {
-
-                const vehicleInitialDraftValues = {
-                    ...values,
-                    latitude: coordinates?.latitude || 0,
-                    longitude: coordinates?.longitude || 0,
-                }
-
-                submitStep1.mutate(vehicleInitialDraftValues);
+                submitStep1.mutate(values);
                 setSubmitting(false);
             }}
             enableReinitialize={true}
@@ -148,19 +156,33 @@ const BasicVehicleInformationForm = ({
                             id="address"
                             type="text"
                             label="Address"
-                            placeholder="Enter address"
+                            placeholder="Search and select an address"
                             value={values.address}
                             onChange={(event: ChangeEvent<HTMLInputElement>) => {
                                 const value = event.target.value;
                                 setSearchAddressQuery(value);
-                                setFieldValue("address", value);
+                                setFieldValue("address", value, false);
+                                setFieldValue("latitude", 0, false);
+                                setFieldValue("longitude", 0, false);
+                                setFieldTouched("address", true, false);
+                                setShowAddressList(true);
                             }}
                             onBlur={handleBlur}
                             error={errors.address && touched.address ? errors.address : ""}
                             info
                             tooltipTitle="Address:"
-                            tooltipDescription="Provide the exact address where the vehicle is located when it’s not in use."
+                            tooltipDescription="Search for your address and pick a result from the list so we can save the correct map location."
                         />
+                        {values.address.trim() &&
+                            !isValidVehicleCoordinates(
+                                values.latitude,
+                                values.longitude
+                            ) && (
+                                <p className="text-sm text-amber-700">
+                                    Select an address from the suggestions to confirm latitude
+                                    and longitude.
+                                </p>
+                            )}
                         {(searchAddressLoading ||
                             (googlePlaces.length > 0 && showAddressList)) && (
                                 <ul className="list-none rounded-xl py-4 px-2 w-full bg-white border border-grey-200 max-h-[200px] overflow-auto shadow-[-2px_4px_6px_-2px_#10192808,12px_16px_37.4px_-4px_#10192814]">
@@ -173,15 +195,27 @@ const BasicVehicleInformationForm = ({
                                             <li
                                                 key={`address-${index}`}
                                                 onClick={() => {
-                                                    setShowAddressList(false);
-                                                    setFieldValue(
-                                                        "address",
-                                                        address?.formattedAddress || ""
+                                                    const formatted =
+                                                        address?.formattedAddress || "";
+                                                    const coords = getPlaceCoordinates(
+                                                        address.location
                                                     );
-                                                    setCoordinates({
-                                                        latitude: address.location.latitude,
-                                                        longitude: address.location.longitude
-                                                    })
+                                                    if (!coords) return;
+
+                                                    setShowAddressList(false);
+                                                    setSearchAddressQuery(formatted);
+                                                    setFieldValue("address", formatted, false);
+                                                    setFieldValue(
+                                                        "latitude",
+                                                        coords.latitude,
+                                                        false
+                                                    );
+                                                    setFieldValue(
+                                                        "longitude",
+                                                        coords.longitude,
+                                                        false
+                                                    );
+                                                    setFieldTouched("address", true, false);
                                                 }}
                                                 className="cursor-pointer hover:bg-primary-75 py-2 px-4 text-sm text-grey-900 rounded-xl"
                                             >

@@ -11,6 +11,7 @@ import {
   VehiclePhotosFormValues,
 } from "@/types";
 import { VEHICLE_SELECT_PLACEHOLDER } from "@/utils/constants";
+import { parseVehicleCoordinate } from "@/utils/functions";
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 import type { DriverProvisionMode } from "@/types/vehicle";
 
@@ -40,6 +41,8 @@ export function normalizeVehicleOnboardingData(
       vehicle.vehicleMakeId || nested.vehicleMake?.id || "",
     vehicleModelId:
       vehicle.vehicleModelId || nested.vehicleModel?.id || "",
+    latitude: parseVehicleCoordinate(vehicle.latitude),
+    longitude: parseVehicleCoordinate(vehicle.longitude),
   };
 }
 

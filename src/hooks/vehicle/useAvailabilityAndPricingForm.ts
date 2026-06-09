@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, type Dispatch, type SetStateAction } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -99,6 +100,7 @@ export default function useAvailabilityAndPricingForm({
   const http = useHttp();
   const queryClient = useQueryClient();
   const dispatch = useAppDispatch();
+  const searchParams = useSearchParams();
 
 
 
@@ -172,12 +174,8 @@ export default function useAvailabilityAndPricingForm({
 
 
 
-  const [vehicleId, setVehicleId] = useState<string>("");
-
-  useEffect(() => {
-    setVehicleId(getOnboardingVehicleId());
-  }, []);
-
+  const routeVehicleId = searchParams.get("id") ?? "";
+  const vehicleId = routeVehicleId || getOnboardingVehicleId();
   const isEditingExisting = isEditingExistingVehicle(vehicleId, vehicle);
 
 
@@ -401,9 +399,7 @@ export default function useAvailabilityAndPricingForm({
     submitStep4.mutate(values, {
       onSuccess: (data) => {
         handleStep4Success(data as VehicleInformation);
-        if (!isEditingExisting) {
-          setCurrentStep((step) => step + 1);
-        }
+        setCurrentStep((step) => step + 1);
         options?.onSuccess?.();
       },
       onSettled: () => {

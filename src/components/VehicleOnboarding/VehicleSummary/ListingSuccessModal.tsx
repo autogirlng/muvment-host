@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BlurredDialog, Button } from "@/ui";
 
@@ -35,14 +34,14 @@ export default function ListingSuccessModal({
       width="max-w-[640px]"
       title={
         <div className="flex flex-col items-center text-center gap-6">
-          <Image
-            src="/icons/success_confetti.png"
-            alt=""
-            height={80}
-            width={80}
-          />
+          <div
+            className="flex h-20 w-20 items-center justify-center rounded-full bg-success-50 text-success-600 text-4xl"
+            aria-hidden
+          >
+            ✓
+          </div>
           <span className="text-h5 md:text-h4 text-black">
-            {isUpdate ? "Vehicle updated" : "Listing successful"}
+            {isUpdate ? "Vehicle updated" : "Vehicle listed successfully"}
           </span>
         </div>
       }
