@@ -9,7 +9,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/lib/hooks";
-import { debounce, handleErrors } from "@/utils/functions";
+import {
+    debounce,
+    handleErrors,
+    parseVehicleCoordinate,
+} from "@/utils/functions";
 import {
     BasicVehicleInformationValues,
     ErrorResponse,
@@ -111,6 +115,12 @@ export default function useBasicInformationForm({ setCurrentStep }: VehicleOnboa
         [vehicle]
     );
 
+    useEffect(() => {
+        if (normalizedVehicle?.address?.trim()) {
+            setSearchAddressQuery(normalizedVehicle.address);
+        }
+    }, [normalizedVehicle?.address]);
+
     const vehicleTypesWithCurrent = useMemo(() => {
         const types = [...vehicleOptions.vehicleTypes];
         const typeId = normalizedVehicle?.vehicleTypeId;
@@ -158,8 +168,8 @@ export default function useBasicInformationForm({ setCurrentStep }: VehicleOnboa
             name: normalizedVehicle?.name || "",
             city: normalizedVehicle?.city || "",
             address: normalizedVehicle?.address || "",
-            latitude: normalizedVehicle?.latitude || 0,
-            longitude: normalizedVehicle?.longitude || 0,
+            latitude: parseVehicleCoordinate(normalizedVehicle?.latitude),
+            longitude: parseVehicleCoordinate(normalizedVehicle?.longitude),
             vehicleMakeId: normalizedVehicle?.vehicleMakeId || VEHICLE_MAKE_PLACEHOLDER,
             vehicleModelId: normalizedVehicle?.vehicleModelId || VEHICLE_SELECT_PLACEHOLDER,
             vehicleTypeId: normalizedVehicle?.vehicleTypeId || VEHICLE_SELECT_PLACEHOLDER,
@@ -236,6 +246,8 @@ export default function useBasicInformationForm({ setCurrentStep }: VehicleOnboa
 
     const buildPayload = (values: BasicVehicleInformationValues) => ({
         ...values,
+        latitude: parseVehicleCoordinate(values.latitude),
+        longitude: parseVehicleCoordinate(values.longitude),
         vehicleMakeId: stripPlaceholder(values.vehicleMakeId, VEHICLE_MAKE_PLACEHOLDER),
         vehicleModelId: stripPlaceholder(values.vehicleModelId, VEHICLE_SELECT_PLACEHOLDER),
         vehicleTypeId: stripPlaceholder(values.vehicleTypeId, VEHICLE_SELECT_PLACEHOLDER),

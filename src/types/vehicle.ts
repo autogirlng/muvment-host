@@ -88,6 +88,7 @@ export interface VehicleOnboardingStepsHookProps  {
     currentStep: number;
     setCurrentStep: Dispatch<SetStateAction<number>>
     setPhotoTipIndex?: Dispatch<SetStateAction<number>>
+    onVehicleUpdated?: (vehicleName: string) => void;
 }
 
 export interface ModelOption extends Option {

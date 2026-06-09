@@ -18,20 +18,28 @@ function isDraftOnlySubmitError(error: AxiosError<ErrorResponse>): boolean {
   return message.includes("draft") || message.includes("only vehicles");
 }
 
-export default function useVehicleSummary() {
+type UseVehicleSummaryOptions = {
+  isEditingExisting?: boolean;
+  onSubmitSuccess?: (vehicleName: string) => void;
+};
+
+export default function useVehicleSummary(options: UseVehicleSummaryOptions = {}) {
+  const { isEditingExisting = false, onSubmitSuccess } = options;
   const http = useHttp();
   const router = useRouter();
   const queryClient = useQueryClient();
 
   const [agreeToTerms, setAgreeToTerms] = useState<boolean>(false);
-  const [showSuccessModal, setShowSuccessModal] = useState(false);
-  const [submittedVehicleName, setSubmittedVehicleName] = useState("vehicle");
 
   const submitVehicleOnboarding = useMutation({
     mutationFn: async () => {
       const id = getOnboardingVehicleId();
       if (!id) {
         throw new Error("Vehicle ID is missing. Please complete onboarding from step 1.");
+      }
+      if (isEditingExisting) {
+        const refreshed = await http.get<VehicleInformationResponse>(`/vehicles/${id}`);
+        return refreshed;
       }
       return http.post<VehicleInformationResponse>(`/vehicles/submit-review?id=${id}`);
     },
@@ -60,20 +68,16 @@ export default function useVehicleSummary() {
 
         sessionStorage.setItem("submittedVehicleId", submittedId);
         sessionStorage.setItem("submittedVehicleName", name);
-        setSubmittedVehicleName(name);
+        onSubmitSuccess?.(name);
         invalidateListingsCache(queryClient, submittedId);
-        setShowSuccessModal(true);
       },
     });
-  }, [queryClient]);
+  }, [queryClient, onSubmitSuccess]);
 
   return {
     submitVehicleOnboarding,
     submitForReview,
     agreeToTerms,
     setAgreeToTerms,
-    showSuccessModal,
-    setShowSuccessModal,
-    submittedVehicleName,
   };
 }

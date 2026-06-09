@@ -16,6 +16,8 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
 
     const [openCancellationModal, setOpenCancellationModal] = useState(false);
     const photos = vehicleInfo?.photos ?? [];
+    const features = vehicleInfo?.features ?? [];
+    const supportedBookingTypes = vehicleInfo?.supportedBookingTypes ?? [];
     const canLoop = photos.length > 1;
 
     const handleOpenCancellationModal = () => {
@@ -26,35 +28,43 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
         <>
             <div className="space-y-11">
                 <div className="space-y-6 md:space-y-8">
-                    <Swiper
-                        pagination={{
-                            type: "fraction",
-                        }}
-                        navigation={canLoop}
-                        modules={[Pagination, Navigation, Autoplay]}
-                        autoplay={
-                            canLoop
-                                ? {
-                                      delay: 5000,
-                                      pauseOnMouseEnter: true,
-                                  }
-                                : false
-                        }
-                        loop={canLoop}
-                        className="vehicle-summary-swiper"
-                    >
-                        {photos.map((image, index) => (
-                            <SwiperSlide key={index}>
-                                <Image
-                                    src={image.cloudinaryUrl}
-                                    alt={`Vehicle image ${index + 1}`} // Add more descriptive alt text
-                                    width={1120}
-                                    height={460}
-                                    className="w-full h-[218px] md:h-[460px] rounded-[42px] object-cover"
-                                />
-                            </SwiperSlide>
-                        ))}
-                    </Swiper>
+                    {photos.length > 0 ? (
+                        <Swiper
+                            pagination={{
+                                type: "fraction",
+                            }}
+                            navigation={canLoop}
+                            modules={[Pagination, Navigation, Autoplay]}
+                            autoplay={
+                                canLoop
+                                    ? {
+                                          delay: 5000,
+                                          pauseOnMouseEnter: true,
+                                      }
+                                    : false
+                            }
+                            loop={canLoop}
+                            className="vehicle-summary-swiper"
+                        >
+                            {photos.map((image, index) => (
+                                <SwiperSlide key={index}>
+                                    <Image
+                                        src={image.cloudinaryUrl}
+                                        alt={`Vehicle image ${index + 1}`}
+                                        width={1120}
+                                        height={460}
+                                        className="w-full h-[218px] md:h-[460px] rounded-[42px] object-cover"
+                                    />
+                                </SwiperSlide>
+                            ))}
+                        </Swiper>
+                    ) : (
+                        <div
+                            className="w-full h-[218px] md:h-[460px] rounded-[42px] bg-grey-100 border border-grey-200 flex items-center justify-center text-sm text-grey-500"
+                        >
+                            No photos uploaded
+                        </div>
+                    )}
                     <h2 className="text-h5 md:text-h3 3xl:text-4xl">
                         {vehicleInfo?.name ?? ""}
                     </h2>
@@ -86,7 +96,7 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
                         <div className="space-y-5">
                             <SectionTitle text="Features" />
                             <div className="flex flex-wrap gap-3">
-                                {vehicleInfo?.features.map((feature, index) => (
+                                {features.map((feature, index) => (
                                     <Chip
                                         key={index}
                                         text={addSpaceBeforeUppercase(feature.name)}
@@ -101,7 +111,7 @@ export default function ViewAsCustomer({ vehicleInfo }: ViewAsCustomerProps) {
                         <div className="space-y-5">
                             <SectionTitle text="Supported Booking Types" />
                             <div className="flex flex-wrap gap-3">
-                                {vehicleInfo?.supportedBookingTypes.map((type, index) => (
+                                {supportedBookingTypes.map((type, index) => (
                                     <Chip
                                         key={index}
                                         text={addSpaceBeforeUppercase(type.name)}
