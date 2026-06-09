@@ -92,6 +92,11 @@ export function canNavigateToOnboardingStep({
 }): boolean {
   if (targetStep === currentStep) return false;
 
+  // Preview step (index 5): allowed once availability/pricing is complete.
+  if (targetStep === 5) {
+    return isOnboardingStepComplete(vehicle, 4);
+  }
+
   if (isDraftResume || isEditingExisting) {
     return isOnboardingStepComplete(vehicle, targetStep);
   }

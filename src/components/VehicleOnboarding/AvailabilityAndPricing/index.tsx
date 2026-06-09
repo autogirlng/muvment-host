@@ -4,10 +4,18 @@ import AvailabilityAndPricingForm from "./AvailabilityAndPricingForm";
 import AvailabilityAndPricingTips from "./AvailabilityAndPricingTips";
 import { VehicleOnboardingStepsHookProps } from "@/types"
 
-export default function AvailabilityAndPricing({ steps, setCurrentStep, currentStep }: VehicleOnboardingStepsHookProps) {
+export default function AvailabilityAndPricing({
+    steps,
+    setCurrentStep,
+    currentStep,
+}: VehicleOnboardingStepsHookProps) {
     return (
         <div className="flex justify-between flex-col-reverse md:flex-row gap-8">
-            <AvailabilityAndPricingForm steps={steps} currentStep={currentStep} setCurrentStep={setCurrentStep} />
+            <AvailabilityAndPricingForm
+                steps={steps}
+                currentStep={currentStep}
+                setCurrentStep={setCurrentStep}
+            />
             <DesktopTips />
             <MobileTips />
         </div>

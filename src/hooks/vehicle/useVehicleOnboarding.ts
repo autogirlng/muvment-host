@@ -68,7 +68,7 @@ export default function useVehicleOnboarding() {
   return {
     data,
     isError,
-    isLoading: isLoading || isFetching || !isVehicleReady,
+    isLoading: (isLoading && !data) || !isVehicleReady,
     routeVehicleId,
     invalidateVehicle,
   };

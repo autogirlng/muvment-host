@@ -4,7 +4,7 @@ import {
   VEHICLE_MAKE_PLACEHOLDER,
   VEHICLE_SELECT_PLACEHOLDER,
 } from "@/utils/constants";
-import { validatePhoneNumber } from "./functions";
+import { isValidVehicleCoordinates, validatePhoneNumber } from "./functions";
 
 export const newLetterValidationSchema = object().shape({
   email: string()
@@ -75,7 +75,22 @@ export const basicVehicleInformationSchema = object().shape({
 
   name: string().required("Vehicle name is required"),
   city: string().required("City is required"),
-  address: string().required("Address is required"),
+  address: string()
+    .required("Address is required")
+    .test(
+      "address-has-coordinates",
+      "Please select an address from the suggestions list",
+      function (value) {
+        if (!value?.trim()) return true;
+        const { latitude, longitude } = this.parent as {
+          latitude?: number;
+          longitude?: number;
+        };
+        return isValidVehicleCoordinates(latitude, longitude);
+      }
+    ),
+  latitude: number().optional(),
+  longitude: number().optional(),
   vehicleTypeId: string()
     .required("Please select vehicle type")
     .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select vehicle type"),

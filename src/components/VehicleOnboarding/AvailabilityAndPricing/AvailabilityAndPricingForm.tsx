@@ -23,7 +23,6 @@ import {
 } from "@/types";
 import type { PricingSheetItem } from "@/hooks/pricing/usePublicPricing";
 import { ApiResponse } from "@/types";
-import ListingSuccessModal from "@/components/VehicleOnboarding/VehicleSummary/ListingSuccessModal";
 import { isVehicleDraft } from "@/utils/vehicleOnboardingMode";
 
 
@@ -43,11 +42,9 @@ const AvailabilityAndPricingForm = ({
         drivers,
         driversLoading,
         vehicle,
-        isEditingExisting,
     } = useAvailabilityAndPricingForm({ currentStep, setCurrentStep });
 
     const [pricingModalOpen, setPricingModalOpen] = useState(false);
-    const [showUpdateSuccessModal, setShowUpdateSuccessModal] = useState(false);
     const [pricingItems, setPricingItems] = useState<PricingSheetItem[]>([]);
     const [pricingLoading, setPricingLoading] = useState(false);
     const [pendingValues, setPendingValues] = useState<AvailabilityAndPricingValues | null>(null);
@@ -107,11 +104,6 @@ const AvailabilityAndPricingForm = ({
 
     const proceedToSummary = (values: AvailabilityAndPricingValues) => {
         submitStep4.mutate(values, {
-            onSuccess: () => {
-                if (isEditingExisting) {
-                    setShowUpdateSuccessModal(true);
-                }
-            },
             onSettled: () => {
                 setPricingModalOpen(false);
                 setPendingValues(null);
@@ -120,13 +112,7 @@ const AvailabilityAndPricingForm = ({
     };
 
     const handleSaveDraft = (values: AvailabilityAndPricingValues) => {
-        saveStep4.mutate(values, {
-            onSuccess: () => {
-                if (isEditingExisting) {
-                    setShowUpdateSuccessModal(true);
-                }
-            },
-        });
+        saveStep4.mutate(values);
     };
 
     const handleStepSubmit = async (
@@ -470,12 +456,6 @@ const AvailabilityAndPricingForm = ({
             onContinue={() => {
                 if (pendingValues) proceedToSummary(pendingValues);
             }}
-        />
-        <ListingSuccessModal
-            open={showUpdateSuccessModal}
-            onOpenChange={setShowUpdateSuccessModal}
-            vehicleName={vehicle?.name || "vehicle"}
-            mode="updated"
         />
         </>
     );

@@ -1,32 +1,55 @@
 import Link from "next/link";
 import { useEffect } from "react";
-import { SingleCheckBox, StepperNavigation } from "@/ui";
+import { FullPageSpinner, SingleCheckBox, StepperNavigation } from "@/ui";
 import useVehicleSummary from "@/hooks/vehicle/useVehicleSummary";
 import ViewAsCustomer from "@/components/VehicleOnboarding/VehicleSummary/ViewAsCustomer";
-import ListingSuccessModal from "@/components/VehicleOnboarding/VehicleSummary/ListingSuccessModal";
 import { useHttp } from "@/hooks/useHttp";
 import { useState } from "react";
 import { VehicleInformationResponse, VehicleInformationStepper, VehicleOnboardingStepsHookProps } from "@/types";
 import { getOnboardingVehicleId } from "@/utils/vehicleOnboardingSession";
 
+type VehicleSummaryProps = VehicleOnboardingStepsHookProps & {
+    isEditingExisting?: boolean;
+    onSubmitSuccess?: (vehicleName: string) => void;
+};
+
 export default function VehicleSummary({
     steps,
     currentStep,
     setCurrentStep,
-}: VehicleOnboardingStepsHookProps) {
+    isEditingExisting = false,
+    onSubmitSuccess,
+}: VehicleSummaryProps) {
     const vehicleId = getOnboardingVehicleId();
     const [vehicleInfo, setVehicleInfo] = useState<VehicleInformationStepper>();
+    const [isLoadingVehicle, setIsLoadingVehicle] = useState(true);
 
     const http = useHttp();
 
-    const fetchVehicleDetails = async () => {
-        if (!vehicleId) return;
-        const vehicle = await http.get<VehicleInformationResponse>(`/vehicles/${vehicleId}`);
-        setVehicleInfo(vehicle?.data);
-    };
-
     useEffect(() => {
-        fetchVehicleDetails();
+        if (!vehicleId) {
+            setIsLoadingVehicle(false);
+            return;
+        }
+
+        let cancelled = false;
+        setIsLoadingVehicle(true);
+
+        http.get<VehicleInformationResponse>(`/vehicles/${vehicleId}`)
+            .then((vehicle) => {
+                if (!cancelled) {
+                    setVehicleInfo(vehicle?.data);
+                }
+            })
+            .finally(() => {
+                if (!cancelled) {
+                    setIsLoadingVehicle(false);
+                }
+            });
+
+        return () => {
+            cancelled = true;
+        };
     }, [vehicleId]);
 
     const {
@@ -34,10 +57,11 @@ export default function VehicleSummary({
         submitVehicleOnboarding,
         agreeToTerms,
         setAgreeToTerms,
-        showSuccessModal,
-        setShowSuccessModal,
-        submittedVehicleName,
-    } = useVehicleSummary();
+    } = useVehicleSummary({ isEditingExisting, onSubmitSuccess });
+
+    if (isLoadingVehicle) {
+        return <FullPageSpinner className="!min-h-[320px]" />;
+    }
 
     return (
         <div className="space-y-11">
@@ -61,7 +85,13 @@ export default function VehicleSummary({
             </div>
 
             <StepperNavigation
-                submitText={submitVehicleOnboarding.isPending ? "Submitting..." : "Submit Vehicle"}
+                submitText={
+                    submitVehicleOnboarding.isPending
+                        ? "Submitting..."
+                        : isEditingExisting
+                          ? "Save changes"
+                          : "Submit Vehicle"
+                }
                 //@ts-ignore
                 steps={steps}
                 currentStep={currentStep}
@@ -78,11 +108,6 @@ export default function VehicleSummary({
                 disableSaveDraftButton
             />
 
-            <ListingSuccessModal
-                open={showSuccessModal}
-                onOpenChange={setShowSuccessModal}
-                vehicleName={submittedVehicleName}
-            />
         </div>
     );
 }
