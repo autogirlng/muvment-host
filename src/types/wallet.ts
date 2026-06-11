@@ -184,6 +184,8 @@ export interface HostPendingBalanceBooking {
   deductions?: HostBookingDeduction[];
   toPayToHost: number;
   hostPaymentStatus: HostPaymentStatus;
+  /** Derived client-side from the booking's latest segment end time. */
+  tripCompletionDate?: string;
 }
 
 export interface HostPendingBalanceBookingsPage {

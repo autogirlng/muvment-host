@@ -1,8 +1,20 @@
+import { useState } from "react";
 import { Formik, Form } from "formik";
-import { StepperNavigation, FileInputField } from "@/ui";
+import { toast } from "react-toastify";
+import { StepperNavigation, FileInputField, Button } from "@/ui";
 import { documentVehicleInformationSchema } from "@/utils/validationSchema";
 import useDocumentInformationForm from "@/hooks/vehicle/useDocumentInformationForm";
 import { VehicleOnboardingStepsHookProps } from "@/types"
+import { createPlaceholderPdfFile } from "@/utils/devPrefill";
+
+const DOCUMENT_PREFILL_FIELDS: { name: string; label: string }[] = [
+    { name: "proofOfOwnership", label: "Proof Of Ownership" },
+    { name: "vehicleRegistration", label: "Vehicle Registration" },
+    { name: "insuranceCertificate", label: "Insurance Certificate" },
+    { name: "inspectionReport", label: "Inspection Report" },
+    { name: "maintenanceHistory", label: "Maintenance History" },
+    { name: "authorizationLetter", label: "Authorization Letter" },
+];
 
 const DocumentInformationForm = ({
     steps,
@@ -13,6 +25,8 @@ const DocumentInformationForm = ({
         currentStep,
         setCurrentStep,
     });
+
+    const [isPrefilling, setIsPrefilling] = useState(false);
 
     return (
         <Formik
@@ -26,8 +40,35 @@ const DocumentInformationForm = ({
                 setSubmitting(false);
             }}
         >
-            {({ values, setFieldValue, isValid, isSubmitting }) => (
+            {({ values, setFieldValue, isValid, isSubmitting }) => {
+                const handlePrefill = () => {
+                    try {
+                        setIsPrefilling(true);
+                        DOCUMENT_PREFILL_FIELDS.forEach((field) => {
+                            setFieldValue(field.name, createPlaceholderPdfFile(field.label));
+                        });
+                        toast.success("Documents prefilled with placeholder files");
+                    } catch {
+                        toast.error("Could not prefill documents");
+                    } finally {
+                        setIsPrefilling(false);
+                    }
+                };
+
+                return (
                 <Form className="max-w-[800px] w-full space-y-8">
+                    <div className="flex justify-end">
+                        <Button
+                            type="button"
+                            color="white"
+                            radius="lg"
+                            onClick={handlePrefill}
+                            loading={isPrefilling}
+                            className="!py-2.5 !px-6 !text-sm border border-primary-500"
+                        >
+                            Prefill with placeholder documents
+                        </Button>
+                    </div>
                     <FileInputField
                         name="proofOfOwnership"
                         id="proofOfOwnership"
@@ -117,7 +158,8 @@ const DocumentInformationForm = ({
                         }
                     />
                 </Form>
-            )}
+                );
+            }}
         </Formik>
     );
 };
