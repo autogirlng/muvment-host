@@ -14,6 +14,7 @@ import { downloadPayoutReceipt } from "@/utils/functions/downloadPayoutReceipt";
 import PayoutDetailsModal, {
   canDownloadPayoutReceipt,
 } from "@/components/Wallet/PayoutDetailsModal";
+import useTripCompletionDate from "@/hooks/wallet/useTripCompletionDates";
 
 export default function PendingBalanceBookingRow({
   item,
@@ -25,10 +26,44 @@ export default function PendingBalanceBookingRow({
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
+  // Derived client-side because the payout row has no trip-completion field.
+  // Skip the lookup when the date is already supplied on the item.
+  const { completionDate: fetchedCompletionDate } = useTripCompletionDate(
+    item.bookingId,
+    !item.tripCompletionDate
+  );
+  const tripCompletionDate = item.tripCompletionDate ?? fetchedCompletionDate;
+
   const dateDisplay =
     item.bookingDate && !Number.isNaN(new Date(item.bookingDate).getTime())
       ? `${format(new Date(item.bookingDate), "MMM d, yyyy")} · ${format(new Date(item.bookingDate), "hh:mma")}`
       : "-";
+
+  const completionDate =
+    tripCompletionDate &&
+    !Number.isNaN(new Date(tripCompletionDate).getTime())
+      ? new Date(tripCompletionDate)
+      : null;
+
+  const tripCompletedDisplay = completionDate
+    ? `${format(completionDate, "MMM d, yyyy")} · ${format(completionDate, "hh:mma")}`
+    : "-";
+
+  const isPaid = String(item.hostPaymentStatus).toUpperCase() === "PAID";
+  const daysSinceCompletion = completionDate
+    ? Math.max(
+        0,
+        Math.floor(
+          (Date.now() - completionDate.getTime()) / (1000 * 60 * 60 * 24)
+        )
+      )
+    : null;
+  const dueForLabel =
+    !isPaid && daysSinceCompletion !== null
+      ? daysSinceCompletion === 0
+        ? "Due today"
+        : `Due for ${daysSinceCompletion} day${daysSinceCompletion === 1 ? "" : "s"}`
+      : null;
 
   const status =
     typeof item.hostPaymentStatus === "string"
@@ -70,6 +105,20 @@ export default function PendingBalanceBookingRow({
         />
         <TableCell title="Vehicle" content={item.vehicleName ?? "-"} className="text-grey-900" />
         <TableCell title="Booking date" content={dateDisplay} className="text-grey-900" />
+        <TableCell
+          title="Trip completed"
+          className="text-grey-900"
+          content={
+            <span className="flex flex-col gap-0.5">
+              <span>{tripCompletedDisplay}</span>
+              {dueForLabel && (
+                <span className="text-xs font-medium text-amber-600">
+                  {dueForLabel}
+                </span>
+              )}
+            </span>
+          }
+        />
         <TableCell title="Deductions" content={deductionSummary} className="capitalize text-grey-900" />
         <TableCell
           title="Amount"

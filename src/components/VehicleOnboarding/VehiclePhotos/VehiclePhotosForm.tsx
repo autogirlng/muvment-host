@@ -1,11 +1,13 @@
 import Image from "next/image";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Formik, Form } from "formik";
+import { toast } from "react-toastify";
 import { vehiclePhotosSchema } from "@/utils/validationSchema";
 import { photoViewOptions } from "@/utils/data";
 import { VehiclePhotos, VehicleOnboardingStepsHookProps } from "@/types";
-import { PhotoUpload, StepperNavigation } from "@/ui";
+import { PhotoUpload, StepperNavigation, Button } from "@/ui";
 import useVehiclePhotosForm from "@/hooks/vehicle/useVehiclePhotosForm";
+import { createPlaceholderImageFile } from "@/utils/devPrefill";
 
 const VehiclePhotosForm = ({
     steps,
@@ -20,6 +22,8 @@ const VehiclePhotosForm = ({
         submitStep3,
         saveStep3,
     } = useVehiclePhotosForm({ setPhotoTipIndex, currentStep, setCurrentStep });
+
+    const [isPrefilling, setIsPrefilling] = useState(false);
 
     useEffect(() => {
         const filledFields = photoViewOptions.filter(
@@ -56,8 +60,40 @@ const VehiclePhotosForm = ({
                 setFieldTouched,
                 setFieldValue,
                 isSubmitting,
-            }) => (
+            }) => {
+                const handlePrefill = async () => {
+                    try {
+                        setIsPrefilling(true);
+                        for (const view of photoViewOptions) {
+                            const file = await createPlaceholderImageFile(view.label);
+                            setFieldValue(view.name, file);
+                            setFieldTouched(view.name, true);
+                        }
+                        setPhotoViews(
+                            photoViewOptions.map((view) => ({ ...view, disabled: false }))
+                        );
+                        toast.success("Photos prefilled with placeholder images");
+                    } catch {
+                        toast.error("Could not prefill photos");
+                    } finally {
+                        setIsPrefilling(false);
+                    }
+                };
+
+                return (
                 <Form className="w-full grid grid-cols-1 sm:grid-cols-2 gap-10">
+                    <div className="sm:col-span-2 flex justify-end">
+                        <Button
+                            type="button"
+                            color="white"
+                            radius="lg"
+                            onClick={handlePrefill}
+                            loading={isPrefilling}
+                            className="!py-2.5 !px-6 !text-sm border border-primary-500"
+                        >
+                            Prefill with placeholder images
+                        </Button>
+                    </div>
                     {photoViews.map((item) => {
                         const fieldName = item.name as keyof VehiclePhotos;
 
@@ -117,7 +153,8 @@ const VehiclePhotosForm = ({
                         }
                     />
                 </Form>
-            )}
+                );
+            }}
         </Formik>
     );
 };
