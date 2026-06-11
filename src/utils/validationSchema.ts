@@ -112,6 +112,15 @@ export const basicVehicleInformationSchema = object().shape({
   isVehicleUpgraded: string()
     .required("Please select upgraded status")
     .notOneOf([VEHICLE_SELECT_PLACEHOLDER], "Please select upgraded status"),
+  yearOfUpgrade: number()
+    .when("isVehicleUpgraded", {
+      is: "yes",
+      then: (schema) =>
+        schema
+          .min(2013, "Please select the year of upgrade")
+          .required("Please select the year of upgrade"),
+      otherwise: (schema) => schema.optional(),
+    }),
 });
 
 export const addtionalVehicleInformationSchema = object().shape({

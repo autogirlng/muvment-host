@@ -677,6 +677,7 @@ export const hostPendingBalanceTableHeadItems: string[] = [
   "Invoice",
   "Vehicle",
   "Booking date",
+  "Trip completed",
   "Deductions",
   "Amount",
   "Payment status",

@@ -413,6 +413,11 @@ const BasicVehicleInformationForm = ({
                                     setFieldTouched("yearOfUpgrade", true);
                                     setFieldValue("yearOfUpgrade", Number(value));
                                 }}
+                                error={
+                                    errors.yearOfUpgrade && touched.yearOfUpgrade
+                                        ? errors.yearOfUpgrade
+                                        : ""
+                                }
                                 info
                                 tooltipTitle="Year of upgrade"
                                 tooltipDescription="Select the year your vehicle was upgraded to."
